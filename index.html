@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Alex Sousa Dev</title>
+  </head>
+  <body>
+    <!-- Fundo animado -->
+    <div class="bg-grid"></div>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <!-- HEADER -->
+    <header class="header" id="header">
+      <div class="logo">
+        <div class="logo-img-wrap">
+          <img src="img/logo.jpeg" alt="Logo Alex Sousa Dev" />
+        </div>
+        <span class="logo-text">Alex Sousa <strong>Dev</strong></span>
+      </div>
+      <nav class="menu">
+        <ul>
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#sobre" class="nav-link">Sobre</a></li>
+          <li><a href="#servico" class="nav-link">Serviços</a></li>
+          <li><a href="#contato" class="nav-link">Contato</a></li>
+          <li><a href="#" class="nav-link nav-cta">Acesso</a></li>
+        </ul>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <nav class="mobile-nav" id="mobileNav">
+      <ul>
+        <li>
+          <a href="#home" class="nav-link" onclick="closeMobile()">Home</a>
+        </li>
+        <li>
+          <a href="#sobre" class="nav-link" onclick="closeMobile()">Sobre</a>
+        </li>
+        <li>
+          <a href="#servico" class="nav-link" onclick="closeMobile()"
+            >Serviços</a
+          >
+        </li>
+        <li>
+          <a href="#contato" class="nav-link" onclick="closeMobile()"
+            >Contato</a
+          >
+        </li>
+        <li><a href="#" class="nav-link nav-cta">Acesso</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <!-- HERO / HOME -->
+      <section class="section home" id="home">
+        <div class="home-content">
+          <p class="hero-tag reveal">👋 Disponível para projetos</p>
+          <h2 class="hero-title reveal">
+            Desenvolvedor<br />
+            <span class="gradient-text">Full Stack</span>
+          </h2>
+          <p class="hero-desc reveal">
+            Olá, eu sou <strong>Alex Sousa</strong>. Transformo ideias em
+            aplicações web modernas, escaláveis e de alto impacto — do front-end
+            ao back-end.
+          </p>
+          <div class="hero-actions reveal">
+            <a href="#contato" class="btn-primary">Entrar em Contato</a>
+            <a href="#sobre" class="btn-ghost">Saiba Mais</a>
+          </div>
+          <div class="hero-stats reveal">
+            <div class="stat">
+              <span class="stat-num">4+</span
+              ><span class="stat-label">Meses de Experiência</span>
+            </div>
+            <div class="stat-div"></div>
+            <div class="stat">
+              <span class="stat-num">10+</span
+              ><span class="stat-label">Projetos Concluídos</span>
+            </div>
+            <div class="stat-div"></div>
+            <div class="stat">
+              <span class="stat-num">5+</span
+              ><span class="stat-label">Tecnologias</span>
+            </div>
+          </div>
+        </div>
+        <div class="home-visual reveal">
+          <div class="img-frame">
+            <div class="img-glow"></div>
+            <img src="img/sousa.jpeg" alt="Alex Sousa Dev" class="hero-img" />
+          </div>
+        </div>
+      </section>
+
+      <!-- SOBRE -->
+      <section class="section sobre-me" id="sobre">
+        <div class="section-header reveal">
+          <span class="section-tag">// Quem sou eu</span>
+          <h2 class="section-title">
+            Sobre <span class="gradient-text">Mim</span>
+          </h2>
+        </div>
+        <div class="sobre-grid">
+          <div class="sobre-img-wrap reveal">
+            <div class="sobre-img-frame">
+              <img src="img/sobre-me.jpeg" alt="Sobre Alex Sousa" />
+            </div>
+            <div class="sobre-badge-stack">
+              <div class="tech-badge">HTML & CSS</div>
+              <div class="tech-badge">JavaScript</div>
+              <div class="tech-badge">React</div>
+              <div class="tech-badge">Node.js</div>
+              <div class="tech-badge">SQLite</div>
+            </div>
+          </div>
+          <div class="sobre-text reveal">
+            <p>
+              Olá! Sou <strong>Alex Sousa</strong>, desenvolvedor Full Stack
+              apaixonado por criar experiências digitais que fazem a diferença.
+              Com mais de <strong>4 meses de experiência</strong>, venho
+              construindo aplicações web e mobile completas, do conceito ao
+              deploy.
+            </p>
+            <p>
+              Meu stack inclui tecnologias modernas como
+              <strong>HTML, CSS, JavaScript, React, Node.js</strong> e
+              <strong>SQLite</strong>. Estou sempre em busca de novos desafios e
+              aprendizados para crescer como profissional.
+            </p>
+            <a
+              href="#contato"
+              class="btn-primary"
+              style="margin-top: 24px; display: inline-block"
+              >Vamos Conversar</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVIÇOS -->
+      <section class="section servico" id="servico">
+        <div class="section-header reveal">
+          <span class="section-tag">// O que eu faço</span>
+          <h2 class="section-title">
+            Meus <span class="gradient-text">Serviços</span>
+          </h2>
+        </div>
+        <div class="services-grid">
+          <div class="service-card reveal">
+            <div class="service-icon">⚡</div>
+            <h3>Front-End</h3>
+            <p>
+              Interfaces modernas, responsivas e de alta performance com HTML,
+              CSS, JavaScript e React.
+            </p>
+          </div>
+          <div class="service-card reveal">
+            <div class="service-icon">🔧</div>
+            <h3>Back-End</h3>
+            <p>
+              APIs robustas e escaláveis com Node.js, autenticação segura e
+              integração com banco de dados.
+            </p>
+          </div>
+          <div class="service-card reveal">
+            <div class="service-icon">🗄️</div>
+            <h3>Banco de Dados</h3>
+            <p>
+              Modelagem e gerenciamento de dados com SQLite e outras soluções
+              eficientes.
+            </p>
+          </div>
+          <div class="service-card reveal">
+            <div class="service-icon">📱</div>
+            <h3>Web Responsiva</h3>
+            <p>
+              Sites e aplicações que funcionam perfeitamente em qualquer
+              dispositivo e tamanho de tela.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTATO -->
+      <section class="section contato" id="contato">
+        <div class="section-header reveal">
+          <span class="section-tag">// Fale comigo</span>
+          <h2 class="section-title">
+            Entre em <span class="gradient-text">Contato</span>
+          </h2>
+        </div>
+        <div class="contato-grid">
+          <div class="contato-info reveal">
+            <h3>Vamos criar algo incrível juntos?</h3>
+            <p>
+              Estou disponível para freelances, projetos e oportunidades. Me
+              envie uma mensagem!
+            </p>
+            <div class="contact-links">
+              <a href="mailto:alexsousadev.21@gmail.com" class="contact-item">
+                <span class="contact-icon">✉️</span>
+                alexsousadev.21@gmail.com
+              </a>
+              <a href="tel:+5599984686139" class="contact-item">
+                <span class="contact-icon">📞</span>
+                (99) 98468-6139
+              </a>
+              <a
+                href="https://github.com/alexsousadev21-commits"
+                target="_blank"
+                class="contact-item"
+              >
+                <span class="contact-icon">🐙</span>
+                alexsousadev21-commits
+              </a>
+            </div>
+          </div>
+          <div class="form reveal">
+            <label for="nomeCompleto">Nome Completo</label>
+            <input
+              type="text"
+              id="nome"
+              placeholder="Digite seu nome completo"
+            />
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="Digite seu e-mail" />
+            <label for="mensagem">Sua Mensagem</label>
+            <textarea
+              id="mensagem"
+              placeholder="Descreva sua mensagem"
+              rows="5"
+            ></textarea>
+            <button class="btn-primary btn-full" onclick="Btn_envia(event)">
+              Enviar Mensagem
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="logo-text">Alex<strong>Dev</strong></span>
+          <p>Desenvolvendo o futuro digital, uma linha de código por vez.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Navegação</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#servico">Serviços</a></li>
+            <li><a href="#contato">Contato</a></li>
+            <li><a href="#">Acesso</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h4>Contato</h4>
+          <a href="mailto:alexsousadev.21@gmail.com"
+            >alexsousadev.21@gmail.com</a
+          >
+          <a href="tel:+5599984686139">(99) 98468-6139</a>
+          <a href="https://github.com/alexsousarodrigues1919-max">GitHub</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Alex Sousa Dev — Todos os direitos reservados</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
