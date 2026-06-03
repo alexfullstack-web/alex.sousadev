@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/frontend/public/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <title>Alex Sousa Dev - Login</title>
+  </head>
+  <body>
+    <div class="notification">
+      <i class="notification-icon"></i>
+      <span class="notification-message"></span>
+    </div>
+    <div class="loader">
+      <div class="spinner"></div>
+      <p>Carregando...</p>
+    </div>
+    <main class="main">
+      <form id="form" autocomplete="off">
+        <div class="header">
+          <img
+            class="logo"
+            src="/frontend/img/logo.jpeg"
+            alt="logo_alex_sousa_dev"
+          />
+          <h1 class="title">Alex<span>Sousa</span>Dev</h1>
+        </div>
+        <label for="username"><i class="fa-solid fa-user"></i> Usuário</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          autocomplete="username"
+          placeholder="Usuário"
+        />
+        <label for="password"><i class="fa-solid fa-lock"></i> Senha</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          autocomplete="current-password"
+          placeholder="Senha"
+        />
+        <button type="submit">
+          <i class="fa-solid fa-right-to-bracket"></i>
+        </button>
+      </form>
+    </main>
+    <button id="btnInfo" class="btn-info">
+      <i class="fa-solid fa-circle-info"></i>
+    </button>
+    <section class="informacao">
+      <h2>
+        <i class="fa-solid fa-shield-halved"></i>
+        Política de Acesso e Utilização
+      </h2>
+
+      <ul>
+        <li>
+          <i class="fa-solid fa-lock"></i>
+          O acesso ao sistema é restrito a usuários autorizados pela
+          administração.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-user-plus"></i>
+          Novos cadastros são realizados exclusivamente pela equipe responsável.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-key"></i>
+          Mantenha suas credenciais em sigilo e não compartilhe seu acesso.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-user-shield"></i>
+          Cada usuário possui permissões específicas de acordo com sua função.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-file-shield"></i>
+          Dados de clientes, projetos e documentos são confidenciais.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Todas as atividades podem ser registradas para auditoria e segurança.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-headset"></i>
+          Solicitações de acesso e suporte devem ser realizadas pelos canais
+          oficiais.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          Qualquer uso indevido poderá resultar em bloqueio ou suspensão da
+          conta.
+        </li>
+
+        <li>
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Sempre realize logout ao encerrar suas atividades.
+        </li>
+      </ul>
+    </section>
+    <footer class="footer">
+      <p>&copy; 2026 Alex Sousa Dev — Todos os direitos reservados</p>
+    </footer>
+    <script src="/frontend/public/script.js"></script>
+  </body>
+</html>
