@@ -91,4 +91,3 @@ form.addEventListener("submit", (e) => {
   form.reset();
 });
 
-showNotification("Esse sistema esta em desenvolvimento. Por favar aguarde....", "info");
