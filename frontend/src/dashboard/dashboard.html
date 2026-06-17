@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./dashoard.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <title>Alex Sousa Dev - Dashoard</title>
+  </head>
+  <body class="body">
+    <div class="notification">
+      <i class="natification-icon"></i>
+      <span class="natification-message"></span>
+    </div>
+    <div class="loader">
+      <div class="spinner"></div>
+      <p>Carregando...</p>
+    </div>
+    <header class="header">
+      <div class="title-logo">
+        <img class="logo" src="/img/logo.jpeg" alt="Alex-sousa-dev-logo" />
+        <h1 class="title">Alex<span>Sousa</span>Dev</h1>
+      </div>
+      <div class="tema">
+        <i class="fa-solid fa-sun"></i>
+        <i class="fa-solid fa-moon"></i>
+      </div>
+      <div class="notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span class="notification-count">3</span>
+        <div class="notification-list" id="notification-list">
+          <ul class="notification-items" id="notification-items">
+            <li>Notificação 1</li>
+            <li>Notificação 2</li>
+            <li>Notificação 3</li>
+          </ul>
+        </div>
+      </div>
+      <div class="profile">
+        <i class="fa-solid fa-user"></i>
+        <span class="user-name">Alex Sousa</span>
+      </div>
+      <div class="settings" id="settings">
+        <i class="fa-solid fa-gear"></i>
+      </div>
+      <div class="logout" id="logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </div>
+    </header>
+
+    <nav class="nav" id="nav">
+      <a href="./dashboard.html"
+        ><i class="fa-solid fa-chart-line"></i> Dashboard</a
+      >
+      <a href="#"><i class="fa-solid fa-user"></i> Usuários</a>
+      <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+      <a href="#"><i class="fa-solid fa-user-tie"></i> Conta Cliente</a>
+      <a href="#"><i class="fa-solid fa-wallet"></i> Financeiro</a>
+      <a href="#"><i class="fa-solid fa-file"></i> Reunião</a>
+      <a href="#"><i class="fa-solid fa-calendar"></i> Agendamentos</a>
+      <a href="#"><i class="fa-solid fa-briefcase"></i> Projetos</a>
+      <a href="#"><i class="fa-solid fa-file-lines"></i> Documentos</a>
+      <a href="#"><i class="fa-solid fa-chart-bar"></i> Planejamento</a>
+      <a href="#"><i class="fa-solid fa-chart-pie"></i> Relatórios</a>
+      <a href="#"><i class="fa-solid fa-headset"></i> Suporte</a>
+      <a href="#"><i class="fa-solid fa-gear"></i> Configurações</a>
+    </nav>
+    <main class="main">
+      <h2>Dashboard</h2>
+      <p>Olá, seja bem-vindo ao Sistema Alex<span>Sousa</span>Dev</p>
+      <div class="dashboard-content">
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-users"></i> Usuários</h3>
+          <p class="card-count" id="user-count">0</p>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-user"></i> Clientes</h3>
+          <p class="card-count" id="client-count">0</p>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-wallet"></i> Financeiro</h3>
+          <p class="card-count" id="finance-count">R$ 0,00</p>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-briefcase"></i> Projetos</h3>
+          <p class="card-count" id="project-count">0</p>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-file-lines"></i> Documentos</h3>
+          <p class="card-count" id="document-count">0</p>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-calendar"></i> Agendamentos</h3>
+          <p class="card-count" id="appointment-count">0</p>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-chart-bar"></i> Planejamento</h3>
+          <p class="card-count" id="planning-count">0</p>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-chart-pie"></i> Relatórios</h3>
+          <p class="card-count" id="report-count">0</p>
+        </div>
+      </div>
+    </main>
+    <section class="graph">
+      <div class="graph-container">
+        <div class="graph-content">
+          <h3><i class="fa-solid fa-calendar"></i> Agendamentos do Dia</h3>
+          <canvas id="schedulingChart"></canvas>
+          <div class="chart-info">
+            <p><strong>Total Geral:</strong> <span id="scheduling-total">0</span> agendamentos</p>
+          </div>
+        </div>
+        <div class="graph-content">
+          <h3><i class="fa-solid fa-briefcase"></i> Projetos</h3>
+          <canvas id="projectsChart"></canvas>
+          <div class="chart-info">
+            <p><strong>Total Geral:</strong> <span id="projects-total">0</span> projetos</p>
+          </div>
+        </div>
+        <div class="graph-content">
+          <h3><i class="fa-solid fa-chart-bar"></i> Totais por Mês</h3>
+          <canvas id="monthlyChart"></canvas>
+          <div class="chart-info">
+            <p><strong>Total Anual:</strong> <span id="yearly-total">0</span> registros</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="list-user-olinne">
+      <div>
+        <h3><i class="fa-solid fa-users"></i> Usuários Online</h3>
+        <ul id="online-users"></ul>
+      </div>
+    </section>
+    <footer class="footer">
+      <p>&copy; 2026 Alex Sousa Dev — Todos os direitos reservados</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/src/dashboard/dashoard.js"></script>
+  </body>
+</html>
