@@ -74,9 +74,15 @@ const chatIaInput = document.getElementById("chatIaInput");
 const chatIaMensagens = document.getElementById("chatIaMensagens");
 const chatIaDigitando = document.getElementById("chatIaDigitando");
 
+let chatIaConversaId = localStorage.getItem("chatIaConversaId") || null;
+let chatIaAguardandoHumano = false;
+let chatIaPollingId = null;
+let chatIaUltimaQtdMensagens = 0;
+
 function abrirChatIa() {
   chatIaModal.classList.add("open");
   chatIaInput.focus();
+  if (chatIaAguardandoHumano) iniciarPollingChatIa();
 }
 function fecharChatIa() {
   chatIaModal.classList.remove("open");
@@ -94,14 +100,11 @@ function adicionarMensagemChatIa(texto, tipo) {
   bubble.textContent = texto;
   msg.appendChild(bubble);
 
-  // insere antes do indicador "digitando" se ele for filho do container;
-  // caso contrário, só adiciona no final (evita o erro de insertBefore)
   if (chatIaDigitando && chatIaDigitando.parentNode === chatIaMensagens) {
     chatIaMensagens.insertBefore(msg, chatIaDigitando);
   } else {
     chatIaMensagens.appendChild(msg);
   }
-
   chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
 }
 
@@ -114,12 +117,15 @@ chatIaForm.addEventListener("submit", async (e) => {
   chatIaInput.value = "";
   chatIaInput.disabled = true;
   chatIaDigitando.style.display = "flex";
-  chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
 
   try {
-    const respostaIa = await enviarMensagemIA(texto);
+    const data = await enviarMensagemIA(texto);
     chatIaDigitando.style.display = "none";
-    adicionarMensagemChatIa(respostaIa, "ia");
+
+    if (data.resposta) adicionarMensagemChatIa(data.resposta, "ia");
+
+    chatIaAguardandoHumano = !!data.aguardandoHumano;
+    if (chatIaAguardandoHumano) iniciarPollingChatIa();
   } catch (err) {
     chatIaDigitando.style.display = "none";
     console.error("[Chat IA] Erro completo:", err);
@@ -133,13 +139,46 @@ chatIaForm.addEventListener("submit", async (e) => {
   }
 });
 
+// ─── POLLING: verifica se o Alex já respondeu ──────────────────
+function iniciarPollingChatIa() {
+  if (chatIaPollingId || !chatIaConversaId) return;
+
+  chatIaPollingId = setInterval(async () => {
+    try {
+      const visitanteId = localStorage.getItem(CHAT_IA_VISITANTE_KEY);
+      const res = await fetch(
+        `${CHAT_IA_API_BASE}/chat-portfolio/${chatIaConversaId}/mensagens`,
+        { headers: visitanteId ? { "x-visitante-id": visitanteId } : {} }
+      );
+      const data = await res.json();
+      if (!data?.sucesso) return;
+
+      const mensagens = data.dados || [];
+      if (mensagens.length > chatIaUltimaQtdMensagens) {
+        const novas = mensagens.slice(chatIaUltimaQtdMensagens);
+        novas.forEach((m) => {
+          if (m.role === "alex") adicionarMensagemChatIa(m.conteudo, "ia");
+        });
+        chatIaUltimaQtdMensagens = mensagens.length;
+      }
+
+      if (data.status === "encerrada") {
+        clearInterval(chatIaPollingId);
+        chatIaPollingId = null;
+      }
+    } catch (err) {
+      console.error("[Chat IA] Erro no polling:", err);
+    }
+  }, 5000); // verifica a cada 5s
+}
+
 // ─── INTEGRAÇÃO COM SUA API ─────────────────────────────────────
-const CHAT_IA_API_URL = "https://bancos-dados-alex-sousa-dev-erp.onrender.com/api/ia/chat-portfolio"; // <-- TROQUE AQUI
+const CHAT_IA_API_BASE = "https://bancos-dados-alex-sousa-dev-erp.onrender.com/api/ia"; // <-- TROQUE AQUI
 const CHAT_IA_VISITANTE_KEY = "chatIaVisitanteId";
 
 async function enviarMensagemIA(mensagem) {
-  if (CHAT_IA_API_URL.includes("SEU_BACKEND_AQUI")) {
-    console.error("[Chat IA] Configure CHAT_IA_API_URL com a URL real do backend.");
+  if (CHAT_IA_API_BASE.includes("SEU_BACKEND_AQUI")) {
+    console.error("[Chat IA] Configure CHAT_IA_API_BASE com a URL real do backend.");
     throw new Error("URL da API não configurada.");
   }
 
@@ -147,13 +186,13 @@ async function enviarMensagemIA(mensagem) {
 
   let res;
   try {
-    res = await fetch(CHAT_IA_API_URL, {
+    res = await fetch(`${CHAT_IA_API_BASE}/chat-portfolio`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...(visitanteId ? { "x-visitante-id": visitanteId } : {}),
       },
-      body: JSON.stringify({ mensagem }),
+      body: JSON.stringify({ mensagem, conversaId: chatIaConversaId }),
     });
   } catch (erroDeRede) {
     console.error("[Chat IA] Falha de rede/CORS:", erroDeRede);
@@ -161,19 +200,17 @@ async function enviarMensagemIA(mensagem) {
   }
 
   const data = await res.json().catch(() => null);
-
   if (!res.ok) {
     console.error("[Chat IA] Backend retornou erro:", res.status, data);
     throw new Error(data?.mensagem || "Erro ao obter resposta da IA.");
   }
 
-  if (!data?.sucesso) {
-    console.warn("[Chat IA] Resposta sem sucesso:", data);
+  if (data.visitanteId) localStorage.setItem(CHAT_IA_VISITANTE_KEY, data.visitanteId);
+  if (data.conversaId) {
+    chatIaConversaId = data.conversaId;
+    localStorage.setItem("chatIaConversaId", chatIaConversaId);
+    chatIaUltimaQtdMensagens += 1; // conta a mensagem do usuário que acabou de ser salva
   }
 
-  if (data.visitanteId) {
-    localStorage.setItem(CHAT_IA_VISITANTE_KEY, data.visitanteId);
-  }
-
-  return data.resposta ?? "Não obtive resposta no momento.";
+  return data;
 }
