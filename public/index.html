@@ -32,13 +32,7 @@
           <li><a href="#sobre" class="nav-link">Sobre</a></li>
           <li><a href="#servico" class="nav-link">Serviços</a></li>
           <li><a href="#contato" class="nav-link">Contato</a></li>
-          <li>
-            <a
-              href="https://alex-sousa-dev.vercel.app/"
-              class="nav-link nav-cta"
-              >Acesso</a
-            >
-          </li>
+          <li><a href="https://alex-sousa-dev.vercel.app/" class="nav-link nav-cta">Acesso</a></li>
         </ul>
       </nav>
       <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -65,11 +59,7 @@
             >Contato</a
           >
         </li>
-        <li>
-          <a href="https://alex-sousa-dev.vercel.app/" class="nav-link nav-cta"
-            >Acesso</a
-          >
-        </li>
+        <li><a href="https://alex-sousa-dev.vercel.app/" class="nav-link nav-cta">Acesso</a></li>
       </ul>
     </nav>
 
@@ -151,7 +141,7 @@
               <strong>SQLite</strong>. Estou sempre em busca de novos desafios e
               aprendizados para crescer como profissional.
             </p>
-            <a
+            
               href="#contato"
               class="btn-primary"
               style="margin-top: 24px; display: inline-block"
@@ -229,7 +219,7 @@
                 <span class="contact-icon">📞</span>
                 (99) 98468-6139
               </a>
-              <a
+              
                 href="https://github.com/alexfullstack-web"
                 target="_blank"
                 class="contact-item"
@@ -288,79 +278,57 @@
           <a href="https://github.com/alexfullstack-web">GitHub</a>
         </div>
       </div>
-      <!-- CHAT IA FLUTUANTE -->
-      <button id="chatIaBtn" class="chat-ia-btn" aria-label="Abrir chat com IA">
-        <span class="chat-ia-btn-icon">💬</span>
-      </button>
-
-      <div id="chatIaModal" class="chat-ia-modal">
-        <div class="chat-ia-scrim" id="chatIaScrim"></div>
-
-        <div class="chat-ia-window">
-          <div class="chat-ia-header">
-            <div class="chat-ia-header-info">
-              <div class="chat-ia-avatar">🤖</div>
-              <div>
-                <div class="chat-ia-title">Mariana IA</div>
-                <div class="chat-ia-status">
-                  <span class="chat-ia-dot"></span> Online agora
-                </div>
-              </div>
-            </div>
-            <button
-              id="chatIaFechar"
-              class="chat-ia-close"
-              aria-label="Fechar chat"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div id="chatIaMensagens" class="chat-ia-mensagens">
-            <div class="chat-ia-msg ia">
-              <div class="chat-ia-bubble">
-                Olá! 👋 Sou a assistente virtual do Alex Sousa. Posso te ajudar
-                a entender os serviços dele ou tirar dúvidas sobre o seu
-                projeto. Como posso ajudar?
-              </div>
-            </div>
-          </div>
-
-          <div
-            id="chatIaDigitando"
-            class="chat-ia-msg ia chat-ia-digitando"
-            style="display: none"
-          >
-            <div class="chat-ia-bubble">
-              <span class="chat-ia-typing"
-                ><span></span><span></span><span></span
-              ></span>
-            </div>
-          </div>
-
-          <form id="chatIaForm" class="chat-ia-footer">
-            <input
-              id="chatIaInput"
-              class="chat-ia-input"
-              type="text"
-              placeholder="Digite sua mensagem..."
-              autocomplete="off"
-            />
-            <button
-              type="submit"
-              class="chat-ia-send"
-              aria-label="Enviar mensagem"
-            >
-              ➤
-            </button>
-          </form>
-        </div>
-      </div>
-
       <div class="footer-bottom">
         <p>&copy; 2026 Alex Sousa Dev — Todos os direitos reservados</p>
       </div>
     </footer>
+
+    <!-- CHAT IA FLUTUANTE -->
+    <button id="chatIaBtn" class="chat-ia-btn" aria-label="Abrir chat com IA">
+      <span class="chat-ia-btn-icon">💬</span>
+    </button>
+
+    <div id="chatIaModal" class="chat-ia-modal">
+      <div class="chat-ia-scrim" id="chatIaScrim"></div>
+
+      <div class="chat-ia-window">
+        <div class="chat-ia-header">
+          <div class="chat-ia-header-info">
+            <div class="chat-ia-avatar">🤖</div>
+            <div>
+              <div class="chat-ia-title">Mariana IA</div>
+              <div class="chat-ia-status"><span class="chat-ia-dot"></span> Online agora</div>
+            </div>
+          </div>
+          <button id="chatIaFechar" class="chat-ia-close" aria-label="Fechar chat">✕</button>
+        </div>
+
+        <div id="chatIaMensagens" class="chat-ia-mensagens">
+          <div class="chat-ia-msg ia">
+            <div class="chat-ia-bubble">
+              Olá! 👋 Sou a assistente virtual do Alex Sousa. Posso te ajudar a entender os serviços dele ou tirar dúvidas sobre o seu projeto. Como posso ajudar?
+            </div>
+          </div>
+
+          <div id="chatIaDigitando" class="chat-ia-msg ia chat-ia-digitando" style="display:none;">
+            <div class="chat-ia-bubble">
+              <span class="chat-ia-typing"><span></span><span></span><span></span></span>
+            </div>
+          </div>
+        </div>
+
+        <form id="chatIaForm" class="chat-ia-footer">
+          <input
+            id="chatIaInput"
+            class="chat-ia-input"
+            type="text"
+            placeholder="Digite sua mensagem..."
+            autocomplete="off"
+          />
+          <button type="submit" class="chat-ia-send" aria-label="Enviar mensagem">➤</button>
+        </form>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>

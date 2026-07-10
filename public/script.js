@@ -1,68 +1,68 @@
 // Hamburger menu
-      const hamburger = document.getElementById("hamburger");
-      const mobileNav = document.getElementById("mobileNav");
-      hamburger.addEventListener("click", () => {
-        hamburger.classList.toggle("open");
-        mobileNav.classList.toggle("open");
-      });
-      function closeMobile() {
-        hamburger.classList.remove("open");
-        mobileNav.classList.remove("open");
+const hamburger = document.getElementById("hamburger");
+const mobileNav = document.getElementById("mobileNav");
+hamburger.addEventListener("click", () => {
+  hamburger.classList.toggle("open");
+  mobileNav.classList.toggle("open");
+});
+function closeMobile() {
+  hamburger.classList.remove("open");
+  mobileNav.classList.remove("open");
+}
+
+// Header scroll effect
+window.addEventListener("scroll", () => {
+  const header = document.getElementById("header");
+  header.classList.toggle("scrolled", window.scrollY > 60);
+});
+
+// Scroll reveal
+const reveals = document.querySelectorAll(".reveal");
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("visible");
+        observer.unobserve(e.target);
       }
+    });
+  },
+  { threshold: 0.12 },
+);
+reveals.forEach((el) => observer.observe(el));
 
-      // Header scroll effect
-      window.addEventListener("scroll", () => {
-        const header = document.getElementById("header");
-        header.classList.toggle("scrolled", window.scrollY > 60);
-      });
+// Contact form
+function Btn_envia(e) {
+  e.preventDefault();
+  const nome = document.getElementById("nome").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const msg = document.getElementById("mensagem").value.trim();
+  const numero = 5599984686139;
+  if (!nome || !email || !msg) {
+    showToast("Preencha todos os campos!", "error");
+    return;
+  } else {
+    window.open(
+      "https://wa.me/" + numero + "?text=Olá, sou " + nome + ". " + email + ". " + msg,
+    );
+  }
+  showToast("Mensagem enviada com sucesso!", "success");
+  document.getElementById("nome").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("mensagem").value = "";
+}
 
-      // Scroll reveal
-      const reveals = document.querySelectorAll(".reveal");
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add("visible");
-              observer.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.12 },
-      );
-      reveals.forEach((el) => observer.observe(el));
-
-      // Contact form
-      function Btn_envia(e) {
-        e.preventDefault();
-        const nome = document.getElementById("nome").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const msg = document.getElementById("mensagem").value.trim();
-        const numero = 5599984686139;
-        if (!nome || !email || !msg) {
-          showToast("Preencha todos os campos!", "error");
-          return;
-        } else {
-          window.open(
-            "https://wa.me/" + numero + "?text=Olá, sou " + nome + ". " + email + ". " + msg,
-          );
-        }
-        showToast("Mensagem enviada com sucesso!", "success");
-        document.getElementById("nome").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("mensagem").value = "";
-      }
-
-      function showToast(text, type) {
-        const t = document.createElement("div");
-        t.className = "toast toast-" + type;
-        t.textContent = text;
-        document.body.appendChild(t);
-        setTimeout(() => t.classList.add("show"), 10);
-        setTimeout(() => {
-          t.classList.remove("show");
-          setTimeout(() => t.remove(), 400);
-        }, 3000);
-      }
+function showToast(text, type) {
+  const t = document.createElement("div");
+  t.className = "toast toast-" + type;
+  t.textContent = text;
+  document.body.appendChild(t);
+  setTimeout(() => t.classList.add("show"), 10);
+  setTimeout(() => {
+    t.classList.remove("show");
+    setTimeout(() => t.remove(), 400);
+  }, 3000);
+}
 
 // ─── CHAT IA ────────────────────────────────────────────────────
 const chatIaBtn = document.getElementById("chatIaBtn");
@@ -93,7 +93,15 @@ function adicionarMensagemChatIa(texto, tipo) {
   bubble.className = "chat-ia-bubble";
   bubble.textContent = texto;
   msg.appendChild(bubble);
-  chatIaMensagens.insertBefore(msg, chatIaDigitando);
+
+  // insere antes do indicador "digitando" se ele for filho do container;
+  // caso contrário, só adiciona no final (evita o erro de insertBefore)
+  if (chatIaDigitando && chatIaDigitando.parentNode === chatIaMensagens) {
+    chatIaMensagens.insertBefore(msg, chatIaDigitando);
+  } else {
+    chatIaMensagens.appendChild(msg);
+  }
+
   chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
 }
 
@@ -114,42 +122,58 @@ chatIaForm.addEventListener("submit", async (e) => {
     adicionarMensagemChatIa(respostaIa, "ia");
   } catch (err) {
     chatIaDigitando.style.display = "none";
+    console.error("[Chat IA] Erro completo:", err);
     adicionarMensagemChatIa(
       "Desculpe, tive um problema para responder agora. Tente novamente em instantes.",
       "ia"
     );
-    console.error(err);
   } finally {
     chatIaInput.disabled = false;
     chatIaInput.focus();
   }
 });
 
-// ─── INTEGRAÇÃO COM SUA API (plugue aqui) ──────────────────────
-const CHAT_IA_API_URL = "https://SEU_BACKEND_AQUI/api/ia/chat-portfolio";
+// ─── INTEGRAÇÃO COM SUA API ─────────────────────────────────────
+const CHAT_IA_API_URL = "https://bancos-dados-alex-sousa-dev-erp.onrender.com/api/ia/chat-portfolio"; // <-- TROQUE AQUI
 const CHAT_IA_VISITANTE_KEY = "chatIaVisitanteId";
 
 async function enviarMensagemIA(mensagem) {
-  const visitanteId = localStorage.getItem(CHAT_IA_VISITANTE_KEY);
-
-  const res = await fetch(CHAT_IA_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(visitanteId ? { "x-visitante-id": visitanteId } : {}),
-    },
-    body: JSON.stringify({ mensagem }),
-  });
-
-  if (!res.ok) {
-    throw new Error("Falha na resposta da IA");
+  if (CHAT_IA_API_URL.includes("SEU_BACKEND_AQUI")) {
+    console.error("[Chat IA] Configure CHAT_IA_API_URL com a URL real do backend.");
+    throw new Error("URL da API não configurada.");
   }
 
-  const data = await res.json();
+  const visitanteId = localStorage.getItem(CHAT_IA_VISITANTE_KEY);
+
+  let res;
+  try {
+    res = await fetch(CHAT_IA_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(visitanteId ? { "x-visitante-id": visitanteId } : {}),
+      },
+      body: JSON.stringify({ mensagem }),
+    });
+  } catch (erroDeRede) {
+    console.error("[Chat IA] Falha de rede/CORS:", erroDeRede);
+    throw new Error("Não foi possível conectar ao servidor da IA.");
+  }
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    console.error("[Chat IA] Backend retornou erro:", res.status, data);
+    throw new Error(data?.mensagem || "Erro ao obter resposta da IA.");
+  }
+
+  if (!data?.sucesso) {
+    console.warn("[Chat IA] Resposta sem sucesso:", data);
+  }
 
   if (data.visitanteId) {
     localStorage.setItem(CHAT_IA_VISITANTE_KEY, data.visitanteId);
   }
 
-  return data.resposta;
+  return data.resposta ?? "Não obtive resposta no momento.";
 }
