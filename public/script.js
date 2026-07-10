@@ -63,3 +63,93 @@
           setTimeout(() => t.remove(), 400);
         }, 3000);
       }
+
+// ─── CHAT IA ────────────────────────────────────────────────────
+const chatIaBtn = document.getElementById("chatIaBtn");
+const chatIaModal = document.getElementById("chatIaModal");
+const chatIaScrim = document.getElementById("chatIaScrim");
+const chatIaFechar = document.getElementById("chatIaFechar");
+const chatIaForm = document.getElementById("chatIaForm");
+const chatIaInput = document.getElementById("chatIaInput");
+const chatIaMensagens = document.getElementById("chatIaMensagens");
+const chatIaDigitando = document.getElementById("chatIaDigitando");
+
+function abrirChatIa() {
+  chatIaModal.classList.add("open");
+  chatIaInput.focus();
+}
+function fecharChatIa() {
+  chatIaModal.classList.remove("open");
+}
+
+chatIaBtn.addEventListener("click", abrirChatIa);
+chatIaFechar.addEventListener("click", fecharChatIa);
+chatIaScrim.addEventListener("click", fecharChatIa);
+
+function adicionarMensagemChatIa(texto, tipo) {
+  const msg = document.createElement("div");
+  msg.className = `chat-ia-msg ${tipo}`;
+  const bubble = document.createElement("div");
+  bubble.className = "chat-ia-bubble";
+  bubble.textContent = texto;
+  msg.appendChild(bubble);
+  chatIaMensagens.insertBefore(msg, chatIaDigitando);
+  chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
+}
+
+chatIaForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const texto = chatIaInput.value.trim();
+  if (!texto) return;
+
+  adicionarMensagemChatIa(texto, "eu");
+  chatIaInput.value = "";
+  chatIaInput.disabled = true;
+  chatIaDigitando.style.display = "flex";
+  chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
+
+  try {
+    const respostaIa = await enviarMensagemIA(texto);
+    chatIaDigitando.style.display = "none";
+    adicionarMensagemChatIa(respostaIa, "ia");
+  } catch (err) {
+    chatIaDigitando.style.display = "none";
+    adicionarMensagemChatIa(
+      "Desculpe, tive um problema para responder agora. Tente novamente em instantes.",
+      "ia"
+    );
+    console.error(err);
+  } finally {
+    chatIaInput.disabled = false;
+    chatIaInput.focus();
+  }
+});
+
+// ─── INTEGRAÇÃO COM SUA API (plugue aqui) ──────────────────────
+const CHAT_IA_API_URL = "https://SEU_BACKEND_AQUI/api/ia/chat-portfolio";
+const CHAT_IA_VISITANTE_KEY = "chatIaVisitanteId";
+
+async function enviarMensagemIA(mensagem) {
+  const visitanteId = localStorage.getItem(CHAT_IA_VISITANTE_KEY);
+
+  const res = await fetch(CHAT_IA_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(visitanteId ? { "x-visitante-id": visitanteId } : {}),
+    },
+    body: JSON.stringify({ mensagem }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Falha na resposta da IA");
+  }
+
+  const data = await res.json();
+
+  if (data.visitanteId) {
+    localStorage.setItem(CHAT_IA_VISITANTE_KEY, data.visitanteId);
+  }
+
+  return data.resposta;
+}
