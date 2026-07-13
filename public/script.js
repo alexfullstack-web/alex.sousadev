@@ -145,7 +145,7 @@ function adicionarMensagemChatIa(texto, tipo) {
 
   if (tipo === "ia") {
     const avatar = document.createElement("img");
-    avatar.src = "img/logo.jpeg";
+    avatar.src = "img/Mariana IA.png";
     avatar.className = "chat-ia-msg-avatar";
     avatar.alt = "";
     msg.appendChild(avatar);
