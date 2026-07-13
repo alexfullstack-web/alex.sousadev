@@ -394,7 +394,7 @@ ul {
 }
 
 .img-frame {
-    top: 90px;
+  top: 90px;
   position: relative;
   width: 340px;
   height: 340px;
@@ -583,6 +583,135 @@ ul {
 }
 .sobre-text strong {
   color: var(--text);
+}
+
+/* ─── PROJETOS ───────────────────────────────────────────────────── */
+.projetos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.projeto-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+.projeto-card:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow);
+  transform: translateY(-6px);
+}
+
+.projeto-img-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--bg-card2);
+}
+.projeto-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.projeto-card:hover .projeto-img-wrap img {
+  transform: scale(1.06);
+}
+
+.projeto-body {
+  padding: 22px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.projeto-body h3 {
+  font-family: var(--font-head);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.projeto-body p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 18px;
+  flex: 1;
+}
+
+.projeto-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.projeto-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--blue-light);
+  background: var(--blue-dim);
+  border: 1px solid rgba(26, 75, 255, 0.3);
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.3px;
+}
+
+.projeto-links {
+  display: flex;
+  gap: 12px;
+}
+.projeto-links a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+.projeto-links a:hover {
+  border-color: var(--blue);
+  color: var(--blue-light);
+  background: var(--blue-dim);
+}
+
+/* Skeleton loading */
+.projeto-card.skeleton {
+  min-height: 340px;
+  position: relative;
+  background: var(--bg-card);
+}
+.projeto-card.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(26, 75, 255, 0.08),
+    transparent
+  );
+  animation: skeletonSweep 1.4s infinite;
+}
+@keyframes skeletonSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.projetos-vazio {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 15px;
+  padding: 40px 0;
 }
 
 /* ─── SERVIÇOS ───────────────────────────────────────────────────── */
@@ -816,8 +945,14 @@ ul {
   animation: chatIaPop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 @keyframes chatIaPop {
-  from { opacity: 0; transform: translateY(16px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Cabeçalho */
@@ -969,8 +1104,10 @@ ul {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background-image:
-    radial-gradient(rgba(26, 75, 255, 0.06) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgba(26, 75, 255, 0.06) 1px,
+    transparent 1px
+  );
   background-size: 22px 22px;
 }
 
@@ -996,8 +1133,14 @@ ul {
   animation: chatIaMsgIn 0.2s ease;
 }
 @keyframes chatIaMsgIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .chat-ia-msg.eu {
   justify-content: flex-end;
@@ -1068,11 +1211,23 @@ ul {
   background: var(--text-muted);
   animation: chatIaBounce 1.2s infinite ease-in-out;
 }
-.chat-ia-typing span:nth-child(2) { animation-delay: 0.15s; }
-.chat-ia-typing span:nth-child(3) { animation-delay: 0.3s; }
+.chat-ia-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.chat-ia-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
 @keyframes chatIaBounce {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-  30% { transform: translateY(-4px); opacity: 1; }
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
 }
 
 /* Rodapé / input */

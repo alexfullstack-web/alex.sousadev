@@ -288,3 +288,88 @@ async function enviarMensagemIA(mensagem) {
 
   return data;
 }
+
+// ─── PROJETOS (via API) ───────────────────────────────────────────
+const PROJETOS_API_URL = "https://bancos-dados-alex-sousa-dev-erp.onrender.com/api/projetos";
+
+async function carregarProjetos() {
+  const grid = document.getElementById("projetosGrid");
+  const vazio = document.getElementById("projetosVazio");
+  if (!grid) return;
+
+  try {
+    const res = await fetch(PROJETOS_API_URL);
+    if (!res.ok) throw new Error("Erro ao buscar projetos");
+    const data = await res.json();
+    const projetos = data.dados || data.projetos || data || [];
+
+    grid.innerHTML = "";
+
+    if (!Array.isArray(projetos) || projetos.length === 0) {
+      vazio.style.display = "block";
+      return;
+    }
+
+    projetos.forEach((p) => {
+      grid.appendChild(criarCardProjeto(p));
+    });
+  } catch (err) {
+    console.error("[Projetos] Erro ao carregar:", err);
+    grid.innerHTML = "";
+    vazio.textContent = "Não foi possível carregar os projetos no momento.";
+    vazio.style.display = "block";
+  }
+}
+
+function criarCardProjeto(projeto) {
+  const card = document.createElement("div");
+  card.className = "projeto-card reveal visible";
+
+  const imgWrap = document.createElement("div");
+  imgWrap.className = "projeto-img-wrap";
+  const img = document.createElement("img");
+  img.src = projeto.imagem || "img/projeto-placeholder.jpg";
+  img.alt = projeto.titulo || "Projeto";
+  imgWrap.appendChild(img);
+
+  const body = document.createElement("div");
+  body.className = "projeto-body";
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = projeto.titulo || "Sem título";
+
+  const desc = document.createElement("p");
+  desc.textContent = projeto.descricao || "";
+
+  const tags = document.createElement("div");
+  tags.className = "projeto-tags";
+  (projeto.tecnologias || []).forEach((t) => {
+    const tag = document.createElement("span");
+    tag.className = "projeto-tag";
+    tag.textContent = t;
+    tags.appendChild(tag);
+  });
+
+  const links = document.createElement("div");
+  links.className = "projeto-links";
+  if (projeto.linkDemo) {
+    const a = document.createElement("a");
+    a.href = projeto.linkDemo;
+    a.target = "_blank";
+    a.textContent = "Ver Demo";
+    links.appendChild(a);
+  }
+  if (projeto.linkRepo) {
+    const a = document.createElement("a");
+    a.href = projeto.linkRepo;
+    a.target = "_blank";
+    a.textContent = "GitHub";
+    links.appendChild(a);
+  }
+
+  body.append(titulo, desc, tags, links);
+  card.append(imgWrap, body);
+  return card;
+}
+
+document.addEventListener("DOMContentLoaded", carregarProjetos);
