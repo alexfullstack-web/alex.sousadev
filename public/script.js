@@ -64,8 +64,9 @@ function showToast(text, type) {
   }, 3000);
 }
 
-// ─── CHAT IA ────────────────────────────────────────────────────
+// ─── CHAT IA (estilo WhatsApp) ───────────────────────────────────
 const chatIaBtn = document.getElementById("chatIaBtn");
+const chatIaBadge = document.getElementById("chatIaBadge");
 const chatIaModal = document.getElementById("chatIaModal");
 const chatIaScrim = document.getElementById("chatIaScrim");
 const chatIaFechar = document.getElementById("chatIaFechar");
@@ -73,31 +74,96 @@ const chatIaForm = document.getElementById("chatIaForm");
 const chatIaInput = document.getElementById("chatIaInput");
 const chatIaMensagens = document.getElementById("chatIaMensagens");
 const chatIaDigitando = document.getElementById("chatIaDigitando");
+const chatIaStatusText = document.getElementById("chatIaStatusText");
+const chatIaHeaderInfo = document.getElementById("chatIaHeaderInfo");
+const chatIaInfoPanel = document.getElementById("chatIaInfoPanel");
+const chatIaInfoFechar = document.getElementById("chatIaInfoFechar");
+
+const CHAT_IA_API_BASE = "https://bancos-dados-alex-sousa-dev-erp.onrender.com/api/ia";
+const CHAT_IA_VISITANTE_KEY = "chatIaVisitanteId";
 
 let chatIaConversaId = localStorage.getItem("chatIaConversaId") || null;
 let chatIaAguardandoHumano = false;
 let chatIaPollingId = null;
 let chatIaUltimaQtdMensagens = 0;
+let chatIaAberto = false;
+let chatIaNaoLidas = 0;
 
+// ─── Abrir / fechar ──────────────────────────────────────────────
 function abrirChatIa() {
   chatIaModal.classList.add("open");
+  chatIaAberto = true;
+  chatIaNaoLidas = 0;
+  atualizarBadge();
   chatIaInput.focus();
   if (chatIaAguardandoHumano) iniciarPollingChatIa();
 }
 function fecharChatIa() {
   chatIaModal.classList.remove("open");
+  chatIaAberto = false;
+  fecharPainelInfo();
 }
-
 chatIaBtn.addEventListener("click", abrirChatIa);
 chatIaFechar.addEventListener("click", fecharChatIa);
 chatIaScrim.addEventListener("click", fecharChatIa);
 
+function atualizarBadge() {
+  if (chatIaNaoLidas > 0) {
+    chatIaBadge.textContent = chatIaNaoLidas > 9 ? "9+" : chatIaNaoLidas;
+    chatIaBadge.style.display = "flex";
+  } else {
+    chatIaBadge.style.display = "none";
+  }
+}
+
+// ─── Painel de perfil ────────────────────────────────────────────
+function abrirPainelInfo() {
+  chatIaInfoPanel.classList.add("open");
+}
+function fecharPainelInfo() {
+  chatIaInfoPanel.classList.remove("open");
+}
+chatIaHeaderInfo.addEventListener("click", abrirPainelInfo);
+chatIaInfoFechar.addEventListener("click", fecharPainelInfo);
+
+// ─── Utilitários visuais ─────────────────────────────────────────
+function horaAtual() {
+  return new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function iconeCheck(duplo) {
+  return `
+    <svg class="chat-ia-ticks" width="14" height="14" viewBox="0 0 16 15" fill="none">
+      <path d="M11.5 3.5 5.5 10 3 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      ${duplo ? '<path d="M15 3.5 9 10l-1-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' : ""}
+    </svg>`;
+}
+
 function adicionarMensagemChatIa(texto, tipo) {
   const msg = document.createElement("div");
   msg.className = `chat-ia-msg ${tipo}`;
+
+  if (tipo === "ia") {
+    const avatar = document.createElement("img");
+    avatar.src = "img/logo.jpeg";
+    avatar.className = "chat-ia-msg-avatar";
+    avatar.alt = "";
+    msg.appendChild(avatar);
+  }
+
   const bubble = document.createElement("div");
   bubble.className = "chat-ia-bubble";
-  bubble.textContent = texto;
+
+  const textoEl = document.createElement("div");
+  textoEl.className = "chat-ia-text";
+  textoEl.textContent = texto;
+  bubble.appendChild(textoEl);
+
+  const meta = document.createElement("span");
+  meta.className = "chat-ia-meta";
+  meta.innerHTML = `<span class="chat-ia-hora">${horaAtual()}</span>${tipo === "eu" ? iconeCheck(true) : ""}`;
+  bubble.appendChild(meta);
+
   msg.appendChild(bubble);
 
   if (chatIaDigitando && chatIaDigitando.parentNode === chatIaMensagens) {
@@ -106,8 +172,20 @@ function adicionarMensagemChatIa(texto, tipo) {
     chatIaMensagens.appendChild(msg);
   }
   chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
+
+  // notificação se o chat estiver fechado e a mensagem for da IA/Alex
+  if (!chatIaAberto && tipo === "ia") {
+    chatIaNaoLidas++;
+    atualizarBadge();
+  }
 }
 
+function definirStatus(texto, digitando = false) {
+  chatIaStatusText.textContent = texto;
+  chatIaStatusText.classList.toggle("digitando", digitando);
+}
+
+// ─── Envio de mensagem ───────────────────────────────────────────
 chatIaForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const texto = chatIaInput.value.trim();
@@ -117,10 +195,13 @@ chatIaForm.addEventListener("submit", async (e) => {
   chatIaInput.value = "";
   chatIaInput.disabled = true;
   chatIaDigitando.style.display = "flex";
+  definirStatus("digitando...", true);
+  chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
 
   try {
     const data = await enviarMensagemIA(texto);
     chatIaDigitando.style.display = "none";
+    definirStatus("online");
 
     if (data.resposta) adicionarMensagemChatIa(data.resposta, "ia");
 
@@ -128,6 +209,7 @@ chatIaForm.addEventListener("submit", async (e) => {
     if (chatIaAguardandoHumano) iniciarPollingChatIa();
   } catch (err) {
     chatIaDigitando.style.display = "none";
+    definirStatus("online");
     console.error("[Chat IA] Erro completo:", err);
     adicionarMensagemChatIa(
       "Desculpe, tive um problema para responder agora. Tente novamente em instantes.",
@@ -139,7 +221,7 @@ chatIaForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ─── POLLING: verifica se o Alex já respondeu ──────────────────
+// ─── Polling: verifica se o Alex já respondeu ───────────────────
 function iniciarPollingChatIa() {
   if (chatIaPollingId || !chatIaConversaId) return;
 
@@ -169,19 +251,11 @@ function iniciarPollingChatIa() {
     } catch (err) {
       console.error("[Chat IA] Erro no polling:", err);
     }
-  }, 5000); // verifica a cada 5s
+  }, 5000);
 }
 
-// ─── INTEGRAÇÃO COM SUA API ─────────────────────────────────────
-const CHAT_IA_API_BASE = "https://bancos-dados-alex-sousa-dev-erp.onrender.com/api/ia"; // <-- TROQUE AQUI
-const CHAT_IA_VISITANTE_KEY = "chatIaVisitanteId";
-
+// ─── Integração com a API ────────────────────────────────────────
 async function enviarMensagemIA(mensagem) {
-  if (CHAT_IA_API_BASE.includes("SEU_BACKEND_AQUI")) {
-    console.error("[Chat IA] Configure CHAT_IA_API_BASE com a URL real do backend.");
-    throw new Error("URL da API não configurada.");
-  }
-
   const visitanteId = localStorage.getItem(CHAT_IA_VISITANTE_KEY);
 
   let res;
@@ -209,7 +283,7 @@ async function enviarMensagemIA(mensagem) {
   if (data.conversaId) {
     chatIaConversaId = data.conversaId;
     localStorage.setItem("chatIaConversaId", chatIaConversaId);
-    chatIaUltimaQtdMensagens += 1; // conta a mensagem do usuário que acabou de ser salva
+    chatIaUltimaQtdMensagens += 1;
   }
 
   return data;
