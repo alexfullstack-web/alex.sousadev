@@ -1279,6 +1279,102 @@ ul {
   transform: none;
 }
 
+/* Balão de convite acima do botão */
+.chat-ia-convite {
+  position: fixed;
+  bottom: 96px;
+  right: 24px;
+  max-width: 260px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 34px 14px 14px;
+  z-index: 998;
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
+  pointer-events: none;
+  transition: var(--transition);
+}
+.chat-ia-convite.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* setinha apontando pro botão */
+.chat-ia-convite::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  right: 26px;
+  width: 14px;
+  height: 14px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+
+.chat-ia-convite-conteudo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.chat-ia-convite-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--blue);
+  flex-shrink: 0;
+}
+.chat-ia-convite-conteudo strong {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 13px;
+  color: var(--white);
+  margin-bottom: 3px;
+}
+.chat-ia-convite-conteudo p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.chat-ia-convite-fechar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-card2);
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.chat-ia-convite-fechar:hover {
+  color: var(--text);
+  background: var(--border);
+}
+
+@media (max-width: 480px) {
+  .chat-ia-convite {
+    right: 16px;
+    left: 16px;
+    max-width: none;
+    bottom: 88px;
+  }
+}
+
 @media (max-width: 480px) {
   .chat-ia-window {
     right: 16px;

@@ -373,3 +373,52 @@ function criarCardProjeto(projeto) {
 }
 
 document.addEventListener("DOMContentLoaded", carregarProjetos);
+
+const chatIaConvite = document.getElementById("chatIaConvite");
+const chatIaConviteFechar = document.getElementById("chatIaConviteFechar");
+
+const CHAT_IA_CONVITE_VISTO_KEY = "chatIaConviteVisto";
+let chatIaConviteTimeoutId = null;
+
+function mostrarConvite() {
+  // não mostra de novo se a pessoa já abriu o chat ou já fechou o convite antes
+  if (localStorage.getItem(CHAT_IA_CONVITE_VISTO_KEY)) return;
+  if (chatIaAberto) return;
+  chatIaConvite.classList.add("show");
+}
+
+function esconderConvite(marcarComoVisto = true) {
+  chatIaConvite.classList.remove("show");
+  if (marcarComoVisto) {
+    localStorage.setItem(CHAT_IA_CONVITE_VISTO_KEY, "1");
+  }
+  if (chatIaConviteTimeoutId) {
+    clearTimeout(chatIaConviteTimeoutId);
+    chatIaConviteTimeoutId = null;
+  }
+}
+
+// aparece sozinho depois de alguns segundos na página
+chatIaConviteTimeoutId = setTimeout(mostrarConvite, 4000);
+
+// clicar no balão abre o chat direto
+chatIaConvite.querySelector(".chat-ia-convite-conteudo").addEventListener("click", () => {
+  esconderConvite();
+  abrirChatIa();
+});
+
+// botão "x" só fecha o convite, sem abrir o chat
+chatIaConviteFechar.addEventListener("click", (e) => {
+  e.stopPropagation();
+  esconderConvite();
+});
+
+function abrirChatIa() {
+  esconderConvite(); // <-- adicione esta linha
+  chatIaModal.classList.add("open");
+  chatIaAberto = true;
+  chatIaNaoLidas = 0;
+  atualizarBadge();
+  chatIaInput.focus();
+  if (chatIaAguardandoHumano) iniciarPollingChatIa();
+}
