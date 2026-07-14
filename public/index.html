@@ -161,12 +161,31 @@
     </h2>
   </div>
 
-  <div id="projetosGrid" class="projetos-grid">
-    <!-- Skeletons enquanto carrega -->
-    <div class="projeto-card skeleton"></div>
-    <div class="projeto-card skeleton"></div>
-    <div class="projeto-card skeleton"></div>
+  <div id="projetoCarrossel" class="projeto-carrossel">
+    <button id="carrosselPrev" class="carrossel-seta carrossel-seta-prev" aria-label="Projeto anterior">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <div class="carrossel-viewport">
+      <div id="carrosselTrack" class="carrossel-track">
+        <!-- slides via JS -->
+        <div class="carrossel-slide skeleton"></div>
+      </div>
+    </div>
+
+    <button id="carrosselNext" class="carrossel-seta carrossel-seta-next" aria-label="Próximo projeto">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
   </div>
+
+  <div id="carrosselDots" class="carrossel-dots"></div>
+
+  <p id="projetosVazio" class="projetos-vazio" style="display:none;"></p>
+</section>
 
   <p id="projetosVazio" class="projetos-vazio" style="display:none;">
     Nenhum projeto encontrado no momento.

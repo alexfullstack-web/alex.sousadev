@@ -289,51 +289,109 @@ async function enviarMensagemIA(mensagem) {
   return data;
 }
 
-// ─── PROJETOS (via API) ───────────────────────────────────────────
+// ─── CARROSSEL DE PROJETOS ────────────────────────────────────────
 const PROJETOS_API_URL = "https://bancos-dados-alex-sousa-dev-erp.onrender.com/api/projetos";
 
+let carrosselProjetos = [];
+let carrosselIndex = 0;
+let carrosselAutoplayId = null;
+
 async function carregarProjetos() {
-  const grid = document.getElementById("projetosGrid");
+  const track = document.getElementById("carrosselTrack");
   const vazio = document.getElementById("projetosVazio");
-  if (!grid) return;
+  const dots = document.getElementById("carrosselDots");
+  const wrap = document.getElementById("projetoCarrossel");
+  if (!track) return;
 
   try {
     const res = await fetch(PROJETOS_API_URL);
-    if (!res.ok) throw new Error("Erro ao buscar projetos");
+    if (!res.ok) throw new Error(`Erro ${res.status} ao buscar projetos`);
     const data = await res.json();
     const projetos = data.dados || data.projetos || data || [];
 
-    grid.innerHTML = "";
-
     if (!Array.isArray(projetos) || projetos.length === 0) {
+      wrap.style.display = "none";
+      dots.style.display = "none";
+      vazio.textContent = "Nenhum projeto encontrado no momento.";
       vazio.style.display = "block";
       return;
     }
 
-    projetos.forEach((p) => {
-      grid.appendChild(criarCardProjeto(p));
-    });
+    carrosselProjetos = projetos;
+    montarCarrossel();
   } catch (err) {
     console.error("[Projetos] Erro ao carregar:", err);
-    grid.innerHTML = "";
-    vazio.textContent = "Não foi possível carregar os projetos no momento.";
+    wrap.style.display = "none";
+    dots.style.display = "none";
+    vazio.textContent = "🔧 A vitrine de projetos está em manutenção no momento. Volte em instantes!";
     vazio.style.display = "block";
   }
 }
 
-function criarCardProjeto(projeto) {
-  const card = document.createElement("div");
-  card.className = "projeto-card reveal visible";
+function montarCarrossel() {
+  const track = document.getElementById("carrosselTrack");
+  const dotsWrap = document.getElementById("carrosselDots");
+
+  track.innerHTML = "";
+  dotsWrap.innerHTML = "";
+
+  carrosselProjetos.forEach((projeto, i) => {
+    track.appendChild(criarSlideProjeto(projeto, i));
+
+    const dot = document.createElement("button");
+    dot.className = "carrossel-dot";
+    dot.setAttribute("aria-label", `Ir para projeto ${i + 1}`);
+    dot.addEventListener("click", () => irParaSlide(i));
+    dotsWrap.appendChild(dot);
+  });
+
+  atualizarCarrossel();
+  iniciarAutoplayCarrossel();
+
+  document.getElementById("carrosselPrev").addEventListener("click", () => {
+    irParaSlide(carrosselIndex - 1);
+    reiniciarAutoplayCarrossel();
+  });
+  document.getElementById("carrosselNext").addEventListener("click", () => {
+    irParaSlide(carrosselIndex + 1);
+    reiniciarAutoplayCarrossel();
+  });
+
+  const viewport = document.querySelector(".carrossel-viewport");
+  viewport.addEventListener("mouseenter", pararAutoplayCarrossel);
+  viewport.addEventListener("mouseleave", iniciarAutoplayCarrossel);
+
+  // swipe touch
+  let touchStartX = 0;
+  viewport.addEventListener("touchstart", (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  viewport.addEventListener("touchend", (e) => {
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      irParaSlide(carrosselIndex + (diff < 0 ? 1 : -1));
+      reiniciarAutoplayCarrossel();
+    }
+  });
+}
+
+function criarSlideProjeto(projeto, index) {
+  const slide = document.createElement("div");
+  slide.className = "carrossel-slide";
 
   const imgWrap = document.createElement("div");
-  imgWrap.className = "projeto-img-wrap";
+  imgWrap.className = "carrossel-img-wrap";
   const img = document.createElement("img");
   img.src = projeto.imagem || "img/projeto-placeholder.jpg";
   img.alt = projeto.titulo || "Projeto";
   imgWrap.appendChild(img);
 
-  const body = document.createElement("div");
-  body.className = "projeto-body";
+  const conteudo = document.createElement("div");
+  conteudo.className = "carrossel-conteudo";
+
+  const idx = document.createElement("span");
+  idx.className = "carrossel-index";
+  idx.textContent = `PROJETO ${String(index + 1).padStart(2, "0")} / ${String(carrosselProjetos.length).padStart(2, "0")}`;
 
   const titulo = document.createElement("h3");
   titulo.textContent = projeto.titulo || "Sem título";
@@ -342,7 +400,7 @@ function criarCardProjeto(projeto) {
   desc.textContent = projeto.descricao || "";
 
   const tags = document.createElement("div");
-  tags.className = "projeto-tags";
+  tags.className = "carrossel-tags";
   (projeto.tecnologias || []).forEach((t) => {
     const tag = document.createElement("span");
     tag.className = "projeto-tag";
@@ -351,11 +409,12 @@ function criarCardProjeto(projeto) {
   });
 
   const links = document.createElement("div");
-  links.className = "projeto-links";
+  links.className = "carrossel-links";
   if (projeto.linkDemo) {
     const a = document.createElement("a");
     a.href = projeto.linkDemo;
     a.target = "_blank";
+    a.className = "btn-primary";
     a.textContent = "Ver Demo";
     links.appendChild(a);
   }
@@ -363,13 +422,49 @@ function criarCardProjeto(projeto) {
     const a = document.createElement("a");
     a.href = projeto.linkRepo;
     a.target = "_blank";
+    a.className = "btn-ghost";
     a.textContent = "GitHub";
     links.appendChild(a);
   }
 
-  body.append(titulo, desc, tags, links);
-  card.append(imgWrap, body);
-  return card;
+  conteudo.append(idx, titulo, desc, tags, links);
+  slide.append(imgWrap, conteudo);
+  return slide;
+}
+
+function atualizarCarrossel() {
+  const track = document.getElementById("carrosselTrack");
+  const slides = track.querySelectorAll(".carrossel-slide");
+  const dots = document.querySelectorAll(".carrossel-dot");
+  const prevBtn = document.getElementById("carrosselPrev");
+  const nextBtn = document.getElementById("carrosselNext");
+
+  track.style.transform = `translateX(-${carrosselIndex * 100}%)`;
+
+  slides.forEach((s, i) => s.classList.toggle("ativo", i === carrosselIndex));
+  dots.forEach((d, i) => d.classList.toggle("ativo", i === carrosselIndex));
+
+  prevBtn.disabled = false;
+  nextBtn.disabled = false;
+}
+
+function irParaSlide(novoIndex) {
+  const total = carrosselProjetos.length;
+  carrosselIndex = (novoIndex + total) % total;
+  atualizarCarrossel();
+}
+
+function iniciarAutoplayCarrossel() {
+  if (carrosselAutoplayId || carrosselProjetos.length <= 1) return;
+  carrosselAutoplayId = setInterval(() => irParaSlide(carrosselIndex + 1), 6000);
+}
+function pararAutoplayCarrossel() {
+  clearInterval(carrosselAutoplayId);
+  carrosselAutoplayId = null;
+}
+function reiniciarAutoplayCarrossel() {
+  pararAutoplayCarrossel();
+  iniciarAutoplayCarrossel();
 }
 
 document.addEventListener("DOMContentLoaded", carregarProjetos);
