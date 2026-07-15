@@ -139,7 +139,7 @@ function iconeCheck(duplo) {
     </svg>`;
 }
 
-function adicionarMensagemChatIa(texto, tipo) {
+function adicionarMensagemChatIa(texto, tipo, silencioso = false) {
   const msg = document.createElement("div");
   msg.className = `chat-ia-msg ${tipo}`;
 
@@ -173,8 +173,7 @@ function adicionarMensagemChatIa(texto, tipo) {
   }
   chatIaMensagens.scrollTop = chatIaMensagens.scrollHeight;
 
-  // notificação se o chat estiver fechado e a mensagem for da IA/Alex
-  if (!chatIaAberto && tipo === "ia") {
+  if (!silencioso && !chatIaAberto && tipo === "ia") {
     chatIaNaoLidas++;
     atualizarBadge();
   }
@@ -220,6 +219,53 @@ chatIaForm.addEventListener("submit", async (e) => {
     chatIaInput.focus();
   }
 });
+
+// ─── RESTAURAR CONVERSA AO RECARREGAR A PÁGINA ──────────────────
+async function restaurarConversaChatIa() {
+  if (!chatIaConversaId) return;
+
+  const visitanteId = localStorage.getItem(CHAT_IA_VISITANTE_KEY);
+
+  try {
+    const res = await fetch(
+      `${CHAT_IA_API_BASE}/chat-portfolio/${chatIaConversaId}/mensagens`,
+      { headers: visitanteId ? { "x-visitante-id": visitanteId } : {} }
+    );
+    const data = await res.json();
+    if (!data?.sucesso) return;
+
+    const mensagens = data.dados || [];
+
+    // se já existe histórico salvo, limpa a saudação padrão e reconstrói o chat de verdade
+    if (mensagens.length > 0) {
+      chatIaMensagens.innerHTML = "";
+      chatIaMensagens.appendChild(chatIaDigitando); // mantém o indicador de digitação no DOM
+
+      const dataSep = document.createElement("div");
+      dataSep.className = "chat-ia-date-sep";
+      dataSep.innerHTML = "<span>Conversa anterior</span>";
+      chatIaMensagens.insertBefore(dataSep, chatIaDigitando);
+
+      mensagens.forEach((m) => {
+        const tipo = m.role === "user" ? "eu" : "ia";
+        adicionarMensagemChatIa(m.conteudo, tipo, true); // true = silencioso, não conta como "não lida"
+      });
+
+      chatIaUltimaQtdMensagens = mensagens.length;
+    }
+
+    // retoma o acompanhamento se a conversa ainda estiver ativa (não encerrada)
+    chatIaAguardandoHumano = data.status === "aguardando_humano" || data.status === "humano";
+
+    if (data.status !== "encerrada") {
+      iniciarPollingChatIa();
+    }
+  } catch (err) {
+    console.error("[Chat IA] Erro ao restaurar conversa:", err);
+  }
+}
+
+restaurarConversaChatIa();
 
 // ─── Polling: verifica se o Alex já respondeu ───────────────────
 function iniciarPollingChatIa() {
