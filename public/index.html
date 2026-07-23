@@ -369,6 +369,13 @@
       </button>
 
       <div class="chat-ia-header-spacer"></div>
+
+      <button id="chatIaCallBtn" class="chat-ia-icon-btn" aria-label="Ligar em vídeo/voz para Mariana">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 7l-7 5 7 5V7z"></path>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+        </svg>
+      </button>
     </div>
 
     <!-- PAINEL DE PERFIL (abre ao clicar no cabeçalho) -->
@@ -425,6 +432,81 @@
     </form>
   </div>
 </div>
+
+    <!-- CHAMADA DE VOZ E VÍDEO COM MARIANA IA (tempo real) -->
+    <div id="chatIaCallModal" class="chat-ia-call-modal">
+      <div class="chat-ia-call-bg"></div>
+
+      <div class="chat-ia-call-top">
+        <div class="chat-ia-call-info">
+          <span class="chat-ia-call-name">Mariana IA</span>
+          <span id="chatIaCallStatus" class="chat-ia-call-status">Chamando...</span>
+        </div>
+        <button id="chatIaCallMinimizar" class="chat-ia-call-icon-btn" aria-label="Minimizar chamada">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <div class="chat-ia-call-stage">
+        <div id="chatIaCallAvatarWrap" class="chat-ia-call-avatar-wrap">
+          <span class="chat-ia-call-ring r1"></span>
+          <span class="chat-ia-call-ring r2"></span>
+          <img src="img/MarianaIA.png" alt="Mariana IA" class="chat-ia-call-avatar" />
+          <span class="chat-ia-call-wave">
+            <span></span><span></span><span></span><span></span><span></span>
+          </span>
+        </div>
+
+        <div id="chatIaCallLocalWrap" class="chat-ia-call-local-wrap">
+          <video id="chatIaCallLocalVideo" class="chat-ia-call-local-video" autoplay muted playsinline></video>
+          <div id="chatIaCallLocalOff" class="chat-ia-call-local-off">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 7l-7 5 7 5V7z"></path>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div id="chatIaCallCaption" class="chat-ia-call-caption"></div>
+
+      <div class="chat-ia-call-controls">
+        <button id="chatIaCallMicBtn" class="chat-ia-call-ctrl" aria-label="Ativar ou desativar microfone">
+          <svg class="ico-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+          </svg>
+          <svg class="ico-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+          </svg>
+        </button>
+
+        <button id="chatIaCallEndBtn" class="chat-ia-call-ctrl chat-ia-call-end" aria-label="Encerrar chamada">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 9c-2.5 0-4.9.5-7 1.4a1.5 1.5 0 0 0-.9 1.6l.4 2.5a1.5 1.5 0 0 0 1.2 1.2l2.1.4a1.5 1.5 0 0 0 1.4-.5l1-1.2a10.6 10.6 0 0 0 3.6 0l1 1.2a1.5 1.5 0 0 0 1.4.5l2.1-.4a1.5 1.5 0 0 0 1.2-1.2l.4-2.5a1.5 1.5 0 0 0-.9-1.6A17 17 0 0 0 12 9z"></path>
+          </svg>
+        </button>
+
+        <button id="chatIaCallCamBtn" class="chat-ia-call-ctrl" aria-label="Ativar ou desativar câmera">
+          <svg class="ico-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 7l-7 5 7 5V7z"></path>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+          </svg>
+          <svg class="ico-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 7l-7 5 7 5V7z"></path>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
