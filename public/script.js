@@ -575,7 +575,7 @@ const chatIaCallCaption = document.getElementById("chatIaCallCaption");
 const chatIaCallMicBtn = document.getElementById("chatIaCallMicBtn");
 const chatIaCallCamBtn = document.getElementById("chatIaCallCamBtn");
 const chatIaCallEndBtn = document.getElementById("chatIaCallEndBtn");
-
+ 
 let chatIaCallStream = null;
 let chatIaCallReconhecimento = null;
 let chatIaCallMicAtivo = true;
@@ -584,15 +584,20 @@ let chatIaCallEmAndamento = false;
 let chatIaCallProcessando = false;
 let chatIaCallTimerId = null;
 let chatIaCallSegundos = 0;
-
+ 
+// NOVO: controle do watchdog de fala e do keep-alive do Chrome
+let chatIaCallFalaWatchdogId = null;
+let chatIaCallFalaKeepAliveId = null;
+let chatIaCallFalaResolvida = false;
+ 
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+ 
 function formatarDuracaoChamada(s) {
   const min = String(Math.floor(s / 60)).padStart(2, "0");
   const sec = String(s % 60).padStart(2, "0");
   return `${min}:${sec}`;
 }
-
+ 
 async function iniciarChamadaIa() {
   if (chatIaCallEmAndamento) return;
   chatIaCallEmAndamento = true;
@@ -600,7 +605,7 @@ async function iniciarChamadaIa() {
   chatIaCallStatus.textContent = "Chamando...";
   chatIaCallCaption.textContent = "";
   fecharChatIa();
-
+ 
   try {
     chatIaCallStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
   } catch (err) {
@@ -615,16 +620,17 @@ async function iniciarChamadaIa() {
       return;
     }
   }
-
+ 
   chatIaCallLocalVideo.srcObject = chatIaCallStream;
   atualizarUiCamera();
   atualizarUiMic();
-
+ 
   if (!SpeechRecognitionAPI) {
+    // Mantém esse aviso visível por mais tempo, sem ser apagado na hora pela saudação
     chatIaCallCaption.textContent =
       "Seu navegador não tem reconhecimento de voz nativo. Use Chrome ou Edge para conversar por voz em tempo real.";
   }
-
+ 
   // "atende" a chamada depois de um instante, como uma ligação real
   setTimeout(() => {
     if (!chatIaCallEmAndamento) return;
@@ -632,7 +638,7 @@ async function iniciarChamadaIa() {
     falarComoIa("Oi! Sou a Mariana, assistente virtual do Alex Sousa. Pode falar comigo, estou ouvindo.");
   }, 1400);
 }
-
+ 
 function iniciarTimerChamada() {
   chatIaCallSegundos = 0;
   chatIaCallStatus.textContent = "00:00";
@@ -644,7 +650,7 @@ function iniciarTimerChamada() {
     }
   }, 1000);
 }
-
+ 
 function atualizarUiMic() {
   chatIaCallStream?.getAudioTracks().forEach((t) => (t.enabled = chatIaCallMicAtivo));
   chatIaCallMicBtn.classList.toggle("off", !chatIaCallMicAtivo);
@@ -654,7 +660,7 @@ function atualizarUiCamera() {
   chatIaCallCamBtn.classList.toggle("off", !chatIaCallCamAtiva);
   chatIaCallLocalWrap.classList.toggle("cam-off", !chatIaCallCamAtiva);
 }
-
+ 
 chatIaCallMicBtn?.addEventListener("click", () => {
   chatIaCallMicAtivo = !chatIaCallMicAtivo;
   atualizarUiMic();
@@ -670,17 +676,17 @@ chatIaCallMinimizar?.addEventListener("click", () => {
   chatIaCallModal.classList.remove("open");
 });
 chatIaCallBtn?.addEventListener("click", iniciarChamadaIa);
-
+ 
 // ─── Escuta em tempo real (Speech-to-Text) ───────────────────────
 function iniciarEscuta() {
   if (!SpeechRecognitionAPI || !chatIaCallEmAndamento || !chatIaCallMicAtivo) return;
   if (chatIaCallReconhecimento) return;
-
+ 
   chatIaCallReconhecimento = new SpeechRecognitionAPI();
   chatIaCallReconhecimento.lang = "pt-BR";
   chatIaCallReconhecimento.continuous = true;
   chatIaCallReconhecimento.interimResults = true;
-
+ 
   chatIaCallReconhecimento.onresult = (event) => {
     let final = "";
     let parcial = "";
@@ -695,25 +701,34 @@ function iniciarEscuta() {
       processarFalaChamada(final.trim());
     }
   };
-
+ 
   chatIaCallReconhecimento.onerror = (e) => {
     if (e.error === "no-speech" || e.error === "aborted") return;
     console.error("[Chamada IA] Erro no reconhecimento:", e.error);
+    // NOVO: mostra o erro pro usuário também, não só no console
+    if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+      chatIaCallCaption.textContent = "Permissão de microfone bloqueada para reconhecimento de voz.";
+    } else if (e.error === "network") {
+      chatIaCallCaption.textContent = "Sem conexão para reconhecimento de voz. Verifique sua internet.";
+    }
   };
-
+ 
   chatIaCallReconhecimento.onend = () => {
     const deveReiniciar = chatIaCallEmAndamento && chatIaCallMicAtivo && !chatIaCallProcessando;
     chatIaCallReconhecimento = null;
     if (deveReiniciar) iniciarEscuta();
   };
-
+ 
   try {
     chatIaCallReconhecimento.start();
+    if (chatIaCallEmAndamento && !chatIaCallProcessando) {
+      chatIaCallStatus.textContent = "Ouvindo...";
+    }
   } catch (e) {
     /* já iniciado, ignora */
   }
 }
-
+ 
 function pararEscuta() {
   if (chatIaCallReconhecimento) {
     chatIaCallReconhecimento.onend = null;
@@ -723,7 +738,7 @@ function pararEscuta() {
     chatIaCallReconhecimento = null;
   }
 }
-
+ 
 // ─── Envia a fala transcrita para a mesma IA do chat de texto ────
 async function processarFalaChamada(texto) {
   if (!texto || chatIaCallProcessando) return;
@@ -732,7 +747,7 @@ async function processarFalaChamada(texto) {
   chatIaCallStatus.textContent = "Mariana está pensando...";
   chatIaCallAvatarWrap.classList.remove("falando");
   chatIaCallAvatarWrap.classList.add("pensando");
-
+ 
   try {
     const data = await enviarMensagemIA(texto);
     const resposta = data?.resposta || "Desculpe, não consegui entender. Pode repetir?";
@@ -742,13 +757,21 @@ async function processarFalaChamada(texto) {
     falarComoIa("Tive um problema para responder agora. Pode repetir, por favor?");
   }
 }
-
+ 
 // ─── Fala a resposta da IA em voz alta (Text-to-Speech) ──────────
 function falarComoIa(texto) {
   chatIaCallAvatarWrap.classList.remove("pensando");
   chatIaCallCaption.textContent = texto;
-
+  chatIaCallFalaResolvida = false;
+ 
   const continuarAposFala = () => {
+    // NOVO: idempotente — se o watchdog e o onend real dispararem os dois, só roda uma vez
+    if (chatIaCallFalaResolvida) return;
+    chatIaCallFalaResolvida = true;
+ 
+    clearTimeout(chatIaCallFalaWatchdogId);
+    clearInterval(chatIaCallFalaKeepAliveId);
+ 
     chatIaCallAvatarWrap.classList.remove("falando");
     chatIaCallProcessando = false;
     if (chatIaCallEmAndamento) {
@@ -756,32 +779,49 @@ function falarComoIa(texto) {
       iniciarEscuta();
     }
   };
-
+ 
   if (!("speechSynthesis" in window)) {
     continuarAposFala();
     return;
   }
-
+ 
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(texto);
   utter.lang = "pt-BR";
   utter.rate = 1;
   utter.pitch = 1.05;
-
+ 
   const vozes = window.speechSynthesis.getVoices();
   const vozPt =
     vozes.find((v) => v.lang === "pt-BR" && /female|mulher|maria|luciana|francisca/i.test(v.name)) ||
     vozes.find((v) => v.lang === "pt-BR") ||
     vozes.find((v) => v.lang?.startsWith("pt"));
   if (vozPt) utter.voice = vozPt;
-
+ 
   chatIaCallAvatarWrap.classList.add("falando");
   utter.onend = continuarAposFala;
   utter.onerror = continuarAposFala;
-
+ 
+  // NOVO: watchdog — se onend não disparar (bug conhecido em todo navegador),
+  // libera a escuta sozinho depois de um tempo estimado pelo tamanho do texto.
+  const duracaoEstimadaMs = Math.max(2500, texto.length * 80) + 2500;
+  clearTimeout(chatIaCallFalaWatchdogId);
+  chatIaCallFalaWatchdogId = setTimeout(continuarAposFala, duracaoEstimadaMs);
+ 
+  // NOVO: keep-alive — corrige o bug do Chrome que pausa a fala sozinha após ~15s
+  clearInterval(chatIaCallFalaKeepAliveId);
+  chatIaCallFalaKeepAliveId = setInterval(() => {
+    if (!window.speechSynthesis.speaking) {
+      clearInterval(chatIaCallFalaKeepAliveId);
+      return;
+    }
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
+  }, 5000);
+ 
   window.speechSynthesis.speak(utter);
 }
-
+ 
 // ─── Encerrar chamada ─────────────────────────────────────────────
 function encerrarChamadaIa() {
   chatIaCallEmAndamento = false;
@@ -789,6 +829,8 @@ function encerrarChamadaIa() {
   pararEscuta();
   window.speechSynthesis?.cancel();
   clearInterval(chatIaCallTimerId);
+  clearTimeout(chatIaCallFalaWatchdogId);
+  clearInterval(chatIaCallFalaKeepAliveId);
   chatIaCallStream?.getTracks().forEach((t) => t.stop());
   chatIaCallStream = null;
   if (chatIaCallLocalVideo) chatIaCallLocalVideo.srcObject = null;
