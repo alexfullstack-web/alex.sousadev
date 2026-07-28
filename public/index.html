@@ -15,8 +15,10 @@
   <body>
     <!-- Fundo animado -->
     <div class="bg-grid"></div>
+    <canvas id="particlesCanvas" class="particles-canvas"></canvas>
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
+    <div id="cursorGlow" class="cursor-glow"></div>
 
     <!-- HEADER -->
     <header class="header" id="header">
@@ -84,25 +86,29 @@
           </div>
           <div class="hero-stats reveal">
             <div class="stat">
-              <span class="stat-num">4+</span
+              <span class="stat-num" data-count="4" data-suffix="+">0</span
               ><span class="stat-label">Meses de Experiência</span>
             </div>
             <div class="stat-div"></div>
             <div class="stat">
-              <span class="stat-num">10+</span
+              <span class="stat-num" data-count="10" data-suffix="+">0</span
               ><span class="stat-label">Projetos Concluídos</span>
             </div>
             <div class="stat-div"></div>
             <div class="stat">
-              <span class="stat-num">5+</span
+              <span class="stat-num" data-count="5" data-suffix="+">0</span
               ><span class="stat-label">Tecnologias</span>
             </div>
           </div>
         </div>
         <div class="home-visual reveal">
-          <div class="img-frame">
+          <div class="img-frame" id="heroImgFrame">
             <div class="img-glow"></div>
             <img src="img/sousa.jpeg" alt="Alex Sousa Dev" class="hero-img" />
+            <div class="img-badge">
+              <span class="badge-dot"></span>
+              🤖 IA assistente em ação
+            </div>
           </div>
         </div>
       </section>
@@ -185,11 +191,6 @@
   <div id="carrosselDots" class="carrossel-dots"></div>
 
   <p id="projetosVazio" class="projetos-vazio" style="display:none;"></p>
-</section>
-
-  <p id="projetosVazio" class="projetos-vazio" style="display:none;">
-    Nenhum projeto encontrado no momento.
-  </p>
 </section>
 
       <!-- SERVIÇOS -->
@@ -370,7 +371,13 @@
 
       <div class="chat-ia-header-spacer"></div>
 
-      <button id="chatIaCallBtn" class="chat-ia-icon-btn" aria-label="Ligar em vídeo/voz para Mariana">
+      <button id="chatIaCallVoiceBtn" class="chat-ia-icon-btn" aria-label="Ligar por voz para Mariana">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+      </button>
+
+      <button id="chatIaCallVideoBtn" class="chat-ia-icon-btn" aria-label="Ligar em vídeo para Mariana">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M23 7l-7 5 7 5V7z"></path>
           <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
@@ -468,6 +475,12 @@
               <line x1="1" y1="1" x2="23" y2="23"></line>
             </svg>
           </div>
+          <span id="chatIaCallScanLine" class="chat-ia-call-scanline"></span>
+        </div>
+
+        <div id="chatIaCallVisaoBadge" class="chat-ia-call-visao-badge" style="display:none;">
+          <span class="chat-ia-call-visao-dot"></span>
+          <span id="chatIaCallVisaoTexto">Analisando imagem...</span>
         </div>
       </div>
 

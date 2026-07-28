@@ -31,6 +31,139 @@ const observer = new IntersectionObserver(
 );
 reveals.forEach((el) => observer.observe(el));
 
+// ─── FUNDO ANIMADO: partículas conectadas ────────────────────────
+(function iniciarParticulas() {
+  const canvas = document.getElementById("particlesCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  let largura, altura, particulas;
+  const QTD = Math.min(70, Math.floor((window.innerWidth * window.innerHeight) / 18000));
+
+  function redimensionar() {
+    largura = canvas.width = window.innerWidth;
+    altura = canvas.height = window.innerHeight;
+  }
+  function criarParticulas() {
+    particulas = Array.from({ length: QTD }, () => ({
+      x: Math.random() * largura,
+      y: Math.random() * altura,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 1.6 + 0.6,
+    }));
+  }
+  function passo() {
+    ctx.clearRect(0, 0, largura, altura);
+    particulas.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > largura) p.vx *= -1;
+      if (p.y < 0 || p.y > altura) p.vy *= -1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(77, 115, 255, 0.55)";
+      ctx.fill();
+    });
+    for (let i = 0; i < particulas.length; i++) {
+      for (let j = i + 1; j < particulas.length; j++) {
+        const a = particulas[i],
+          b = particulas[j];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 130) {
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = `rgba(26, 75, 255, ${0.12 * (1 - d / 130)})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(passo);
+  }
+  redimensionar();
+  criarParticulas();
+  requestAnimationFrame(passo);
+  window.addEventListener("resize", () => {
+    redimensionar();
+    criarParticulas();
+  });
+})();
+
+// ─── BRILHO SEGUINDO O CURSOR ─────────────────────────────────────
+(function iniciarCursorGlow() {
+  const glow = document.getElementById("cursorGlow");
+  if (!glow) return;
+  let ativo = false;
+  window.addEventListener("mousemove", (e) => {
+    glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    if (!ativo) {
+      glow.classList.add("active");
+      ativo = true;
+    }
+  });
+  window.addEventListener("mouseleave", () => glow.classList.remove("active"));
+})();
+
+// ─── TILT 3D NA FOTO DO HERO ──────────────────────────────────────
+(function iniciarTiltFoto() {
+  const frame = document.getElementById("heroImgFrame");
+  if (!frame) return;
+  frame.addEventListener("mousemove", (e) => {
+    const rect = frame.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    frame.style.transform = `rotateY(${x * 14}deg) rotateX(${-y * 14}deg)`;
+  });
+  frame.addEventListener("mouseleave", () => {
+    frame.style.transform = "rotateY(0deg) rotateX(0deg)";
+  });
+})();
+
+// ─── RIPPLE NOS BOTÕES ─────────────────────────────────────────────
+document.addEventListener("click", (e) => {
+  const alvo = e.target.closest(".btn-primary, .btn-ghost, .chat-ia-send, .carrossel-seta, .chat-ia-btn");
+  if (!alvo) return;
+  const rect = alvo.getBoundingClientRect();
+  const tamanho = Math.max(rect.width, rect.height);
+  const ripple = document.createElement("span");
+  ripple.className = "ui-ripple";
+  ripple.style.width = ripple.style.height = `${tamanho}px`;
+  ripple.style.left = `${e.clientX - rect.left - tamanho / 2}px`;
+  ripple.style.top = `${e.clientY - rect.top - tamanho / 2}px`;
+  alvo.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 650);
+});
+
+// ─── CONTADOR ANIMADO NAS ESTATÍSTICAS ────────────────────────────
+(function iniciarContadores() {
+  const nums = document.querySelectorAll(".stat-num[data-count]");
+  if (!nums.length) return;
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const alvo = parseInt(el.dataset.count, 10);
+        const sufixo = el.dataset.suffix || "";
+        const duracao = 1200;
+        const inicio = performance.now();
+        function anima(agora) {
+          const progresso = Math.min((agora - inicio) / duracao, 1);
+          const valor = Math.floor(progresso * alvo);
+          el.textContent = valor + sufixo;
+          if (progresso < 1) requestAnimationFrame(anima);
+          else el.textContent = alvo + sufixo;
+        }
+        requestAnimationFrame(anima);
+        obs.unobserve(el);
+      });
+    },
+    { threshold: 0.5 },
+  );
+  nums.forEach((el) => obs.observe(el));
+})();
+
 // Contact form
 function Btn_envia(e) {
   e.preventDefault();
@@ -90,20 +223,11 @@ let chatIaAberto = false;
 let chatIaNaoLidas = 0;
 
 // ─── Abrir / fechar ──────────────────────────────────────────────
-function abrirChatIa() {
-  chatIaModal.classList.add("open");
-  chatIaAberto = true;
-  chatIaNaoLidas = 0;
-  atualizarBadge();
-  chatIaInput.focus();
-  if (chatIaAguardandoHumano) iniciarPollingChatIa();
-}
 function fecharChatIa() {
   chatIaModal.classList.remove("open");
   chatIaAberto = false;
   fecharPainelInfo();
 }
-chatIaBtn.addEventListener("click", abrirChatIa);
 chatIaFechar.addEventListener("click", fecharChatIa);
 chatIaScrim.addEventListener("click", fecharChatIa);
 
@@ -236,10 +360,9 @@ async function restaurarConversaChatIa() {
 
     const mensagens = data.dados || [];
 
-    // se já existe histórico salvo, limpa a saudação padrão e reconstrói o chat de verdade
     if (mensagens.length > 0) {
       chatIaMensagens.innerHTML = "";
-      chatIaMensagens.appendChild(chatIaDigitando); // mantém o indicador de digitação no DOM
+      chatIaMensagens.appendChild(chatIaDigitando);
 
       const dataSep = document.createElement("div");
       dataSep.className = "chat-ia-date-sep";
@@ -248,13 +371,12 @@ async function restaurarConversaChatIa() {
 
       mensagens.forEach((m) => {
         const tipo = m.role === "user" ? "eu" : "ia";
-        adicionarMensagemChatIa(m.conteudo, tipo, true); // true = silencioso, não conta como "não lida"
+        adicionarMensagemChatIa(m.conteudo, tipo, true);
       });
 
       chatIaUltimaQtdMensagens = mensagens.length;
     }
 
-    // retoma o acompanhamento se a conversa ainda estiver ativa (não encerrada)
     chatIaAguardandoHumano = data.status === "aguardando_humano" || data.status === "humano";
 
     if (data.status !== "encerrada") {
@@ -407,7 +529,6 @@ function montarCarrossel() {
   viewport.addEventListener("mouseenter", pararAutoplayCarrossel);
   viewport.addEventListener("mouseleave", iniciarAutoplayCarrossel);
 
-  // swipe touch
   let touchStartX = 0;
   viewport.addEventListener("touchstart", (e) => {
     touchStartX = e.touches[0].clientX;
@@ -522,7 +643,6 @@ const CHAT_IA_CONVITE_VISTO_KEY = "chatIaConviteVisto";
 let chatIaConviteTimeoutId = null;
 
 function mostrarConvite() {
-  // não mostra de novo se a pessoa já abriu o chat ou já fechou o convite antes
   if (localStorage.getItem(CHAT_IA_CONVITE_VISTO_KEY)) return;
   if (chatIaAberto) return;
   chatIaConvite.classList.add("show");
@@ -539,23 +659,20 @@ function esconderConvite(marcarComoVisto = true) {
   }
 }
 
-// aparece sozinho depois de alguns segundos na página
 chatIaConviteTimeoutId = setTimeout(mostrarConvite, 4000);
 
-// clicar no balão abre o chat direto
 chatIaConvite.querySelector(".chat-ia-convite-conteudo").addEventListener("click", () => {
   esconderConvite();
   abrirChatIa();
 });
 
-// botão "x" só fecha o convite, sem abrir o chat
 chatIaConviteFechar.addEventListener("click", (e) => {
   e.stopPropagation();
   esconderConvite();
 });
 
 function abrirChatIa() {
-  esconderConvite(); // <-- adicione esta linha
+  esconderConvite();
   chatIaModal.classList.add("open");
   chatIaAberto = true;
   chatIaNaoLidas = 0;
@@ -563,8 +680,13 @@ function abrirChatIa() {
   chatIaInput.focus();
   if (chatIaAguardandoHumano) iniciarPollingChatIa();
 }
+chatIaBtn.addEventListener("click", abrirChatIa);
+
 // ─── CHAMADA DE VOZ E VÍDEO COM MARIANA IA (tempo real) ──────────
-const chatIaCallBtn = document.getElementById("chatIaCallBtn");
+// Dois fluxos separados, como no WhatsApp: chamada de voz (sem câmera)
+// e chamada de vídeo (com câmera + avatar animado).
+const chatIaCallVoiceBtn = document.getElementById("chatIaCallVoiceBtn");
+const chatIaCallVideoBtn = document.getElementById("chatIaCallVideoBtn");
 const chatIaCallModal = document.getElementById("chatIaCallModal");
 const chatIaCallStatus = document.getElementById("chatIaCallStatus");
 const chatIaCallMinimizar = document.getElementById("chatIaCallMinimizar");
@@ -575,7 +697,124 @@ const chatIaCallCaption = document.getElementById("chatIaCallCaption");
 const chatIaCallMicBtn = document.getElementById("chatIaCallMicBtn");
 const chatIaCallCamBtn = document.getElementById("chatIaCallCamBtn");
 const chatIaCallEndBtn = document.getElementById("chatIaCallEndBtn");
- 
+
+// ─── VISÃO DA MARIANA (câmera) ────────────────────────────────────
+// Roda 100% no navegador do visitante com face-api.js: detecta rosto e
+// expressão facial (feliz, neutro, surpreso...) em tempo real durante a
+// chamada de vídeo. Nenhuma imagem é enviada para nenhum servidor — é
+// apenas leitura local do quadro da câmera para gerar um comentário da IA.
+// Isso NÃO identifica quem é a pessoa (não é reconhecimento de identidade),
+// só reconhece expressões visíveis no rosto.
+const FACE_API_SRC = "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js";
+const FACE_API_MODELS_URL = "https://justadudewhohacks.github.io/face-api.js/models";
+
+let visaoIaCarregada = false;
+let visaoIaCarregando = false;
+let visaoIaIntervaloId = null;
+let visaoIaComentarioFeito = false;
+const chatIaCallVisaoBadge = document.getElementById("chatIaCallVisaoBadge");
+const chatIaCallVisaoTexto = document.getElementById("chatIaCallVisaoTexto");
+const chatIaCallScanLine = document.getElementById("chatIaCallScanLine");
+
+function carregarScriptExterno(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+async function carregarVisaoIa() {
+  if (visaoIaCarregada || visaoIaCarregando) return;
+  visaoIaCarregando = true;
+  try {
+    if (!window.faceapi) await carregarScriptExterno(FACE_API_SRC);
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(FACE_API_MODELS_URL),
+      faceapi.nets.faceExpressionNet.loadFromUri(FACE_API_MODELS_URL),
+    ]);
+    visaoIaCarregada = true;
+  } catch (err) {
+    console.warn("[Visão IA] Reconhecimento facial indisponível (rede/CDN bloqueado):", err);
+  } finally {
+    visaoIaCarregando = false;
+  }
+}
+
+function traduzirExpressao(exp) {
+  const mapa = {
+    happy: "sorrindo 😄",
+    neutral: "com uma expressão tranquila",
+    surprised: "surpreso(a) 😮",
+    sad: "com uma expressão mais séria",
+    angry: "meio tenso(a)",
+    fearful: "surpreso(a)",
+    disgusted: "com uma careta 😅",
+  };
+  return mapa[exp] || "por aqui";
+}
+
+async function iniciarVisaoIa() {
+  if (chatIaCallTipo !== "video" || !chatIaCallCamAtiva) return;
+  chatIaCallLocalWrap.classList.add("scanning");
+  chatIaCallVisaoBadge.style.display = "flex";
+  chatIaCallVisaoTexto.textContent = "Ativando a visão da Mariana...";
+  await carregarVisaoIa();
+  if (!visaoIaCarregada) {
+    chatIaCallVisaoTexto.textContent = "Visão indisponível neste navegador/rede";
+    chatIaCallLocalWrap.classList.remove("scanning");
+    return;
+  }
+  chatIaCallVisaoTexto.textContent = "Analisando imagem...";
+
+  clearInterval(visaoIaIntervaloId);
+  visaoIaIntervaloId = setInterval(async () => {
+    if (!chatIaCallEmAndamento || !chatIaCallCamAtiva || chatIaCallLocalVideo.readyState < 2) return;
+    try {
+      const resultado = await faceapi
+        .detectSingleFace(chatIaCallLocalVideo, new faceapi.TinyFaceDetectorOptions())
+        .withFaceExpressions();
+
+      if (!resultado) {
+        chatIaCallVisaoTexto.textContent = "Procurando seu rosto...";
+        return;
+      }
+
+      const expressoes = Object.entries(resultado.expressions).sort((a, b) => b[1] - a[1]);
+      const [expressaoTop] = expressoes[0];
+      chatIaCallVisaoTexto.textContent = `Vejo você — ${traduzirExpressao(expressaoTop)}`;
+
+      // Comenta em voz alta uma única vez por chamada, sem atrapalhar a fala atual
+      if (!visaoIaComentarioFeito && !chatIaCallProcessando && chatIaCallEmAndamento) {
+        visaoIaComentarioFeito = true;
+        const frase =
+          expressaoTop === "happy"
+            ? "Consigo te ver por aqui — e adorei esse sorriso! 😄"
+            : expressaoTop === "surprised"
+              ? "Te vejo aí, com essa cara de surpreso! Aconteceu algo? Pode falar comigo."
+              : "Consigo te ver por aqui. Fico de olho enquanto a gente conversa 👀";
+        setTimeout(() => {
+          if (chatIaCallEmAndamento && !chatIaCallProcessando) falarComoIa(frase);
+        }, 400);
+      }
+    } catch (err) {
+      // detecção é um recurso extra — falha silenciosa não deve travar a chamada
+    }
+  }, 2200);
+}
+
+function pararVisaoIa() {
+  clearInterval(visaoIaIntervaloId);
+  visaoIaIntervaloId = null;
+  visaoIaComentarioFeito = false;
+  chatIaCallLocalWrap.classList.remove("scanning");
+  if (chatIaCallVisaoBadge) chatIaCallVisaoBadge.style.display = "none";
+}
+
+let chatIaCallTipo = "video"; // "voz" | "video"
 let chatIaCallStream = null;
 let chatIaCallReconhecimento = null;
 let chatIaCallMicAtivo = true;
@@ -584,61 +823,67 @@ let chatIaCallEmAndamento = false;
 let chatIaCallProcessando = false;
 let chatIaCallTimerId = null;
 let chatIaCallSegundos = 0;
- 
-// NOVO: controle do watchdog de fala e do keep-alive do Chrome
+let chatIaCallWatchdogListaId = null;
+
+// controle da fala (TTS) — watchdog + keep-alive contra bugs do navegador
 let chatIaCallFalaWatchdogId = null;
 let chatIaCallFalaKeepAliveId = null;
 let chatIaCallFalaResolvida = false;
- 
+
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
- 
+
 function formatarDuracaoChamada(s) {
   const min = String(Math.floor(s / 60)).padStart(2, "0");
   const sec = String(s % 60).padStart(2, "0");
   return `${min}:${sec}`;
 }
- 
-async function iniciarChamadaIa() {
+
+async function iniciarChamadaIa(tipo) {
   if (chatIaCallEmAndamento) return;
+  chatIaCallTipo = tipo === "voz" ? "voz" : "video";
   chatIaCallEmAndamento = true;
   chatIaCallModal.classList.add("open");
+  chatIaCallModal.classList.toggle("modo-voz", chatIaCallTipo === "voz");
   chatIaCallStatus.textContent = "Chamando...";
   chatIaCallCaption.textContent = "";
   fecharChatIa();
- 
+
+  const quererVideo = chatIaCallTipo === "video";
+
   try {
-    chatIaCallStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    chatIaCallStream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: quererVideo,
+    });
+    chatIaCallCamAtiva = quererVideo;
   } catch (err) {
-    try {
-      chatIaCallStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      chatIaCallCamAtiva = false;
-    } catch (err2) {
-      console.error("[Chamada IA] Permissão negada:", err2);
-      chatIaCallStatus.textContent = "Não foi possível acessar câmera/microfone.";
-      chatIaCallCaption.textContent = "Permita o acesso ao microfone (e câmera, se quiser vídeo) para ligar para a Mariana.";
-      setTimeout(encerrarChamadaIa, 3000);
-      return;
-    }
+    console.error("[Chamada IA] Permissão negada:", err);
+    chatIaCallStatus.textContent = "Não foi possível acessar o microfone.";
+    chatIaCallCaption.textContent =
+      "Permita o acesso ao microfone" + (quererVideo ? " e à câmera" : "") + " para ligar para a Mariana.";
+    setTimeout(encerrarChamadaIa, 3000);
+    return;
   }
- 
-  chatIaCallLocalVideo.srcObject = chatIaCallStream;
+
+  if (quererVideo) {
+    chatIaCallLocalVideo.srcObject = chatIaCallStream;
+  }
   atualizarUiCamera();
   atualizarUiMic();
- 
+
   if (!SpeechRecognitionAPI) {
-    // Mantém esse aviso visível por mais tempo, sem ser apagado na hora pela saudação
     chatIaCallCaption.textContent =
       "Seu navegador não tem reconhecimento de voz nativo. Use Chrome ou Edge para conversar por voz em tempo real.";
   }
- 
-  // "atende" a chamada depois de um instante, como uma ligação real
+
   setTimeout(() => {
     if (!chatIaCallEmAndamento) return;
     iniciarTimerChamada();
     falarComoIa("Oi! Sou a Mariana, assistente virtual do Alex Sousa. Pode falar comigo, estou ouvindo.");
+    if (quererVideo) iniciarVisaoIa();
   }, 1400);
 }
- 
+
 function iniciarTimerChamada() {
   chatIaCallSegundos = 0;
   chatIaCallStatus.textContent = "00:00";
@@ -650,7 +895,7 @@ function iniciarTimerChamada() {
     }
   }, 1000);
 }
- 
+
 function atualizarUiMic() {
   chatIaCallStream?.getAudioTracks().forEach((t) => (t.enabled = chatIaCallMicAtivo));
   chatIaCallMicBtn.classList.toggle("off", !chatIaCallMicAtivo);
@@ -660,7 +905,7 @@ function atualizarUiCamera() {
   chatIaCallCamBtn.classList.toggle("off", !chatIaCallCamAtiva);
   chatIaCallLocalWrap.classList.toggle("cam-off", !chatIaCallCamAtiva);
 }
- 
+
 chatIaCallMicBtn?.addEventListener("click", () => {
   chatIaCallMicAtivo = !chatIaCallMicAtivo;
   atualizarUiMic();
@@ -668,25 +913,29 @@ chatIaCallMicBtn?.addEventListener("click", () => {
   else if (!chatIaCallProcessando) iniciarEscuta();
 });
 chatIaCallCamBtn?.addEventListener("click", () => {
+  if (chatIaCallTipo !== "video") return;
   chatIaCallCamAtiva = !chatIaCallCamAtiva;
   atualizarUiCamera();
+  if (chatIaCallCamAtiva) iniciarVisaoIa();
+  else pararVisaoIa();
 });
 chatIaCallEndBtn?.addEventListener("click", encerrarChamadaIa);
 chatIaCallMinimizar?.addEventListener("click", () => {
   chatIaCallModal.classList.remove("open");
 });
-chatIaCallBtn?.addEventListener("click", iniciarChamadaIa);
- 
+chatIaCallVoiceBtn?.addEventListener("click", () => iniciarChamadaIa("voz"));
+chatIaCallVideoBtn?.addEventListener("click", () => iniciarChamadaIa("video"));
+
 // ─── Escuta em tempo real (Speech-to-Text) ───────────────────────
 function iniciarEscuta() {
   if (!SpeechRecognitionAPI || !chatIaCallEmAndamento || !chatIaCallMicAtivo) return;
   if (chatIaCallReconhecimento) return;
- 
+
   chatIaCallReconhecimento = new SpeechRecognitionAPI();
   chatIaCallReconhecimento.lang = "pt-BR";
   chatIaCallReconhecimento.continuous = true;
   chatIaCallReconhecimento.interimResults = true;
- 
+
   chatIaCallReconhecimento.onresult = (event) => {
     let final = "";
     let parcial = "";
@@ -701,24 +950,23 @@ function iniciarEscuta() {
       processarFalaChamada(final.trim());
     }
   };
- 
+
   chatIaCallReconhecimento.onerror = (e) => {
     if (e.error === "no-speech" || e.error === "aborted") return;
     console.error("[Chamada IA] Erro no reconhecimento:", e.error);
-    // NOVO: mostra o erro pro usuário também, não só no console
     if (e.error === "not-allowed" || e.error === "service-not-allowed") {
       chatIaCallCaption.textContent = "Permissão de microfone bloqueada para reconhecimento de voz.";
     } else if (e.error === "network") {
       chatIaCallCaption.textContent = "Sem conexão para reconhecimento de voz. Verifique sua internet.";
     }
   };
- 
+
   chatIaCallReconhecimento.onend = () => {
     const deveReiniciar = chatIaCallEmAndamento && chatIaCallMicAtivo && !chatIaCallProcessando;
     chatIaCallReconhecimento = null;
     if (deveReiniciar) iniciarEscuta();
   };
- 
+
   try {
     chatIaCallReconhecimento.start();
     if (chatIaCallEmAndamento && !chatIaCallProcessando) {
@@ -728,7 +976,7 @@ function iniciarEscuta() {
     /* já iniciado, ignora */
   }
 }
- 
+
 function pararEscuta() {
   if (chatIaCallReconhecimento) {
     chatIaCallReconhecimento.onend = null;
@@ -738,7 +986,7 @@ function pararEscuta() {
     chatIaCallReconhecimento = null;
   }
 }
- 
+
 // ─── Envia a fala transcrita para a mesma IA do chat de texto ────
 async function processarFalaChamada(texto) {
   if (!texto || chatIaCallProcessando) return;
@@ -747,7 +995,7 @@ async function processarFalaChamada(texto) {
   chatIaCallStatus.textContent = "Mariana está pensando...";
   chatIaCallAvatarWrap.classList.remove("falando");
   chatIaCallAvatarWrap.classList.add("pensando");
- 
+
   try {
     const data = await enviarMensagemIA(texto);
     const resposta = data?.resposta || "Desculpe, não consegui entender. Pode repetir?";
@@ -757,21 +1005,21 @@ async function processarFalaChamada(texto) {
     falarComoIa("Tive um problema para responder agora. Pode repetir, por favor?");
   }
 }
- 
+
 // ─── Fala a resposta da IA em voz alta (Text-to-Speech) ──────────
 function falarComoIa(texto) {
   chatIaCallAvatarWrap.classList.remove("pensando");
   chatIaCallCaption.textContent = texto;
   chatIaCallFalaResolvida = false;
- 
+
   const continuarAposFala = () => {
-    // NOVO: idempotente — se o watchdog e o onend real dispararem os dois, só roda uma vez
+    // idempotente: se o watchdog e o onend real dispararem os dois, roda só uma vez
     if (chatIaCallFalaResolvida) return;
     chatIaCallFalaResolvida = true;
- 
+
     clearTimeout(chatIaCallFalaWatchdogId);
     clearInterval(chatIaCallFalaKeepAliveId);
- 
+
     chatIaCallAvatarWrap.classList.remove("falando");
     chatIaCallProcessando = false;
     if (chatIaCallEmAndamento) {
@@ -779,36 +1027,36 @@ function falarComoIa(texto) {
       iniciarEscuta();
     }
   };
- 
+
   if (!("speechSynthesis" in window)) {
     continuarAposFala();
     return;
   }
- 
+
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(texto);
   utter.lang = "pt-BR";
   utter.rate = 1;
   utter.pitch = 1.05;
- 
+
   const vozes = window.speechSynthesis.getVoices();
   const vozPt =
     vozes.find((v) => v.lang === "pt-BR" && /female|mulher|maria|luciana|francisca/i.test(v.name)) ||
     vozes.find((v) => v.lang === "pt-BR") ||
     vozes.find((v) => v.lang?.startsWith("pt"));
   if (vozPt) utter.voice = vozPt;
- 
+
   chatIaCallAvatarWrap.classList.add("falando");
   utter.onend = continuarAposFala;
   utter.onerror = continuarAposFala;
- 
-  // NOVO: watchdog — se onend não disparar (bug conhecido em todo navegador),
+
+  // watchdog: se onend não disparar (bug conhecido em vários navegadores),
   // libera a escuta sozinho depois de um tempo estimado pelo tamanho do texto.
   const duracaoEstimadaMs = Math.max(2500, texto.length * 80) + 2500;
   clearTimeout(chatIaCallFalaWatchdogId);
   chatIaCallFalaWatchdogId = setTimeout(continuarAposFala, duracaoEstimadaMs);
- 
-  // NOVO: keep-alive — corrige o bug do Chrome que pausa a fala sozinha após ~15s
+
+  // keep-alive: corrige o bug do Chrome que pausa a fala sozinha após ~15s
   clearInterval(chatIaCallFalaKeepAliveId);
   chatIaCallFalaKeepAliveId = setInterval(() => {
     if (!window.speechSynthesis.speaking) {
@@ -818,15 +1066,29 @@ function falarComoIa(texto) {
     window.speechSynthesis.pause();
     window.speechSynthesis.resume();
   }, 5000);
- 
+
   window.speechSynthesis.speak(utter);
 }
- 
+
+// ─── Watchdog geral: se algo travar, a escuta volta sozinha ─────
+clearInterval(chatIaCallWatchdogListaId);
+chatIaCallWatchdogListaId = setInterval(() => {
+  if (
+    chatIaCallEmAndamento &&
+    chatIaCallMicAtivo &&
+    !chatIaCallProcessando &&
+    !chatIaCallReconhecimento
+  ) {
+    iniciarEscuta();
+  }
+}, 3000);
+
 // ─── Encerrar chamada ─────────────────────────────────────────────
 function encerrarChamadaIa() {
   chatIaCallEmAndamento = false;
   chatIaCallProcessando = false;
   pararEscuta();
+  pararVisaoIa();
   window.speechSynthesis?.cancel();
   clearInterval(chatIaCallTimerId);
   clearTimeout(chatIaCallFalaWatchdogId);
@@ -835,7 +1097,7 @@ function encerrarChamadaIa() {
   chatIaCallStream = null;
   if (chatIaCallLocalVideo) chatIaCallLocalVideo.srcObject = null;
   chatIaCallAvatarWrap.classList.remove("falando", "pensando");
-  chatIaCallModal.classList.remove("open");
+  chatIaCallModal.classList.remove("open", "modo-voz");
   chatIaCallCaption.textContent = "";
   chatIaCallMicAtivo = true;
   chatIaCallCamAtiva = true;

@@ -65,6 +65,33 @@ ul {
   z-index: 0;
 }
 
+.particles-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26, 75, 255, 0.1), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  will-change: transform;
+}
+.cursor-glow.active {
+  opacity: 1;
+}
+
 .bg-orb {
   position: fixed;
   border-radius: 50%;
@@ -398,6 +425,9 @@ ul {
   position: relative;
   width: 340px;
   height: 340px;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out;
+  will-change: transform;
 }
 
 .img-glow {
@@ -479,6 +509,29 @@ ul {
 }
 
 /* ─── BUTTONS ────────────────────────────────────────────────────── */
+.btn-primary,
+.btn-ghost,
+.chat-ia-send,
+.carrossel-seta,
+.chat-ia-btn {
+  position: relative;
+  overflow: hidden;
+}
+.ui-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(0);
+  animation: uiRippleAnim 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes uiRippleAnim {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -1852,7 +1905,34 @@ ul {
   box-shadow: var(--glow);
   position: relative;
   z-index: 2;
-  transition: transform 0.25s ease;
+  animation: chatCallRespirar 3.6s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+@keyframes chatCallRespirar {
+  0%, 100% { transform: scale(1) translateY(0); filter: brightness(1); }
+  50% { transform: scale(1.018) translateY(-1.5px); filter: brightness(1.03); }
+}
+
+/* "piscada" sutil pra parecer mais viva, mesmo parada */
+.chat-ia-call-avatar-wrap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(5, 6, 26, 0.55);
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+  animation: chatCallPiscar 6.5s ease-in-out infinite;
+}
+@keyframes chatCallPiscar {
+  0%, 93%, 100% { opacity: 0; }
+  95% { opacity: 0.14; }
+  96.5% { opacity: 0; }
 }
 .chat-ia-call-ring {
   position: absolute;
@@ -1871,7 +1951,18 @@ ul {
   100% { transform: scale(1.55); opacity: 0; }
 }
 .chat-ia-call-avatar-wrap.falando .chat-ia-call-avatar {
-  transform: scale(1.04);
+  animation: chatCallFalando 0.42s ease-in-out infinite;
+}
+@keyframes chatCallFalando {
+  0%, 100% { transform: scale(1.02) translateY(0); filter: brightness(1.05) saturate(1.05); }
+  50% { transform: scale(1.045) translateY(-2px); filter: brightness(1.12) saturate(1.1); }
+}
+.chat-ia-call-avatar-wrap.pensando .chat-ia-call-avatar {
+  animation: chatCallPensando 1.6s ease-in-out infinite;
+}
+@keyframes chatCallPensando {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: brightness(0.94) saturate(0.9); }
+  50% { transform: scale(1.01) rotate(0.6deg); filter: brightness(1) saturate(1); }
 }
 
 /* onda de áudio quando a IA está falando */
@@ -1943,6 +2034,65 @@ ul {
   display: flex;
 }
 
+/* Linha de scan sobre o vídeo local, enquanto a Mariana "analisa" a imagem */
+.chat-ia-call-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  box-shadow: 0 0 8px var(--accent);
+  top: 0;
+  opacity: 0;
+  z-index: 4;
+}
+.chat-ia-call-local-wrap.scanning .chat-ia-call-scanline {
+  opacity: 1;
+  animation: scanLineMove 2.2s ease-in-out infinite;
+}
+@keyframes scanLineMove {
+  0% {
+    top: 4%;
+  }
+  50% {
+    top: 92%;
+  }
+  100% {
+    top: 4%;
+  }
+}
+.chat-ia-call-local-wrap.scanning {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+}
+
+/* Badge "Mariana está te vendo" com expressão detectada ao vivo */
+.chat-ia-call-visao-badge {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(11, 13, 31, 0.85);
+  border: 1px solid var(--border);
+  padding: 7px 16px;
+  border-radius: 100px;
+  font-size: 12.5px;
+  color: var(--text);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+}
+.chat-ia-call-visao-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: blink 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
 /* legenda / transcrição em tempo real */
 .chat-ia-call-caption {
   position: relative;
@@ -2006,4 +2156,22 @@ ul {
   .chat-ia-call-local-wrap { top: 80px; right: 14px; width: 80px; height: 110px; }
   .chat-ia-call-ctrl { width: 50px; height: 50px; }
   .chat-ia-call-end { width: 58px; height: 58px; }
+}
+
+/* modo chamada de voz: sem câmera própria e sem botão de câmera */
+.chat-ia-call-modal.modo-voz .chat-ia-call-local-wrap,
+.chat-ia-call-modal.modo-voz #chatIaCallCamBtn {
+  display: none;
+}
+.chat-ia-call-modal.modo-voz .chat-ia-call-avatar-wrap {
+  width: 200px;
+  height: 200px;
+}
+.chat-ia-call-modal.modo-voz .chat-ia-call-avatar {
+  width: 176px;
+  height: 176px;
+}
+.chat-ia-call-modal.modo-voz .chat-ia-call-avatar-wrap::after {
+  width: 176px;
+  height: 176px;
 }
