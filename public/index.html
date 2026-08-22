@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Alex Sousa — Desenvolvedor Full Stack. Aplicações web modernas, responsivas e escaláveis." />
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,34 +15,41 @@
     <title>Alex Sousa Dev</title>
   </head>
   <body>
-    <!-- Fundo animado -->
+    <!-- Fundo animado: grade sutil + rede de conexões (dados fluindo) + orbs -->
     <div class="bg-grid"></div>
-    <canvas id="particlesCanvas" class="particles-canvas"></canvas>
+    <canvas id="redeCanvas" class="rede-canvas"></canvas>
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
     <div id="cursorGlow" class="cursor-glow"></div>
 
     <!-- HEADER -->
     <header class="header" id="header">
-      <div class="logo">
-        <div class="logo-img-wrap">
-          <img src="img/logo.jpeg" alt="Logo Alex Sousa Dev" />
-        </div>
+      <a href="#home" class="logo">
+        <span class="logo-img-wrap" aria-hidden="true">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1554f7"/>
+                <stop offset="55%" stop-color="#4d7dff"/>
+                <stop offset="100%" stop-color="#2ea3ff"/>
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="94" height="94" rx="26" fill="#ffffff" stroke="url(#logoGrad)" stroke-width="4"/>
+            <path d="M50 24 L71 70 L61.5 70 L57.3 60.5 L42.7 60.5 L38.5 70 L29 70 Z M50 39.5 L44.6 52 H55.4 Z" fill="url(#logoGrad)"/>
+            <rect x="34" y="78" width="32" height="5" rx="2.5" fill="url(#logoGrad)" opacity="0.9"/>
+          </svg>
+        </span>
         <span class="logo-text">Alex Sousa <strong>Dev</strong></span>
-      </div>
+      </a>
       <nav class="menu">
         <ul>
           <li><a href="#sobre" class="nav-link">Sobre</a></li>
           <li><a href="#servico" class="nav-link">Serviços</a></li>
-          <li><a href="#projetos" class="nav-link">Projetos</a></li>
           <li><a href="#sobre" class="nav-link">Habilidades</a></li>
           <li><a href="#contato" class="nav-link">Contato</a></li>
         </ul>
       </nav>
-      <a href="img/CV-Alex-Sousa.pdf" download class="nav-cta nav-cta-cv">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        Baixar CV
-      </a>
+      <a href="#contato" class="nav-cta">Vamos Conversar</a>
       <button class="hamburger" id="hamburger" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -49,30 +58,11 @@
     <!-- MOBILE MENU -->
     <nav class="mobile-nav" id="mobileNav">
       <ul>
-        <li>
-          <a href="#sobre" class="nav-link" onclick="closeMobile()">Sobre</a>
-        </li>
-        <li>
-          <a href="#servico" class="nav-link" onclick="closeMobile()"
-            >Serviços</a
-          >
-        </li>
-        <li>
-          <a href="#projetos" class="nav-link" onclick="closeMobile()"
-            >Projetos</a
-          >
-        </li>
-        <li>
-          <a href="#sobre" class="nav-link" onclick="closeMobile()"
-            >Habilidades</a
-          >
-        </li>
-        <li>
-          <a href="#contato" class="nav-link" onclick="closeMobile()"
-            >Contato</a
-          >
-        </li>
-        <li><a href="img/CV-Alex-Sousa.pdf" download class="nav-link nav-cta">Baixar CV</a></li>
+        <li><a href="#sobre" class="nav-link" onclick="closeMobile()">Sobre</a></li>
+        <li><a href="#servico" class="nav-link" onclick="closeMobile()">Serviços</a></li>
+        <li><a href="#sobre" class="nav-link" onclick="closeMobile()">Habilidades</a></li>
+        <li><a href="#contato" class="nav-link" onclick="closeMobile()">Contato</a></li>
+        <li><a href="#contato" class="nav-link nav-cta" onclick="closeMobile()">Vamos Conversar</a></li>
       </ul>
     </nav>
 
@@ -91,13 +81,13 @@
               foco em performance, experiência do usuário e código limpo.
             </p>
             <div class="hero-actions reveal">
-              <a href="#projetos" class="btn-primary">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
-                Ver Projetos
-              </a>
-              <a href="#contato" class="btn-ghost">
+              <a href="#contato" class="btn-primary">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                Entrar em Contato
+                Vamos Conversar
+              </a>
+              <a href="#servico" class="btn-ghost">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                Ver Serviços
               </a>
             </div>
             <div class="hero-social reveal">
@@ -115,10 +105,16 @@
               </a>
             </div>
           </div>
+
+          <!-- FOTO REAL ANIMADA: pessoa programando -->
           <div class="home-visual reveal">
             <div class="img-frame" id="heroImgFrame">
               <div class="img-glow"></div>
-              <img src="img/alex sousa.png" alt="Alex Sousa Dev" class="hero-img" />
+              <img
+                class="hero-foto"
+                src="./img/progamado.jpg"
+                alt="Desenvolvedor programando em um notebook"
+              />
             </div>
           </div>
         </div>
@@ -198,9 +194,13 @@
           </h2>
         </div>
         <div class="sobre-grid">
-          <div class="sobre-img-wrap reveal">
-            <div class="sobre-img-frame">
-              <img src="img/sobre-me.jpeg" alt="Sobre Alex Sousa" />
+          <div class="sobre-img-wrap reveal reveal-left">
+            <div class="robo-ia-frame">
+              <img
+                class="robo-foto"
+                src="./img/ai.jpg"
+                alt="Robô de inteligência artificial"
+              />
             </div>
             <div class="sobre-badge-stack">
               <div class="tech-badge">HTML & CSS</div>
@@ -212,7 +212,7 @@
               <div class="tech-badge">GitHub</div>
             </div>
           </div>
-          <div class="sobre-text reveal">
+          <div class="sobre-text reveal reveal-right">
             <p>
               Olá! Sou <strong>Alex Sousa</strong>, desenvolvedor Full Stack
               apaixonado por criar experiências digitais que fazem a diferença.
@@ -226,50 +226,12 @@
               <strong>SQLite</strong>. Estou sempre em busca de novos desafios e
               aprendizados para crescer como profissional.
             </p>
-            
-              <a href="#contato"
-              class="btn-primary"
-              style="margin-top: 24px; display: inline-block"
-              >Vamos Conversar</a
+            <a href="#contato" class="btn-primary" style="margin-top: 24px; display: inline-block">
+              Vamos Conversar</a
             >
           </div>
         </div>
       </section>
-
-      <!-- PROJETOS -->
-<section class="section projetos" id="projetos">
-  <div class="section-header reveal">
-    <span class="section-tag">// Meu trabalho</span>
-    <h2 class="section-title">
-      Meus <span class="gradient-text">Projetos</span>
-    </h2>
-  </div>
-
-  <div id="projetoCarrossel" class="projeto-carrossel">
-    <button id="carrosselPrev" class="carrossel-seta carrossel-seta-prev" aria-label="Projeto anterior">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="15 18 9 12 15 6"></polyline>
-      </svg>
-    </button>
-
-    <div class="carrossel-viewport">
-      <div id="carrosselTrack" class="carrossel-track">
-        <!-- slides via JS -->
-        <div class="carrossel-slide skeleton"></div>
-      </div>
-    </div>
-
-    <button id="carrosselNext" class="carrossel-seta carrossel-seta-next" aria-label="Próximo projeto">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="9 18 15 12 9 6"></polyline>
-      </svg>
-    </button>
-  </div>
-
-  <div id="carrosselDots" class="carrossel-dots"></div>
-
-  <p id="projetosVazio" class="projetos-vazio" style="display:none;"></p>
-</section>
 
       <!-- SERVIÇOS -->
       <section class="section servico" id="servico">
@@ -324,7 +286,7 @@
           </h2>
         </div>
         <div class="contato-grid">
-          <div class="contato-info reveal">
+          <div class="contato-info reveal reveal-left">
             <h3>Vamos criar algo incrível juntos?</h3>
             <p>
               Estou disponível para freelances, projetos e oportunidades. Me
@@ -339,18 +301,14 @@
                 <span class="contact-icon">📞</span>
                 (99) 98468-6139
               </a>
-              
-               <a href="https://github.com/alexfullstack-web"
-                target="_blank"
-                class="contact-item"
-              >
+              <a href="https://github.com/alexfullstack-web" target="_blank" class="contact-item">
                 <span class="contact-icon">🐙</span>
                 alexfullstack-web
               </a>
             </div>
           </div>
-          <div class="form reveal">
-            <label for="nomeCompleto">Nome Completo</label>
+          <div class="form reveal reveal-right">
+            <label for="nome">Nome Completo</label>
             <input
               type="text"
               id="nome"
@@ -386,7 +344,6 @@
             <li><a href="#sobre">Sobre</a></li>
             <li><a href="#servico">Serviços</a></li>
             <li><a href="#contato">Contato</a></li>
-            <li><a href="https://alex-sousa-dev.vercel.app/">Acesso</a></li>
           </ul>
         </div>
         <div class="footer-social">
@@ -402,202 +359,6 @@
         <p>&copy; 2026 Alex Sousa Dev — Todos os direitos reservados</p>
       </div>
     </footer>
-
-    <!-- CHAT IA FLUTUANTE -->
-<button id="chatIaBtn" class="chat-ia-btn" aria-label="Abrir chat com IA">
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-  </svg>
-  <span id="chatIaBadge" class="chat-ia-badge" style="display:none;">1</span>
-</button>
-
-<!-- BALÃO DE CONVITE (aparece sozinho acima do botão) -->
-<div id="chatIaConvite" class="chat-ia-convite">
-  <button id="chatIaConviteFechar" class="chat-ia-convite-fechar" aria-label="Fechar aviso">✕</button>
-  <div class="chat-ia-convite-conteudo">
-    <img src="img/MarianaIA.png" alt="Mariana IA" class="chat-ia-convite-avatar" />
-    <div>
-      <strong>Mariana IA</strong>
-      <p>Olá! 👋 Como eu posso ajudar?</p>
-    </div>
-  </div>
-</div>
-
-<div id="chatIaModal" class="chat-ia-modal">
-  <div class="chat-ia-scrim" id="chatIaScrim"></div>
-
-  <div class="chat-ia-window">
-    <!-- CABEÇALHO / PERFIL -->
-    <div class="chat-ia-header">
-      <button id="chatIaFechar" class="chat-ia-icon-btn" aria-label="Fechar chat">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-      </button>
-
-      <button class="chat-ia-header-info" id="chatIaHeaderInfo" aria-label="Ver perfil">
-        <div class="chat-ia-avatar-wrap">
-          <img src="img/MarianaIA.png" alt="Mariana IA" class="chat-ia-avatar-img" />
-          <span class="chat-ia-online-dot"></span>
-        </div>
-        <div class="chat-ia-header-text">
-          <span class="chat-ia-title">Mariana IA</span>
-          <span class="chat-ia-status" id="chatIaStatusText">online</span>
-        </div>
-      </button>
-
-      <div class="chat-ia-header-spacer"></div>
-
-      <button id="chatIaCallVoiceBtn" class="chat-ia-icon-btn" aria-label="Ligar por voz para Mariana">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path>
-        </svg>
-      </button>
-
-      <button id="chatIaCallVideoBtn" class="chat-ia-icon-btn" aria-label="Ligar em vídeo para Mariana">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M23 7l-7 5 7 5V7z"></path>
-          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-        </svg>
-      </button>
-    </div>
-
-    <!-- PAINEL DE PERFIL (abre ao clicar no cabeçalho) -->
-    <div id="chatIaInfoPanel" class="chat-ia-info-panel">
-      <button id="chatIaInfoFechar" class="chat-ia-icon-btn chat-ia-info-close" aria-label="Fechar perfil">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-      <img src="img/MarianaIA.png" class="chat-ia-info-avatar" alt="Mariana IA" />
-      <h4>Mariana IA</h4>
-      <span class="chat-ia-info-tag">Assistente virtual · Alex Sousa Dev</span>
-      <p>
-        Tiro dúvidas sobre os projetos e serviços do Alex, e conecto você
-        diretamente com ele sempre que precisar. É só me chamar! 👋
-      </p>
-    </div>
-
-    <!-- MENSAGENS -->
-    <div id="chatIaMensagens" class="chat-ia-mensagens">
-      <div class="chat-ia-date-sep"><span>Hoje</span></div>
-
-      <div class="chat-ia-msg ia">
-        <img src="img/MarianaIA.png" class="chat-ia-msg-avatar" alt="" />
-        <div class="chat-ia-bubble">
-          <div class="chat-ia-text">Olá! 👋 Sou a assistente virtual do Alex Sousa dev. Posso te ajudar a entender os serviços dele ou tirar dúvidas sobre o seu projeto. Como posso ajudar?</div>
-          <span class="chat-ia-meta"><span class="chat-ia-hora">agora</span></span>
-        </div>
-      </div>
-
-      <div id="chatIaDigitando" class="chat-ia-msg ia chat-ia-digitando" style="display:none;">
-        <img src="img/MarianaIA.png" class="chat-ia-msg-avatar" alt="" />
-        <div class="chat-ia-bubble chat-ia-bubble-typing">
-          <span class="chat-ia-typing"><span></span><span></span><span></span></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- INPUT -->
-    <form id="chatIaForm" class="chat-ia-footer">
-      <input
-        id="chatIaInput"
-        class="chat-ia-input"
-        type="text"
-        placeholder="Digite uma mensagem"
-        autocomplete="off"
-      />
-      <button type="submit" class="chat-ia-send" aria-label="Enviar mensagem">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-        </svg>
-      </button>
-    </form>
-  </div>
-</div>
-
-    <!-- CHAMADA DE VOZ E VÍDEO COM MARIANA IA (tempo real) -->
-    <div id="chatIaCallModal" class="chat-ia-call-modal">
-      <div class="chat-ia-call-bg"></div>
-
-      <div class="chat-ia-call-top">
-        <div class="chat-ia-call-info">
-          <span class="chat-ia-call-name">Mariana IA</span>
-          <span id="chatIaCallStatus" class="chat-ia-call-status">Chamando...</span>
-        </div>
-        <button id="chatIaCallMinimizar" class="chat-ia-call-icon-btn" aria-label="Minimizar chamada">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-      </div>
-
-      <div class="chat-ia-call-stage">
-        <div id="chatIaCallAvatarWrap" class="chat-ia-call-avatar-wrap">
-          <span class="chat-ia-call-ring r1"></span>
-          <span class="chat-ia-call-ring r2"></span>
-          <img src="img/MarianaIA.png" alt="Mariana IA" class="chat-ia-call-avatar" />
-          <span class="chat-ia-call-wave">
-            <span></span><span></span><span></span><span></span><span></span>
-          </span>
-        </div>
-
-        <div id="chatIaCallLocalWrap" class="chat-ia-call-local-wrap">
-          <video id="chatIaCallLocalVideo" class="chat-ia-call-local-video" autoplay muted playsinline></video>
-          <div id="chatIaCallLocalOff" class="chat-ia-call-local-off">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M23 7l-7 5 7 5V7z"></path>
-              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-              <line x1="1" y1="1" x2="23" y2="23"></line>
-            </svg>
-          </div>
-          <span id="chatIaCallScanLine" class="chat-ia-call-scanline"></span>
-        </div>
-
-        <div id="chatIaCallVisaoBadge" class="chat-ia-call-visao-badge" style="display:none;">
-          <span class="chat-ia-call-visao-dot"></span>
-          <span id="chatIaCallVisaoTexto">Analisando imagem...</span>
-        </div>
-      </div>
-
-      <div id="chatIaCallCaption" class="chat-ia-call-caption"></div>
-
-      <div class="chat-ia-call-controls">
-        <button id="chatIaCallMicBtn" class="chat-ia-call-ctrl" aria-label="Ativar ou desativar microfone">
-          <svg class="ico-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-            <line x1="12" y1="19" x2="12" y2="23"></line>
-          </svg>
-          <svg class="ico-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="1" y1="1" x2="23" y2="23"></line>
-            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
-            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
-            <line x1="12" y1="19" x2="12" y2="23"></line>
-          </svg>
-        </button>
-
-        <button id="chatIaCallEndBtn" class="chat-ia-call-ctrl chat-ia-call-end" aria-label="Encerrar chamada">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 9c-2.5 0-4.9.5-7 1.4a1.5 1.5 0 0 0-.9 1.6l.4 2.5a1.5 1.5 0 0 0 1.2 1.2l2.1.4a1.5 1.5 0 0 0 1.4-.5l1-1.2a10.6 10.6 0 0 0 3.6 0l1 1.2a1.5 1.5 0 0 0 1.4.5l2.1-.4a1.5 1.5 0 0 0 1.2-1.2l.4-2.5a1.5 1.5 0 0 0-.9-1.6A17 17 0 0 0 12 9z"></path>
-          </svg>
-        </button>
-
-        <button id="chatIaCallCamBtn" class="chat-ia-call-ctrl" aria-label="Ativar ou desativar câmera">
-          <svg class="ico-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 7l-7 5 7 5V7z"></path>
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-          </svg>
-          <svg class="ico-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 7l-7 5 7 5V7z"></path>
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-            <line x1="1" y1="1" x2="23" y2="23"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
 
     <script src="script.js"></script>
   </body>
