@@ -1,3 +1,43 @@
+// ─── TELA DE CARREGAMENTO ──────────────────────────────────────────
+(function iniciarLoader() {
+  const loader = document.getElementById("loader");
+  const barra = document.getElementById("loaderBarFill");
+  const percentEl = document.getElementById("loaderPercent");
+  if (!loader || !barra) return;
+
+  document.body.classList.add("loading");
+
+  let progresso = 0;
+  function atualizar(valor) {
+    progresso = valor;
+    barra.style.width = progresso + "%";
+    if (percentEl) percentEl.textContent = Math.round(progresso) + "%";
+  }
+
+  const intervalo = setInterval(() => {
+    // avança rápido no início e desacelera perto do fim, simulando carregamento real
+    const passo = progresso < 70 ? Math.random() * 10 : Math.random() * 3;
+    atualizar(Math.min(progresso + passo, 92));
+  }, 140);
+
+  function esconderLoader() {
+    clearInterval(intervalo);
+    atualizar(100);
+    setTimeout(() => {
+      loader.classList.add("loader-hidden");
+      document.body.classList.remove("loading");
+    }, 320);
+  }
+
+  if (document.readyState === "complete") {
+    esconderLoader();
+  } else {
+    window.addEventListener("load", esconderLoader);
+    // tempo máximo de segurança, caso algum recurso demore demais para carregar
+    setTimeout(esconderLoader, 4000);
+  }
+})();
+
 // Hamburger menu
 const hamburger = document.getElementById("hamburger");
 const mobileNav = document.getElementById("mobileNav");

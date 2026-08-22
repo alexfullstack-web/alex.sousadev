@@ -150,6 +150,123 @@ ul {
   }
 }
 
+/* ─── TELA DE CARREGAMENTO ─────────────────────────────────────────── */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+.loader.loader-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.loader-logo-wrap {
+  width: 64px;
+  height: 64px;
+  display: block;
+  animation: loaderPulse 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 16px var(--blue-glow));
+}
+.loader-logo-wrap svg {
+  width: 100%;
+  height: 100%;
+}
+@keyframes loaderPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.loader-bar-track {
+  width: 200px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--border);
+  overflow: hidden;
+}
+.loader-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--accent));
+  box-shadow: 0 0 12px var(--blue-glow);
+  transition: width 0.25s ease;
+}
+
+.loader-percent {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  min-width: 54px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.loader-text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+.loader-dots span {
+  animation: loaderDots 1.2s infinite;
+  opacity: 0;
+}
+.loader-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+.loader-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loader-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes loaderDots {
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* impede rolagem enquanto o loader está ativo */
+body.loading {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-logo-wrap {
+    animation: none;
+  }
+}
+
 /* ─── HEADER ─────────────────────────────────────────────────────── */
 .header {
   position: fixed;

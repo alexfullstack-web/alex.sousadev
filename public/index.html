@@ -15,6 +15,31 @@
     <title>Alex Sousa Dev</title>
   </head>
   <body>
+    <!-- TELA DE CARREGAMENTO -->
+    <div class="loader" id="loader">
+      <div class="loader-inner">
+        <span class="loader-logo-wrap">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="loaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1554f7"/>
+                <stop offset="55%" stop-color="#4d7dff"/>
+                <stop offset="100%" stop-color="#2ea3ff"/>
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="94" height="94" rx="26" fill="#ffffff" stroke="url(#loaderGrad)" stroke-width="4"/>
+            <path d="M50 24 L71 70 L61.5 70 L57.3 60.5 L42.7 60.5 L38.5 70 L29 70 Z M50 39.5 L44.6 52 H55.4 Z" fill="url(#loaderGrad)"/>
+            <rect x="34" y="78" width="32" height="5" rx="2.5" fill="url(#loaderGrad)" opacity="0.9"/>
+          </svg>
+        </span>
+        <div class="loader-bar-track">
+          <div class="loader-bar-fill" id="loaderBarFill"></div>
+        </div>
+        <p class="loader-percent" id="loaderPercent">0%</p>
+        <p class="loader-text">Carregando<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span></p>
+      </div>
+    </div>
+
     <!-- Fundo animado: grade sutil + rede de conexões (dados fluindo) + orbs -->
     <div class="bg-grid"></div>
     <canvas id="redeCanvas" class="rede-canvas"></canvas>
