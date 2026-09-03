@@ -1,0 +1,34 @@
+@media (max-width: 900px){
+  :root{--gutter:5vw}
+  .navbar__nav{gap:18px}
+  .erp{grid-template-columns:1fr;gap:36px}
+  .tech-grid{grid-template-columns:repeat(2,1fr)}
+  .contact__grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width: 680px){
+  :root{--nav-h:64px}
+  .navbar__toggle{display:flex}
+  .navbar__nav{position:absolute;top:100%;left:0;right:0;display:none;flex-direction:column;align-items:stretch;gap:0;padding:10px var(--gutter) 18px;background:rgba(7,8,11,.96);border-bottom:1px solid var(--line)}
+  .navbar__nav.is-open{display:flex}
+  .navbar__link{padding:12px 0}
+  .navbar__link--cta{padding:10px 14px;text-align:center;margin-top:5px}
+  .hero{padding-bottom:90px}
+  .hero__title{font-size:clamp(3rem,16vw,5rem)}
+  .hero__actions{width:100%;flex-direction:column;align-items:stretch}
+  .btn{justify-content:center}
+  .camera{height:430vh}
+  .camera__caption{left:var(--gutter);bottom:32px;right:var(--gutter)}
+  .camera__caption-text{font-size:1.25rem}
+  .camera__tags{right:var(--gutter);top:auto;bottom:90px;gap:6px;font-size:.65rem}
+  .camera__tags li{padding:5px 8px}
+  .code-window__body{font-size:.62rem;line-height:1.5;padding:14px;max-height:45vh}
+  .camera__pill-list{gap:6px;font-size:.65rem}
+  .camera__pill-list li{padding:5px 9px}
+  .projects,.tech,.architecture{padding-top:90px;padding-bottom:80px}
+  .project-grid,.tech-grid,.contact__grid{grid-template-columns:1fr}
+  .about{grid-template-columns:1fr;padding-top:80px;padding-bottom:80px;gap:34px}
+  .about__visual{max-width:340px}
+  .timeline{padding-top:70px;padding-bottom:90px}
+  .timeline__card{padding:24px 20px}
+  .footer__inner{flex-direction:column}
+}

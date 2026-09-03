@@ -1,0 +1,11 @@
+/* Motion layer kept separate from layout rules. */
+@keyframes scroll-cue{0%{transform:translateY(-100%)}50%,100%{transform:translateY(100%)}}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 3px var(--accent-dim)}50%{box-shadow:0 0 0 7px transparent}}
+@keyframes code-fall{from{transform:translateY(-8%)}to{transform:translateY(108%)}}
+@keyframes node-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.hero__badge-dot{animation:pulse-dot 2.4s ease-in-out infinite}
+.arch-line::after{animation:node-pulse 2s ease-in-out infinite}
+.code-rain span{animation:code-fall var(--speed,18s) linear infinite;animation-delay:var(--delay,0s)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.is-visible{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}

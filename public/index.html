@@ -3,388 +3,544 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Alex Sousa — Desenvolvedor Full Stack. Aplicações web modernas, responsivas e escaláveis." />
-    <link rel="icon" type="image/svg+xml" href="img/logo.svg" />
+    <title>Alex Sousa — Desenvolvedor Full Stack</title>
+    <meta
+      name="description"
+      content="Alex Sousa, desenvolvedor Full Stack. HTML, CSS, JavaScript, Node.js, Express, JWT, bcrypt, Prisma e MongoDB. Conheça o projeto ERP e outros sistemas."
+    />
+    <meta name="theme-color" content="#07080B" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
-    <title>Alex Sousa Dev</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
   </head>
   <body>
-    <!-- TELA DE CARREGAMENTO -->
-    <div class="loader" id="loader">
-      <div class="loader-inner">
-        <span class="loader-logo-wrap">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="loaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#1554f7"/>
-                <stop offset="55%" stop-color="#4d7dff"/>
-                <stop offset="100%" stop-color="#2ea3ff"/>
-              </linearGradient>
-            </defs>
-            <rect x="3" y="3" width="94" height="94" rx="26" fill="#ffffff" stroke="url(#loaderGrad)" stroke-width="4"/>
-            <path d="M50 24 L71 70 L61.5 70 L57.3 60.5 L42.7 60.5 L38.5 70 L29 70 Z M50 39.5 L44.6 52 H55.4 Z" fill="url(#loaderGrad)"/>
-            <rect x="34" y="78" width="32" height="5" rx="2.5" fill="url(#loaderGrad)" opacity="0.9"/>
-          </svg>
-        </span>
-        <div class="loader-bar-track">
-          <div class="loader-bar-fill" id="loaderBarFill"></div>
-        </div>
-        <p class="loader-percent" id="loaderPercent">0%</p>
-        <p class="loader-text">Carregando<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span></p>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+    <!-- ================= CANVAS DE FUNDO (partículas) ================= -->
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar" id="navbar">
+      <div class="navbar__inner">
+        <a href="#inicio" class="navbar__brand">
+          <span class="navbar__brand-mark">AS</span>
+          <span class="navbar__brand-name">Alex Sousa</span>
+        </a>
+
+        <nav
+          class="navbar__nav"
+          id="navbar-nav"
+          aria-label="Navegação principal"
+        >
+          <a href="#inicio" class="navbar__link">Início</a>
+          <a href="#sobre" class="navbar__link">Sobre</a>
+          <a href="#tecnologias" class="navbar__link">Skills</a>
+          <a href="#projetos" class="navbar__link">Projetos</a>
+          <a href="#experiencia" class="navbar__link">Experiência</a>
+          <a href="#contato" class="navbar__link navbar__link--cta">Contato</a>
+        </nav>
+
+        <button
+          class="navbar__toggle"
+          id="navbar-toggle"
+          aria-label="Abrir menu"
+          aria-expanded="false"
+          aria-controls="navbar-nav"
+        >
+          <span></span><span></span><span></span>
+        </button>
       </div>
-    </div>
-
-    <!-- Fundo animado: grade sutil + rede de conexões (dados fluindo) + orbs -->
-    <div class="bg-grid"></div>
-    <canvas id="redeCanvas" class="rede-canvas"></canvas>
-    <div class="bg-orb orb-1"></div>
-    <div class="bg-orb orb-2"></div>
-    <div id="cursorGlow" class="cursor-glow"></div>
-
-    <!-- HEADER -->
-    <header class="header" id="header">
-      <a href="#home" class="logo">
-        <span class="logo-img-wrap" aria-hidden="true">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#1554f7"/>
-                <stop offset="55%" stop-color="#4d7dff"/>
-                <stop offset="100%" stop-color="#2ea3ff"/>
-              </linearGradient>
-            </defs>
-            <rect x="3" y="3" width="94" height="94" rx="26" fill="#ffffff" stroke="url(#logoGrad)" stroke-width="4"/>
-            <path d="M50 24 L71 70 L61.5 70 L57.3 60.5 L42.7 60.5 L38.5 70 L29 70 Z M50 39.5 L44.6 52 H55.4 Z" fill="url(#logoGrad)"/>
-            <rect x="34" y="78" width="32" height="5" rx="2.5" fill="url(#logoGrad)" opacity="0.9"/>
-          </svg>
-        </span>
-        <span class="logo-text">Alex Sousa <strong>Dev</strong></span>
-      </a>
-      <nav class="menu">
-        <ul>
-          <li><a href="#sobre" class="nav-link">Sobre</a></li>
-          <li><a href="#servico" class="nav-link">Serviços</a></li>
-          <li><a href="#sobre" class="nav-link">Habilidades</a></li>
-          <li><a href="#contato" class="nav-link">Contato</a></li>
-        </ul>
-      </nav>
-      <a href="#contato" class="nav-cta">Vamos Conversar</a>
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
     </header>
 
-    <!-- MOBILE MENU -->
-    <nav class="mobile-nav" id="mobileNav">
-      <ul>
-        <li><a href="#sobre" class="nav-link" onclick="closeMobile()">Sobre</a></li>
-        <li><a href="#servico" class="nav-link" onclick="closeMobile()">Serviços</a></li>
-        <li><a href="#sobre" class="nav-link" onclick="closeMobile()">Habilidades</a></li>
-        <li><a href="#contato" class="nav-link" onclick="closeMobile()">Contato</a></li>
-        <li><a href="#contato" class="nav-link nav-cta" onclick="closeMobile()">Vamos Conversar</a></li>
-      </ul>
-    </nav>
+    <main id="conteudo">
+      <!-- ================= HERO ================= -->
+      <section class="hero" id="inicio">
+        <div class="hero__grid" aria-hidden="true"></div>
+        <div class="hero__content">
+          <p class="hero__eyebrow">// full stack developer</p>
+          <h1 class="hero__title">Alex Sousa</h1>
+          <p class="hero__role">Desenvolvedor Full Stack</p>
+          <p class="hero__lede">
+            Transformo ideias em sistemas web modernos, funcionais e escaláveis.
+          </p>
 
-    <main>
-      <!-- HERO / HOME -->
-      <section class="section home" id="home">
-        <div class="home-inner">
-          <div class="home-content">
-            <p class="hero-tag reveal">Olá, eu sou</p>
-            <h1 class="hero-name reveal">
-              Alex <span class="gradient-text">Sousa</span>
-            </h1>
-            <h2 class="hero-role reveal">Desenvolvedor Full Stack</h2>
-            <p class="hero-desc reveal">
-              Desenvolvo aplicações web modernas, responsivas e escaláveis com
-              foco em performance, experiência do usuário e código limpo.
-            </p>
-            <div class="hero-actions reveal">
-              <a href="#contato" class="btn-primary">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                Vamos Conversar
-              </a>
-              <a href="#servico" class="btn-ghost">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                Ver Serviços
-              </a>
-            </div>
-            <div class="hero-social reveal">
-              <a href="https://github.com/alexfullstack-web" target="_blank" rel="noopener" class="social-btn" aria-label="GitHub">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.04-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.83.58C20.56 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"></path></svg>
-              </a>
-              <a href="#" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"></path></svg>
-              </a>
-              <a href="#" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37a4 4 0 1 1-7.914 1.173A4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-              </a>
-              <a href="https://wa.me/5599984686139" target="_blank" rel="noopener" class="social-btn" aria-label="WhatsApp">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.2h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2zm5.83 14.16c-.25.7-1.45 1.34-2 1.43-.51.08-1.15.11-1.86-.12-.43-.13-.98-.32-1.69-.62-2.97-1.28-4.91-4.27-5.06-4.47-.15-.2-1.21-1.61-1.21-3.07 0-1.46.77-2.18 1.04-2.48.27-.3.6-.37.8-.37.2 0 .4 0 .58.01.19.01.44-.07.68.53.25.6.85 2.08.92 2.23.07.15.12.33.02.53-.1.2-.15.32-.3.5-.15.18-.31.4-.44.53-.15.15-.3.31-.13.6.17.3.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.47.3.15.47.13.65-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.66-.15.27.1 1.72.81 2.02.96.3.15.5.22.57.35.08.13.08.72-.17 1.42z"></path></svg>
-              </a>
-            </div>
+          <div class="hero__badge">
+            <span class="hero__badge-dot" aria-hidden="true"></span>
+            6 meses de experiência prática
           </div>
 
-          <!-- FOTO REAL ANIMADA: pessoa programando -->
-          <div class="home-visual reveal">
-            <div class="img-frame" id="heroImgFrame">
-              <div class="img-glow"></div>
-              <img
-                class="hero-foto"
-                src="./img/progamado.jpg"
-                alt="Desenvolvedor programando em um notebook"
-              />
-            </div>
+          <div class="hero__actions">
+            <a href="#projetos" class="btn btn--primary">Ver projetos</a>
+            <a href="#sobre" class="btn btn--ghost">Conhecer meu trabalho</a>
           </div>
+
+          <ul class="hero__stack" aria-label="Tecnologias principais">
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li>Node.js</li>
+            <li>Express</li>
+            <li>Prisma</li>
+            <li>MongoDB</li>
+          </ul>
         </div>
 
-        <div class="hero-features reveal">
-          <div class="hero-feature-card">
-            <div class="hero-feature-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line><polyline points="8 9 5.5 11.5 8 14"></polyline><polyline points="14 9 16.5 11.5 14 14"></polyline></svg>
-            </div>
-            <h4>Desenvolvimento Web</h4>
-            <p>Criação de sites e sistemas modernos e responsivos.</p>
-          </div>
-          <div class="hero-feature-card">
-            <div class="hero-feature-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"></rect><line x1="11" y1="18" x2="13" y2="18"></line></svg>
-            </div>
-            <h4>Aplicações Responsivas</h4>
-            <p>Interfaces que funcionam perfeitamente em qualquer dispositivo.</p>
-          </div>
-          <div class="hero-feature-card">
-            <div class="hero-feature-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="6" rx="1.5"></rect><rect x="2" y="15" width="20" height="6" rx="1.5"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-            </div>
-            <h4>Back-end Robusto</h4>
-            <p>APIs eficientes, seguras e escaláveis com as melhores tecnologias.</p>
-          </div>
-          <div class="hero-feature-card">
-            <div class="hero-feature-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-            </div>
-            <h4>Código Limpo</h4>
-            <p>Boas práticas, manutenção facilitada e alto desempenho em cada projeto.</p>
-          </div>
-        </div>
-
-        <div class="hero-stats reveal">
-          <div class="stat">
-            <span class="stat-icon">💼</span>
-            <div class="stat-text">
-              <span class="stat-num" data-count="10" data-suffix="+">0</span>
-              <span class="stat-label">Projetos Concluídos</span>
-            </div>
-          </div>
-          <div class="stat-div"></div>
-          <div class="stat">
-            <span class="stat-icon">🤝</span>
-            <div class="stat-text">
-              <span class="stat-num" data-count="5" data-suffix="+">0</span>
-              <span class="stat-label">Tecnologias Dominadas</span>
-            </div>
-          </div>
-          <div class="stat-div"></div>
-          <div class="stat">
-            <span class="stat-icon">⏱️</span>
-            <div class="stat-text">
-              <span class="stat-num" data-count="4" data-suffix="+">0</span>
-              <span class="stat-label">Meses de Experiência</span>
-            </div>
-          </div>
-          <div class="stat-div"></div>
-          <div class="stat">
-            <span class="stat-icon">🏆</span>
-            <div class="stat-text">
-              <span class="stat-num" data-count="100" data-suffix="%">0</span>
-              <span class="stat-label">Dedicação</span>
-            </div>
-          </div>
+        <div class="hero__scroll-cue" aria-hidden="true">
+          <span>scroll</span>
+          <div class="hero__scroll-line"><i></i></div>
         </div>
       </section>
 
-      <!-- SOBRE -->
-      <section class="section sobre-me" id="sobre">
-        <div class="section-header reveal">
-          <span class="section-tag">// Quem sou eu</span>
-          <h2 class="section-title">
-            Sobre <span class="gradient-text">Mim</span>
-          </h2>
-        </div>
-        <div class="sobre-grid">
-          <div class="sobre-img-wrap reveal reveal-left">
-            <div class="robo-ia-frame">
-              <img
-                class="robo-foto"
-                src="./img/ai.jpg"
-                alt="Robô de inteligência artificial"
-              />
-            </div>
-            <div class="sobre-badge-stack">
-              <div class="tech-badge">HTML & CSS</div>
-              <div class="tech-badge">JavaScript</div>
-              <div class="tech-badge">React</div>
-              <div class="tech-badge">Node.js</div>
-              <div class="tech-badge">SQLite</div>
-              <div class="tech-badge">Git</div>
-              <div class="tech-badge">GitHub</div>
-            </div>
+      <!-- ================= SEQUÊNCIA CINEMATOGRÁFICA ================= -->
+      <section
+        class="camera"
+        id="camera-sequence"
+        aria-label="Jornada visual: da empresa ao código"
+      >
+        <div class="camera__stage" id="camera-stage">
+          <!-- layer 0: intro label -->
+          <div class="camera__layer camera__layer--intro" data-layer="intro">
+            <p class="camera__kicker">// iniciando a jornada</p>
+            <p class="camera__hint">role para continuar</p>
           </div>
-          <div class="sobre-text reveal reveal-right">
-            <p>
-              Olá! Sou <strong>Alex Sousa</strong>, desenvolvedor Full Stack
-              apaixonado por criar experiências digitais que fazem a diferença.
-              Com mais de <strong>4 meses de experiência</strong>, venho
-              construindo aplicações web e mobile completas, do conceito ao
-              deploy.
-            </p>
-            <p>
-              Meu stack inclui tecnologias modernas como
-              <strong>HTML, CSS, JavaScript, React, Node.js</strong> e
-              <strong>SQLite</strong>. Estou sempre em busca de novos desafios e
-              aprendizados para crescer como profissional.
-            </p>
-            <a href="#contato" class="btn-primary" style="margin-top: 24px; display: inline-block">
-              Vamos Conversar</a
-            >
-          </div>
-        </div>
-      </section>
 
-      <!-- SERVIÇOS -->
-      <section class="section servico" id="servico">
-        <div class="section-header reveal">
-          <span class="section-tag">// O que eu faço</span>
-          <h2 class="section-title">
-            Meus <span class="gradient-text">Serviços</span>
-          </h2>
-        </div>
-        <div class="services-grid">
-          <div class="service-card reveal">
-            <div class="service-icon">⚡</div>
-            <h3>Front-End</h3>
-            <p>
-              Interfaces modernas, responsivas e de alta performance com HTML,
-              CSS, JavaScript e React.
-            </p>
-          </div>
-          <div class="service-card reveal">
-            <div class="service-icon">🔧</div>
-            <h3>Back-End</h3>
-            <p>
-              APIs robustas e escaláveis com Node.js, autenticação segura e
-              integração com banco de dados.
-            </p>
-          </div>
-          <div class="service-card reveal">
-            <div class="service-icon">🗄️</div>
-            <h3>Banco de Dados</h3>
-            <p>
-              Modelagem e gerenciamento de dados com SQLite e outras soluções
-              eficientes.
-            </p>
-          </div>
-          <div class="service-card reveal">
-            <div class="service-icon">📱</div>
-            <h3>Web Responsiva</h3>
-            <p>
-              Sites e aplicações que funcionam perfeitamente em qualquer
-              dispositivo e tamanho de tela.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- CONTATO -->
-      <section class="section contato" id="contato">
-        <div class="section-header reveal">
-          <span class="section-tag">// Fale comigo</span>
-          <h2 class="section-title">
-            Entre em <span class="gradient-text">Contato</span>
-          </h2>
-        </div>
-        <div class="contato-grid">
-          <div class="contato-info reveal reveal-left">
-            <h3>Vamos criar algo incrível juntos?</h3>
-            <p>
-              Estou disponível para freelances, projetos e oportunidades. Me
-              envie uma mensagem!
-            </p>
-            <div class="contact-links">
-              <a href="mailto:alexsousadev.21@gmail.com" class="contact-item">
-                <span class="contact-icon">✉️</span>
-                alexsousadev.21@gmail.com
-              </a>
-              <a href="tel:+5599984686139" class="contact-item">
-                <span class="contact-icon">📞</span>
-                (99) 98468-6139
-              </a>
-              <a href="https://github.com/alexfullstack-web" target="_blank" class="contact-item">
-                <span class="contact-icon">🐙</span>
-                alexfullstack-web
-              </a>
-            </div>
-          </div>
-          <div class="form reveal reveal-right">
-            <label for="nome">Nome Completo</label>
-            <input
-              type="text"
-              id="nome"
-              placeholder="Digite seu nome completo"
+          <!-- layer 1: empresa -->
+          <figure class="camera__layer camera__layer--img" data-layer="empresa">
+            <img
+              src="img/empresa.jpg"
+              alt="Fachada iluminada de um prédio corporativo moderno à noite"
+              loading="lazy"
             />
-            <label for="email">E-mail</label>
-            <input type="email" id="email" placeholder="Digite seu e-mail" />
-            <label for="mensagem">Sua Mensagem</label>
-            <textarea
-              id="mensagem"
-              placeholder="Descreva sua mensagem"
-              rows="5"
-            ></textarea>
-            <button class="btn-primary btn-full" onclick="Btn_envia(event)">
-              Enviar Mensagem
-            </button>
+            <figcaption class="camera__caption">
+              <span class="camera__caption-tag">01</span>
+              <span class="camera__caption-text">Entrando na empresa</span>
+            </figcaption>
+          </figure>
+
+          <!-- layer 2: equipe -->
+          <figure class="camera__layer camera__layer--img" data-layer="equipe">
+            <img
+              src="img/equepe.jpg"
+              alt="Equipe de desenvolvedores trabalhando em um escritório moderno"
+              loading="lazy"
+            />
+            <figcaption class="camera__caption">
+              <span class="camera__caption-tag">02</span>
+              <span class="camera__caption-text">A equipe em ação</span>
+            </figcaption>
+            <ul class="camera__tags" aria-hidden="true">
+              <li style="--d: 0">PLANNING</li>
+              <li style="--d: 1">DEVELOPMENT</li>
+              <li style="--d: 2">API</li>
+              <li style="--d: 3">DATABASE</li>
+              <li style="--d: 4">DEPLOYMENT</li>
+            </ul>
+          </figure>
+
+          <!-- layer 3: computador -->
+          <figure
+            class="camera__layer camera__layer--img"
+            data-layer="computador"
+          >
+            <img
+              src="img/progamado.jpg"
+              alt="Desenvolvedor em frente a dois monitores durante uma sessão de código"
+              loading="lazy"
+            />
+            <figcaption class="camera__caption">
+              <span class="camera__caption-tag">03</span>
+              <span class="camera__caption-text"
+                >Um desenvolvedor, um computador</span
+              >
+            </figcaption>
+          </figure>
+
+          <!-- layer 4: entrando na tela / código -->
+          <figure
+            class="camera__layer camera__layer--img camera__layer--screen"
+            data-layer="tela"
+          >
+            <img
+              src="img/codigo.jpg"
+              alt="Close-up de linhas de código coloridas em um monitor"
+              loading="lazy"
+            />
+            <div class="camera__code-window" aria-hidden="true">
+              <div class="code-window">
+                <div class="code-window__bar">
+                  <span class="code-window__dot"></span
+                  ><span class="code-window__dot"></span
+                  ><span class="code-window__dot"></span>
+                  <span class="code-window__title">server.js</span>
+                </div>
+                <pre
+                  class="code-window__body"
+                ><code><span class="tok-kw">const</span> app = <span class="tok-fn">express</span>();
+
+app.<span class="tok-fn">use</span>(<span class="tok-fn">cors</span>());
+app.<span class="tok-fn">use</span>(express.<span class="tok-fn">json</span>());
+
+app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, <span class="tok-kw">async</span> (req, res) => {
+  <span class="tok-cm">// authentication</span>
+  <span class="tok-kw">const</span> user = <span class="tok-kw">await</span> prisma.usuario.<span class="tok-fn">findUnique</span>({
+    where: { email: req.body.email }
+  });
+
+  <span class="tok-kw">const</span> valid = <span class="tok-kw">await</span> bcrypt.<span class="tok-fn">compare</span>(
+    req.body.senha, user.senha
+  );
+
+  <span class="tok-kw">const</span> token = jwt.<span class="tok-fn">sign</span>(
+    { id: user.id }, process.env.JWT_SECRET
+  );
+
+  res.<span class="tok-fn">json</span>({ token });
+});</code></pre>
+              </div>
+              <ul class="camera__pill-list">
+                <li>JWT</li>
+                <li>bcrypt</li>
+                <li>Prisma</li>
+                <li>MongoDB</li>
+                <li>REST API</li>
+                <li>Node.js</li>
+                <li>Express</li>
+              </ul>
+            </div>
+          </figure>
+        </div>
+
+        <!-- fundo de código: transição para a próxima seção -->
+        <div class="code-rain" id="code-rain" aria-hidden="true"></div>
+      </section>
+
+      <!-- ================= PROJETOS ================= -->
+      <section class="projects" id="projetos">
+        <div class="section-head">
+          <p class="section-head__kicker">// meus projetos</p>
+          <h2 class="section-head__title">Sistemas que eu construí</h2>
+          <p class="section-head__lede">
+            Uma seleção de projetos práticos com foco em arquitetura Full Stack,
+            autenticação e integração com banco de dados.
+          </p>
+        </div>
+
+        <!-- Projeto principal: ERP -->
+        <article class="erp" id="erp">
+          <div class="erp__visual">
+            <img
+              src="img/fundo8.jpg"
+              alt="Interface de código representando o painel do sistema ERP Alex Sousa"
+              loading="lazy"
+            />
+            <div class="erp__visual-glow" aria-hidden="true"></div>
+            <div class="erp__modules" aria-hidden="true">
+              <span style="--d: 0">Dashboard</span>
+              <span style="--d: 1">CRM</span>
+              <span style="--d: 2">Clientes</span>
+              <span style="--d: 3">Leads</span>
+              <span style="--d: 4">Projetos</span>
+              <span style="--d: 5">Tarefas</span>
+              <span style="--d: 6">Financeiro</span>
+              <span style="--d: 7">Usuários</span>
+              <span style="--d: 8">Hospedagens</span>
+              <span style="--d: 9">Domínios</span>
+              <span style="--d: 10">APIs</span>
+            </div>
+          </div>
+          <div class="erp__content">
+            <p class="erp__tag">Projeto principal</p>
+            <h3 class="erp__title">ERP Alex Sousa</h3>
+            <p class="erp__desc">
+              Sistema ERP desenvolvido para gerenciamento empresarial,
+              integrando diferentes módulos em uma única plataforma.
+            </p>
+            <ul class="erp__list">
+              <li>Dashboard</li>
+              <li>CRM</li>
+              <li>Clientes</li>
+              <li>Leads</li>
+              <li>Projetos</li>
+              <li>Tarefas</li>
+              <li>Financeiro</li>
+              <li>Usuários</li>
+              <li>Hospedagens</li>
+              <li>Domínios</li>
+              <li>APIs</li>
+            </ul>
+            <ul class="erp__stack">
+              <li>Node.js</li>
+              <li>Express</li>
+              <li>JWT</li>
+              <li>bcrypt</li>
+              <li>Prisma</li>
+              <li>MongoDB</li>
+            </ul>
+            <div class="erp__actions">
+              <a
+                href="https://github.com/alexfullstack-web"
+                class="btn btn--primary"
+                target="_blank"
+                rel="noopener"
+                >GitHub</a
+              >
+              <a href="#contato" class="btn btn--ghost">Ver projeto</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Grid de outros projetos -->
+        <div class="project-grid" id="project-grid">
+          <!-- os cards são renderizados via js/projects.js -->
+        </div>
+      </section>
+
+      <!-- ================= ARQUITETURA ================= -->
+      <section class="architecture" id="arquitetura">
+        <div class="section-head">
+          <p class="section-head__kicker">
+            // como um sistema full stack funciona
+          </p>
+          <h2 class="section-head__title">Da interface ao banco de dados</h2>
+        </div>
+
+        <div class="arch-flow" id="arch-flow">
+          <div class="arch-node" style="--i: 0">
+            <span class="arch-node__label">Frontend</span>
+            <span class="arch-node__detail">HTML · CSS · JavaScript</span>
+          </div>
+          <div class="arch-line" style="--i: 0"></div>
+          <div class="arch-node" style="--i: 1">
+            <span class="arch-node__label">REST API</span>
+            <span class="arch-node__detail">rotas e endpoints</span>
+          </div>
+          <div class="arch-line" style="--i: 1"></div>
+          <div class="arch-node" style="--i: 2">
+            <span class="arch-node__label">Node.js + Express</span>
+            <span class="arch-node__detail">servidor e middlewares</span>
+          </div>
+          <div class="arch-line" style="--i: 2"></div>
+          <div class="arch-node" style="--i: 3">
+            <span class="arch-node__label">JWT · bcrypt</span>
+            <span class="arch-node__detail">autenticação e segurança</span>
+          </div>
+          <div class="arch-line" style="--i: 3"></div>
+          <div class="arch-node" style="--i: 4">
+            <span class="arch-node__label">Prisma</span>
+            <span class="arch-node__detail">camada de acesso a dados</span>
+          </div>
+          <div class="arch-line" style="--i: 4"></div>
+          <div class="arch-node" style="--i: 5">
+            <span class="arch-node__label">MongoDB</span>
+            <span class="arch-node__detail">persistência dos dados</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TECNOLOGIAS ================= -->
+      <section class="tech" id="tecnologias">
+        <div class="section-head">
+          <p class="section-head__kicker">// stack</p>
+          <h2 class="section-head__title">Tecnologias que utilizo</h2>
+        </div>
+
+        <div class="tech-grid">
+          <div class="tech-group">
+            <h3 class="tech-group__title">Frontend</h3>
+            <ul class="tech-group__list">
+              <li><span class="tech-dot"></span>HTML5</li>
+              <li><span class="tech-dot"></span>CSS3</li>
+              <li><span class="tech-dot"></span>JavaScript</li>
+            </ul>
+          </div>
+          <div class="tech-group">
+            <h3 class="tech-group__title">Backend</h3>
+            <ul class="tech-group__list">
+              <li><span class="tech-dot"></span>Node.js</li>
+              <li><span class="tech-dot"></span>Express.js</li>
+              <li><span class="tech-dot"></span>CORS</li>
+              <li><span class="tech-dot"></span>JWT</li>
+              <li><span class="tech-dot"></span>bcrypt</li>
+            </ul>
+          </div>
+          <div class="tech-group">
+            <h3 class="tech-group__title">Banco de dados</h3>
+            <ul class="tech-group__list">
+              <li><span class="tech-dot"></span>Prisma</li>
+              <li><span class="tech-dot"></span>MongoDB</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SOBRE MIM ================= -->
+      <section class="about" id="sobre">
+        <div class="about__visual">
+          <img
+            src="img/ai.jpg"
+            alt="Tela de código próxima a um teclado de notebook"
+            loading="lazy"
+          />
+        </div>
+        <div class="about__content">
+          <p class="section-head__kicker">// sobre mim</p>
+          <h2 class="section-head__title">Sobre mim</h2>
+          <p class="about__text">
+            Sou Alex Sousa, desenvolvedor Full Stack focado na criação de
+            aplicações web modernas, sistemas administrativos e soluções
+            digitais.
+          </p>
+          <p class="about__text">
+            Tenho 6 meses de experiência prática desenvolvendo projetos com
+            tecnologias de frontend, backend e banco de dados.
+          </p>
+          <ul class="about__traits">
+            <li>Evolução constante</li>
+            <li>Aprendizado contínuo</li>
+            <li>Responsabilidade</li>
+            <li>Organização</li>
+            <li>Interesse genuíno por tecnologia</li>
+            <li>Desenvolvimento de sistemas reais</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= EXPERIÊNCIA ================= -->
+      <section class="timeline" id="experiencia">
+        <div class="section-head">
+          <p class="section-head__kicker">// trajetória</p>
+          <h2 class="section-head__title">Experiência</h2>
+        </div>
+
+        <div class="timeline__track">
+          <div class="timeline__item">
+            <div class="timeline__marker" aria-hidden="true"></div>
+            <div class="timeline__card">
+              <p class="timeline__date">2026 — Atualmente</p>
+              <h3 class="timeline__role">Desenvolvedor Full Stack</h3>
+              <p class="timeline__desc">
+                Experiência prática com HTML, CSS, JavaScript, Node.js, Express,
+                JWT, bcrypt, Prisma e MongoDB, construindo sistemas web
+                completos do frontend ao banco de dados.
+              </p>
+              <p class="timeline__badge">6 meses de experiência prática</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CONTATO ================= -->
+      <section class="contact" id="contato">
+        <div class="contact__inner">
+          <p class="section-head__kicker">// contato</p>
+          <h2 class="contact__title">Vamos construir algo juntos?</h2>
+          <p class="contact__lede">
+            Estou aberto a oportunidades, projetos e conexões profissionais.
+          </p>
+
+          <div class="contact__grid">
+            <a
+              class="contact__card"
+              href="mailto:alexsousadev.21@gmail.com"
+              aria-label="Enviar e-mail para Alex Sousa"
+            >
+              <span class="contact__card-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                >
+                  <path d="M3 6h18v12H3z" />
+                  <path d="M3 6l9 7 9-7" />
+                </svg>
+              </span>
+              <span class="contact__card-label">E-mail</span>
+              <span class="contact__card-value">alexsousadev.21@gmail.com</span>
+            </a>
+
+            <a
+              class="contact__card"
+              href="https://github.com/alexfullstack-web"
+              target="_blank"
+              rel="noopener"
+              aria-label="Abrir perfil do GitHub de Alex Sousa"
+            >
+              <span class="contact__card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.7-1.28-1.7-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a10.9 10.9 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.6.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.08.78 2.18 0 1.57-.02 2.84-.02 3.23 0 .3.2.66.79.55A10.51 10.51 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5Z"
+                  />
+                </svg>
+              </span>
+              <span class="contact__card-label">GitHub</span>
+              <span class="contact__card-value">alexfullstack-web</span>
+            </a>
+
+            <a
+              class="contact__card"
+              href="https://wa.me/5599984686139"
+              target="_blank"
+              rel="noopener"
+              aria-label="Iniciar conversa no WhatsApp com Alex Sousa"
+            >
+              <span class="contact__card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.06-1.33A10 10 0 1 0 12 2Zm5.63 14.13c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.16-4.94-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.48-.14.14-.28.28-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.2.68-.79.87-1.06.18-.28.37-.23.62-.14.26.1 1.63.77 1.9.91.28.14.46.21.53.33.07.12.07.68-.17 1.36Z"
+                  />
+                </svg>
+              </span>
+              <span class="contact__card-label">WhatsApp</span>
+              <span class="contact__card-value">(99) 98468-6139</span>
+            </a>
+
+            <a
+              class="contact__card"
+              href="https://instagram.com/alex.sousadev"
+              target="_blank"
+              rel="noopener"
+              aria-label="Abrir perfil do Instagram de Alex Sousa"
+            >
+              <span class="contact__card-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.2" cy="6.8" r="1" />
+                </svg>
+              </span>
+              <span class="contact__card-label">Instagram</span>
+              <span class="contact__card-value">alex.sousadev</span>
+            </a>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- FOOTER -->
+    <!-- ================= FOOTER ================= -->
     <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <span class="logo-text">Alex Sousa<strong>Dev</strong></span>
-          <p>Desenvolvendo o futuro digital, uma linha de código por vez.</p>
-        </div>
-        <div class="footer-links">
-          <h4>Navegação</h4>
-          <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#sobre">Sobre</a></li>
-            <li><a href="#servico">Serviços</a></li>
-            <li><a href="#contato">Contato</a></li>
-          </ul>
-        </div>
-        <div class="footer-social">
-          <h4>Contato</h4>
-          <a href="mailto:alexsousadev.21@gmail.com"
-            >alexsousadev.21@gmail.com</a
-          >
-          <a href="tel:+5599984686139">(99) 98468-6139</a>
-          <a href="https://github.com/alexfullstack-web">GitHub</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 Alex Sousa Dev — Todos os direitos reservados</p>
+      <div class="footer__inner">
+        <p>Portfolio v1.0</p>
+        <p>© 2026 Alex Sousa — Full Stack Developer</p>
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/scroll.js" defer></script>
+    <script src="js/animations.js" defer></script>
+    <script src="js/projects.js" defer></script>
   </body>
 </html>
