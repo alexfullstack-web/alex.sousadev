@@ -1,5 +1,6 @@
 @media (max-width: 900px){
   :root{--gutter:5vw}
+  .hero__visual{right:3vw;width:42vw;opacity:.42}
   .navbar__nav{gap:18px}
   .erp{grid-template-columns:1fr;gap:36px}
   .tech-grid{grid-template-columns:repeat(2,1fr)}
@@ -13,14 +14,17 @@
   .navbar__link{padding:12px 0}
   .navbar__link--cta{padding:10px 14px;text-align:center;margin-top:5px}
   .hero{padding-bottom:90px}
+  .hero__visual{top:15%;right:5vw;width:90vw;opacity:.2;transform:rotate(0)}
+  .hero__visual::after{background:rgba(7,8,11,.58)}
   .hero__title{font-size:clamp(3rem,16vw,5rem)}
   .hero__actions{width:100%;flex-direction:column;align-items:stretch}
   .btn{justify-content:center}
-  .camera{height:430vh}
+  .camera{height:590vh}
   .camera__caption{left:var(--gutter);bottom:32px;right:var(--gutter)}
   .camera__caption-text{font-size:1.25rem}
   .camera__tags{right:var(--gutter);top:auto;bottom:90px;gap:6px;font-size:.65rem}
   .camera__tags li{padding:5px 8px}
+  .camera__result-card{right:var(--gutter);top:16%;left:var(--gutter);}
   .code-window__body{font-size:.62rem;line-height:1.5;padding:14px;max-height:45vh}
   .camera__pill-list{gap:6px;font-size:.65rem}
   .camera__pill-list li{padding:5px 9px}

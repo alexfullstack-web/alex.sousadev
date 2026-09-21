@@ -3,17 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alex Sousa — Desenvolvedor Full Stack</title>
+    <title>Alex Sousa | Desenvolvedor Full Stack</title>
     <meta
       name="description"
-      content="Alex Sousa, desenvolvedor Full Stack. HTML, CSS, JavaScript, Node.js, Express, JWT, bcrypt, Prisma e MongoDB. Conheça o projeto ERP e outros sistemas."
+      content="Alex Sousa, desenvolvedor Full Stack. Node.js, Express, JWT, Prisma e MongoDB. Conheça o ERP Alex Sousa e a assistente Mariana IA."
     />
-    <meta name="theme-color" content="#07080B" />
+    <meta name="theme-color" content="#0A0E14" />
+    <meta property="og:title" content="Alex Sousa | Desenvolvedor Full Stack" />
+    <meta property="og:description" content="Portfólio de Alex Sousa — sistemas web completos, do frontend ao banco de dados." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="img/logo.png" />
+    <link rel="icon" href="img/logo.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
@@ -24,23 +29,15 @@
   <body>
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
-    <!-- ================= CANVAS DE FUNDO (partículas) ================= -->
-    <canvas id="bg-canvas" aria-hidden="true"></canvas>
-
     <!-- ================= NAVBAR ================= -->
     <header class="navbar" id="navbar">
       <div class="navbar__inner">
         <a href="#inicio" class="navbar__brand">
-          <span class="navbar__brand-mark">AS</span>
+          <img src="img/logo.png" alt="Alex Sousa Tech" class="navbar__brand-logo" width="34" height="34" />
           <span class="navbar__brand-name">Alex Sousa</span>
         </a>
 
-        <nav
-          class="navbar__nav"
-          id="navbar-nav"
-          aria-label="Navegação principal"
-        >
-          <a href="#inicio" class="navbar__link">Início</a>
+        <nav class="navbar__nav" id="navbar-nav" aria-label="Navegação principal">
           <a href="#sobre" class="navbar__link">Sobre</a>
           <a href="#tecnologias" class="navbar__link">Skills</a>
           <a href="#projetos" class="navbar__link">Projetos</a>
@@ -64,283 +61,73 @@
       <!-- ================= HERO ================= -->
       <section class="hero" id="inicio">
         <div class="hero__grid" aria-hidden="true"></div>
-        <div class="hero__content">
-          <p class="hero__eyebrow">// full stack developer</p>
-          <h1 class="hero__title">Alex Sousa</h1>
-          <p class="hero__role">Desenvolvedor Full Stack</p>
-          <p class="hero__lede">
-            Transformo ideias em sistemas web modernos, funcionais e escaláveis.
-          </p>
 
-          <div class="hero__badge">
-            <span class="hero__badge-dot" aria-hidden="true"></span>
-            6 meses de experiência prática
-          </div>
-
-          <div class="hero__actions">
-            <a href="#projetos" class="btn btn--primary">Ver projetos</a>
-            <a href="#sobre" class="btn btn--ghost">Conhecer meu trabalho</a>
-          </div>
-
-          <ul class="hero__stack" aria-label="Tecnologias principais">
-            <li>HTML</li>
-            <li>CSS</li>
-            <li>JavaScript</li>
-            <li>Node.js</li>
-            <li>Express</li>
-            <li>Prisma</li>
-            <li>MongoDB</li>
-          </ul>
-        </div>
-
-        <div class="hero__scroll-cue" aria-hidden="true">
-          <span>scroll</span>
-          <div class="hero__scroll-line"><i></i></div>
-        </div>
-      </section>
-
-      <!-- ================= SEQUÊNCIA CINEMATOGRÁFICA ================= -->
-      <section
-        class="camera"
-        id="camera-sequence"
-        aria-label="Jornada visual: da empresa ao código"
-      >
-        <div class="camera__stage" id="camera-stage">
-          <!-- layer 0: intro label -->
-          <div class="camera__layer camera__layer--intro" data-layer="intro">
-            <p class="camera__kicker">// iniciando a jornada</p>
-            <p class="camera__hint">role para continuar</p>
-          </div>
-
-          <!-- layer 1: empresa -->
-          <figure class="camera__layer camera__layer--img" data-layer="empresa">
-            <img
-              src="img/empresa.jpg"
-              alt="Fachada iluminada de um prédio corporativo moderno à noite"
-              loading="lazy"
-            />
-            <figcaption class="camera__caption">
-              <span class="camera__caption-tag">01</span>
-              <span class="camera__caption-text">Entrando na empresa</span>
-            </figcaption>
-          </figure>
-
-          <!-- layer 2: equipe -->
-          <figure class="camera__layer camera__layer--img" data-layer="equipe">
-            <img
-              src="img/equepe.jpg"
-              alt="Equipe de desenvolvedores trabalhando em um escritório moderno"
-              loading="lazy"
-            />
-            <figcaption class="camera__caption">
-              <span class="camera__caption-tag">02</span>
-              <span class="camera__caption-text">A equipe em ação</span>
-            </figcaption>
-            <ul class="camera__tags" aria-hidden="true">
-              <li style="--d: 0">PLANNING</li>
-              <li style="--d: 1">DEVELOPMENT</li>
-              <li style="--d: 2">API</li>
-              <li style="--d: 3">DATABASE</li>
-              <li style="--d: 4">DEPLOYMENT</li>
-            </ul>
-          </figure>
-
-          <!-- layer 3: computador -->
-          <figure
-            class="camera__layer camera__layer--img"
-            data-layer="computador"
-          >
-            <img
-              src="img/progamado.jpg"
-              alt="Desenvolvedor em frente a dois monitores durante uma sessão de código"
-              loading="lazy"
-            />
-            <figcaption class="camera__caption">
-              <span class="camera__caption-tag">03</span>
-              <span class="camera__caption-text"
-                >Um desenvolvedor, um computador</span
-              >
-            </figcaption>
-          </figure>
-
-          <!-- layer 4: entrando na tela / código -->
-          <figure
-            class="camera__layer camera__layer--img camera__layer--screen"
-            data-layer="tela"
-          >
-            <img
-              src="img/codigo.jpg"
-              alt="Close-up de linhas de código coloridas em um monitor"
-              loading="lazy"
-            />
-            <div class="camera__code-window" aria-hidden="true">
-              <div class="code-window">
-                <div class="code-window__bar">
-                  <span class="code-window__dot"></span
-                  ><span class="code-window__dot"></span
-                  ><span class="code-window__dot"></span>
-                  <span class="code-window__title">server.js</span>
-                </div>
-                <pre
-                  class="code-window__body"
-                ><code><span class="tok-kw">const</span> app = <span class="tok-fn">express</span>();
-
-app.<span class="tok-fn">use</span>(<span class="tok-fn">cors</span>());
-app.<span class="tok-fn">use</span>(express.<span class="tok-fn">json</span>());
-
-app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, <span class="tok-kw">async</span> (req, res) => {
-  <span class="tok-cm">// authentication</span>
-  <span class="tok-kw">const</span> user = <span class="tok-kw">await</span> prisma.usuario.<span class="tok-fn">findUnique</span>({
-    where: { email: req.body.email }
-  });
-
-  <span class="tok-kw">const</span> valid = <span class="tok-kw">await</span> bcrypt.<span class="tok-fn">compare</span>(
-    req.body.senha, user.senha
-  );
-
-  <span class="tok-kw">const</span> token = jwt.<span class="tok-fn">sign</span>(
-    { id: user.id }, process.env.JWT_SECRET
-  );
-
-  res.<span class="tok-fn">json</span>({ token });
-});</code></pre>
-              </div>
-              <ul class="camera__pill-list">
-                <li>JWT</li>
-                <li>bcrypt</li>
-                <li>Prisma</li>
-                <li>MongoDB</li>
-                <li>REST API</li>
-                <li>Node.js</li>
-                <li>Express</li>
-              </ul>
-            </div>
-          </figure>
-        </div>
-
-        <!-- fundo de código: transição para a próxima seção -->
-        <div class="code-rain" id="code-rain" aria-hidden="true"></div>
-      </section>
-
-      <!-- ================= PROJETOS ================= -->
-      <section class="projects" id="projetos">
-        <div class="section-head">
-          <p class="section-head__kicker">// meus projetos</p>
-          <h2 class="section-head__title">Sistemas que eu construí</h2>
-          <p class="section-head__lede">
-            Uma seleção de projetos práticos com foco em arquitetura Full Stack,
-            autenticação e integração com banco de dados.
-          </p>
-        </div>
-
-        <!-- Projeto principal: ERP -->
-        <article class="erp" id="erp">
-          <div class="erp__visual">
-            <img
-              src="img/fundo8.jpg"
-              alt="Interface de código representando o painel do sistema ERP Alex Sousa"
-              loading="lazy"
-            />
-            <div class="erp__visual-glow" aria-hidden="true"></div>
-            <div class="erp__modules" aria-hidden="true">
-              <span style="--d: 0">Dashboard</span>
-              <span style="--d: 1">CRM</span>
-              <span style="--d: 2">Clientes</span>
-              <span style="--d: 3">Leads</span>
-              <span style="--d: 4">Projetos</span>
-              <span style="--d: 5">Tarefas</span>
-              <span style="--d: 6">Financeiro</span>
-              <span style="--d: 7">Usuários</span>
-              <span style="--d: 8">Hospedagens</span>
-              <span style="--d: 9">Domínios</span>
-              <span style="--d: 10">APIs</span>
-            </div>
-          </div>
-          <div class="erp__content">
-            <p class="erp__tag">Projeto principal</p>
-            <h3 class="erp__title">ERP Alex Sousa</h3>
-            <p class="erp__desc">
-              Sistema ERP desenvolvido para gerenciamento empresarial,
-              integrando diferentes módulos em uma única plataforma.
+        <div class="hero__inner">
+          <div class="hero__content">
+            <p class="hero__eyebrow">Desenvolvedor Full Stack</p>
+            <h1 class="hero__title">Alex Sousa</h1>
+            <p class="hero__lede">
+              Construo sistemas web do frontend ao banco de dados: interfaces
+              claras, APIs seguras e dados bem estruturados.
             </p>
-            <ul class="erp__list">
-              <li>Dashboard</li>
-              <li>CRM</li>
-              <li>Clientes</li>
-              <li>Leads</li>
-              <li>Projetos</li>
-              <li>Tarefas</li>
-              <li>Financeiro</li>
-              <li>Usuários</li>
-              <li>Hospedagens</li>
-              <li>Domínios</li>
-              <li>APIs</li>
-            </ul>
-            <ul class="erp__stack">
+
+            <div class="hero__actions">
+              <a href="#projetos" class="btn btn--primary">Ver projetos</a>
+              <a href="#contato" class="btn btn--ghost">Entrar em contato</a>
+            </div>
+
+            <ul class="hero__stack" aria-label="Tecnologias principais">
+              <li>JavaScript</li>
               <li>Node.js</li>
               <li>Express</li>
-              <li>JWT</li>
-              <li>bcrypt</li>
               <li>Prisma</li>
               <li>MongoDB</li>
+              <li>JWT</li>
             </ul>
-            <div class="erp__actions">
-              <a
-                href="https://github.com/alexfullstack-web"
-                class="btn btn--primary"
-                target="_blank"
-                rel="noopener"
-                >GitHub</a
-              >
-              <a href="#contato" class="btn btn--ghost">Ver projeto</a>
+          </div>
+
+          <div class="hero__portrait">
+            <div class="hero__portrait-frame">
+              <img src="img/perfil.jpeg" alt="Foto de Alex Sousa" width="600" height="600" fetchpriority="high" decoding="async" />
+            </div>
+            <div class="hero__portrait-card">
+              <span class="hero__portrait-dot" aria-hidden="true"></span>
+              Disponível para novos projetos
             </div>
           </div>
-        </article>
-
-        <!-- Grid de outros projetos -->
-        <div class="project-grid" id="project-grid">
-          <!-- os cards são renderizados via js/projects.js -->
         </div>
       </section>
 
-      <!-- ================= ARQUITETURA ================= -->
-      <section class="architecture" id="arquitetura">
+      <!-- ================= SOBRE MIM ================= -->
+      <section class="about" id="sobre">
         <div class="section-head">
-          <p class="section-head__kicker">
-            // como um sistema full stack funciona
-          </p>
-          <h2 class="section-head__title">Da interface ao banco de dados</h2>
+          <p class="section-head__kicker">Sobre mim</p>
+          <h2 class="section-head__title">Quem constrói o que você vai ver aqui</h2>
         </div>
 
-        <div class="arch-flow" id="arch-flow">
-          <div class="arch-node" style="--i: 0">
-            <span class="arch-node__label">Frontend</span>
-            <span class="arch-node__detail">HTML · CSS · JavaScript</span>
+        <div class="about__body">
+          <div class="about__visual">
+            <img src="img/perfil.jpeg" alt="Alex Sousa" width="900" height="1100" loading="lazy" decoding="async" />
           </div>
-          <div class="arch-line" style="--i: 0"></div>
-          <div class="arch-node" style="--i: 1">
-            <span class="arch-node__label">REST API</span>
-            <span class="arch-node__detail">rotas e endpoints</span>
-          </div>
-          <div class="arch-line" style="--i: 1"></div>
-          <div class="arch-node" style="--i: 2">
-            <span class="arch-node__label">Node.js + Express</span>
-            <span class="arch-node__detail">servidor e middlewares</span>
-          </div>
-          <div class="arch-line" style="--i: 2"></div>
-          <div class="arch-node" style="--i: 3">
-            <span class="arch-node__label">JWT · bcrypt</span>
-            <span class="arch-node__detail">autenticação e segurança</span>
-          </div>
-          <div class="arch-line" style="--i: 3"></div>
-          <div class="arch-node" style="--i: 4">
-            <span class="arch-node__label">Prisma</span>
-            <span class="arch-node__detail">camada de acesso a dados</span>
-          </div>
-          <div class="arch-line" style="--i: 4"></div>
-          <div class="arch-node" style="--i: 5">
-            <span class="arch-node__label">MongoDB</span>
-            <span class="arch-node__detail">persistência dos dados</span>
+          <div class="about__content">
+            <p class="about__text">
+              Sou Alex Sousa, desenvolvedor Full Stack. Trabalho com o
+              ciclo completo de um sistema web: interface, API, autenticação
+              e banco de dados, sempre buscando código legível e decisões de
+              arquitetura que se sustentam quando o projeto cresce.
+            </p>
+            <p class="about__text">
+              No dia a dia, isso significa desenhar rotas REST claras,
+              proteger dados com JWT e bcrypt, e modelar dados com Prisma e
+              MongoDB de um jeito que facilita manutenção — não só que
+              funciona na primeira tentativa.
+            </p>
+            <ul class="about__traits">
+              <li>Aprendizado contínuo</li>
+              <li>Organização</li>
+              <li>Atenção a detalhes</li>
+              <li>Comunicação direta</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -348,7 +135,7 @@ app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, 
       <!-- ================= TECNOLOGIAS ================= -->
       <section class="tech" id="tecnologias">
         <div class="section-head">
-          <p class="section-head__kicker">// stack</p>
+          <p class="section-head__kicker">Stack</p>
           <h2 class="section-head__title">Tecnologias que utilizo</h2>
         </div>
 
@@ -366,57 +153,111 @@ app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, 
             <ul class="tech-group__list">
               <li><span class="tech-dot"></span>Node.js</li>
               <li><span class="tech-dot"></span>Express.js</li>
-              <li><span class="tech-dot"></span>CORS</li>
-              <li><span class="tech-dot"></span>JWT</li>
-              <li><span class="tech-dot"></span>bcrypt</li>
+              <li><span class="tech-dot"></span>JWT &amp; bcrypt</li>
+              <li><span class="tech-dot"></span>REST APIs</li>
             </ul>
           </div>
           <div class="tech-group">
-            <h3 class="tech-group__title">Banco de dados</h3>
+            <h3 class="tech-group__title">Dados</h3>
             <ul class="tech-group__list">
               <li><span class="tech-dot"></span>Prisma</li>
               <li><span class="tech-dot"></span>MongoDB</li>
             </ul>
           </div>
         </div>
+
+        <div class="arch-flow" id="arch-flow" aria-label="Fluxo de uma requisição, do frontend ao banco de dados">
+          <div class="arch-node"><span class="arch-node__label">Frontend</span></div>
+          <div class="arch-line"></div>
+          <div class="arch-node"><span class="arch-node__label">REST API</span></div>
+          <div class="arch-line"></div>
+          <div class="arch-node"><span class="arch-node__label">Node.js + Express</span></div>
+          <div class="arch-line"></div>
+          <div class="arch-node"><span class="arch-node__label">JWT · bcrypt</span></div>
+          <div class="arch-line"></div>
+          <div class="arch-node"><span class="arch-node__label">Prisma</span></div>
+          <div class="arch-line"></div>
+          <div class="arch-node"><span class="arch-node__label">MongoDB</span></div>
+        </div>
       </section>
 
-      <!-- ================= SOBRE MIM ================= -->
-      <section class="about" id="sobre">
-        <div class="about__visual">
-          <img
-            src="img/ai.jpg"
-            alt="Tela de código próxima a um teclado de notebook"
-            loading="lazy"
-          />
-        </div>
-        <div class="about__content">
-          <p class="section-head__kicker">// sobre mim</p>
-          <h2 class="section-head__title">Sobre mim</h2>
-          <p class="about__text">
-            Sou Alex Sousa, desenvolvedor Full Stack focado na criação de
-            aplicações web modernas, sistemas administrativos e soluções
-            digitais.
+      <!-- ================= PROJETOS ================= -->
+      <section class="projects" id="projetos">
+        <div class="section-head">
+          <p class="section-head__kicker">Projetos</p>
+          <h2 class="section-head__title">Sistemas que eu construí</h2>
+          <p class="section-head__lede">
+            Projetos com foco em arquitetura Full Stack, autenticação e
+            integração com banco de dados.
           </p>
-          <p class="about__text">
-            Tenho 6 meses de experiência prática desenvolvendo projetos com
-            tecnologias de frontend, backend e banco de dados.
-          </p>
-          <ul class="about__traits">
-            <li>Evolução constante</li>
-            <li>Aprendizado contínuo</li>
-            <li>Responsabilidade</li>
-            <li>Organização</li>
-            <li>Interesse genuíno por tecnologia</li>
-            <li>Desenvolvimento de sistemas reais</li>
-          </ul>
         </div>
+
+        <!-- Projeto: ERP -->
+        <article class="project-feature" id="erp">
+          <div class="project-feature__visual">
+            <div class="project-feature__glow" aria-hidden="true"></div>
+            <div class="project-feature__modules" aria-hidden="true">
+              <span>Dashboard</span>
+              <span>CRM</span>
+              <span>Clientes</span>
+              <span>Leads</span>
+              <span>Financeiro</span>
+              <span>Usuários</span>
+              <span>APIs</span>
+            </div>
+          </div>
+          <div class="project-feature__content">
+            <p class="project-feature__tag">Projeto principal</p>
+            <h3 class="project-feature__title">ERP Alex Sousa</h3>
+            <p class="project-feature__desc">
+              Sistema de gestão empresarial que reúne CRM, clientes, leads,
+              projetos, financeiro e controle de usuários em uma única
+              plataforma.
+            </p>
+            <ul class="project-feature__stack">
+              <li>Node.js</li>
+              <li>Express</li>
+              <li>JWT</li>
+              <li>bcrypt</li>
+              <li>Prisma</li>
+              <li>MongoDB</li>
+            </ul>
+            <div class="project-feature__actions">
+              <a href="https://github.com/alexfullstack-web" class="btn btn--primary" target="_blank" rel="noopener">Ver no GitHub</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Projeto: Mariana IA -->
+        <article class="project-feature project-feature--reverse" id="mariana-ia">
+          <div class="project-feature__visual project-feature__visual--image">
+            <img src="img/mariana-ia.png" alt="Mariana IA — assistente de suporte e atendimento" width="900" height="900" loading="lazy" decoding="async" />
+          </div>
+          <div class="project-feature__content">
+            <p class="project-feature__tag">Assistente de atendimento</p>
+            <h3 class="project-feature__title">Mariana IA</h3>
+            <p class="project-feature__desc">
+              Assistente de suporte e atendimento integrada a sistemas web,
+              feita para responder dúvidas e acompanhar solicitações de
+              usuários em tempo real.
+            </p>
+            <ul class="project-feature__stack">
+              <li>Node.js</li>
+              <li>Express</li>
+              <li>API de IA</li>
+              <li>MongoDB</li>
+            </ul>
+            <div class="project-feature__actions">
+              <a href="#contato" class="btn btn--ghost">Saiba mais</a>
+            </div>
+          </div>
+        </article>
       </section>
 
       <!-- ================= EXPERIÊNCIA ================= -->
       <section class="timeline" id="experiencia">
         <div class="section-head">
-          <p class="section-head__kicker">// trajetória</p>
+          <p class="section-head__kicker">Trajetória</p>
           <h2 class="section-head__title">Experiência</h2>
         </div>
 
@@ -427,11 +268,11 @@ app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, 
               <p class="timeline__date">2026 — Atualmente</p>
               <h3 class="timeline__role">Desenvolvedor Full Stack</h3>
               <p class="timeline__desc">
-                Experiência prática com HTML, CSS, JavaScript, Node.js, Express,
-                JWT, bcrypt, Prisma e MongoDB, construindo sistemas web
-                completos do frontend ao banco de dados.
+                Desenvolvimento de sistemas web completos — frontend, API,
+                autenticação e banco de dados — com HTML, CSS, JavaScript,
+                Node.js, Express, JWT, bcrypt, Prisma e MongoDB. Projetos de
+                referência: ERP Alex Sousa e Mariana IA.
               </p>
-              <p class="timeline__badge">6 meses de experiência prática</p>
             </div>
           </div>
         </div>
@@ -440,25 +281,16 @@ app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, 
       <!-- ================= CONTATO ================= -->
       <section class="contact" id="contato">
         <div class="contact__inner">
-          <p class="section-head__kicker">// contato</p>
+          <p class="section-head__kicker">Contato</p>
           <h2 class="contact__title">Vamos construir algo juntos?</h2>
           <p class="contact__lede">
             Estou aberto a oportunidades, projetos e conexões profissionais.
           </p>
 
           <div class="contact__grid">
-            <a
-              class="contact__card"
-              href="mailto:alexsousadev.21@gmail.com"
-              aria-label="Enviar e-mail para Alex Sousa"
-            >
+            <a class="contact__card" href="mailto:alexsousadev.21@gmail.com" aria-label="Enviar e-mail para Alex Sousa">
               <span class="contact__card-icon" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                   <path d="M3 6h18v12H3z" />
                   <path d="M3 6l9 7 9-7" />
                 </svg>
@@ -467,56 +299,29 @@ app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, 
               <span class="contact__card-value">alexsousadev.21@gmail.com</span>
             </a>
 
-            <a
-              class="contact__card"
-              href="https://github.com/alexfullstack-web"
-              target="_blank"
-              rel="noopener"
-              aria-label="Abrir perfil do GitHub de Alex Sousa"
-            >
+            <a class="contact__card" href="https://github.com/alexfullstack-web" target="_blank" rel="noopener" aria-label="Abrir perfil do GitHub de Alex Sousa">
               <span class="contact__card-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.7-1.28-1.7-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a10.9 10.9 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.6.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.08.78 2.18 0 1.57-.02 2.84-.02 3.23 0 .3.2.66.79.55A10.51 10.51 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5Z"
-                  />
+                  <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.7-1.28-1.7-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a10.9 10.9 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.6.23 2.77.11 3.06.74.8 1.19 1.83 1.19 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.08.78 2.18 0 1.57-.02 2.84-.02 3.23 0 .3.2.66.79.55A10.51 10.51 0 0 0 23.5 12c0-6.27-5.23-11.5-11.5-11.5Z" />
                 </svg>
               </span>
               <span class="contact__card-label">GitHub</span>
               <span class="contact__card-value">alexfullstack-web</span>
             </a>
 
-            <a
-              class="contact__card"
-              href="https://wa.me/5599984686139"
-              target="_blank"
-              rel="noopener"
-              aria-label="Iniciar conversa no WhatsApp com Alex Sousa"
-            >
+            <a class="contact__card" href="https://wa.me/5599984686139" target="_blank" rel="noopener" aria-label="Iniciar conversa no WhatsApp com Alex Sousa">
               <span class="contact__card-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path
-                    d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.06-1.33A10 10 0 1 0 12 2Zm5.63 14.13c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.16-4.94-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.48-.14.14-.28.28-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.2.68-.79.87-1.06.18-.28.37-.23.62-.14.26.1 1.63.77 1.9.91.28.14.46.21.53.33.07.12.07.68-.17 1.36Z"
-                  />
+                  <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.06-1.33A10 10 0 1 0 12 2Zm5.63 14.13c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.8-4.16-4.94-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.48-.14.14-.28.28-.12.56.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.2.68-.79.87-1.06.18-.28.37-.23.62-.14.26.1 1.63.77 1.9.91.28.14.46.21.53.33.07.12.07.68-.17 1.36Z" />
                 </svg>
               </span>
               <span class="contact__card-label">WhatsApp</span>
               <span class="contact__card-value">(99) 98468-6139</span>
             </a>
 
-            <a
-              class="contact__card"
-              href="https://instagram.com/alex.sousadev"
-              target="_blank"
-              rel="noopener"
-              aria-label="Abrir perfil do Instagram de Alex Sousa"
-            >
+            <a class="contact__card" href="https://instagram.com/alex.sousadev" target="_blank" rel="noopener" aria-label="Abrir perfil do Instagram de Alex Sousa">
               <span class="contact__card-icon" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                   <rect x="3" y="3" width="18" height="18" rx="5" />
                   <circle cx="12" cy="12" r="4" />
                   <circle cx="17.2" cy="6.8" r="1" />
@@ -533,14 +338,21 @@ app.<span class="tok-fn">post</span>(<span class="tok-str">"/api/login"</span>, 
     <!-- ================= FOOTER ================= -->
     <footer class="footer">
       <div class="footer__inner">
-        <p>Portfolio v1.0</p>
-        <p>© 2026 Alex Sousa — Full Stack Developer</p>
+        <div class="footer__brand">
+          <img src="img/logo.png" alt="" width="22" height="22" />
+          <p>Alex Sousa — Full Stack Developer</p>
+        </div>
+        <nav class="footer__links" aria-label="Links de contato">
+          <a href="mailto:alexsousadev.21@gmail.com">E-mail</a>
+          <a href="https://github.com/alexfullstack-web" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://wa.me/5599984686139" target="_blank" rel="noopener">WhatsApp</a>
+          <a href="https://instagram.com/alex.sousadev" target="_blank" rel="noopener">Instagram</a>
+        </nav>
+        <p class="footer__meta">Portfolio v2.0 · © 2026 Alex Sousa</p>
       </div>
     </footer>
 
     <script src="js/main.js" defer></script>
-    <script src="js/scroll.js" defer></script>
     <script src="js/animations.js" defer></script>
-    <script src="js/projects.js" defer></script>
   </body>
 </html>

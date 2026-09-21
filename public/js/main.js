@@ -6,6 +6,11 @@
   const context = canvas?.getContext('2d');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  document.querySelectorAll('img[data-fallback]').forEach((image) => image.addEventListener('error', () => {
+    const fallback = image.dataset.fallback;
+    if (fallback && image.src !== new URL(fallback, document.baseURI).href) image.src = fallback;
+  }, { once: true }));
+
   toggle?.addEventListener('click', () => {
     const open = nav.classList.toggle('is-open');
     toggle.setAttribute('aria-expanded', String(open));

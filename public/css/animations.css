@@ -3,6 +3,8 @@
 @keyframes pulse-dot{0%,100%{box-shadow:0 0 0 3px var(--accent-dim)}50%{box-shadow:0 0 0 7px transparent}}
 @keyframes code-fall{from{transform:translateY(-8%)}to{transform:translateY(108%)}}
 @keyframes node-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes result-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes hero-image-in{from{opacity:0;transform:translateY(18px) rotate(2deg)}to{opacity:.72;transform:translateY(0) rotate(2deg)}}
 .hero__badge-dot{animation:pulse-dot 2.4s ease-in-out infinite}
 .arch-line::after{animation:node-pulse 2s ease-in-out infinite}
 .code-rain span{animation:code-fall var(--speed,18s) linear infinite;animation-delay:var(--delay,0s)}
