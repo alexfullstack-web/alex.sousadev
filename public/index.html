@@ -27,6 +27,10 @@
 </head>
 
 <body>
+  <div class="site-bg" aria-hidden="true">
+    <canvas id="bg-canvas" class="site-bg__canvas"></canvas>
+  </div>
+
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
   <!-- ================= NAVBAR ================= -->
@@ -226,6 +230,33 @@
         </div>
       </article>
 
+      <!-- Projeto: Alex Sousa Tech -->
+      <article class="project-feature" id="alex-sousa-tech">
+        <div class="project-feature__visual project-feature__visual--image">
+          <img src="img/alexsousatech-preview.jpg" alt="Página inicial do site Alex Sousa Tech" width="1348"
+            height="643" loading="lazy" decoding="async" />
+        </div>
+        <div class="project-feature__content">
+          <p class="project-feature__tag">Site da empresa</p>
+          <h3 class="project-feature__title">Alex Sousa Tech</h3>
+          <p class="project-feature__desc">
+            Site institucional da minha empresa, apresentando os serviços
+            de desenvolvimento web, apps, SaaS e automação que ofereço, do
+            front-end à IA.
+          </p>
+          <ul class="project-feature__stack">
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li>Node.js</li>
+          </ul>
+          <div class="project-feature__actions">
+            <a href="https://alexsousatech.vercel.app/" class="btn btn--primary" target="_blank"
+              rel="noopener">Visitar site</a>
+          </div>
+        </div>
+      </article>
+
       <!-- Projeto: Mariana IA -->
       <article class="project-feature project-feature--reverse" id="mariana-ia">
         <div class="project-feature__visual project-feature__visual--image">
@@ -358,6 +389,7 @@
 
   <script src="js/main.js" defer></script>
   <script src="js/animations.js" defer></script>
+  <script src="js/bg.js" defer></script>
 </body>
 
 </html>
