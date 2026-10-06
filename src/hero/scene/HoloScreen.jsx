@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { HOLO_CODE, TIMELINE, progress, easeOutExpo } from '../config.js';
+import { HOLO_CODES, TIMELINE, progress, easeOutExpo, variantState, ASTRO_VARIANTS, SWITCH } from '../config.js';
 
 /*
-  Interface holográfica projetada pelo notebook. O código é desenhado em um
-  canvas 2D (texto nítido) e só é redesenhado quando muda — não a cada frame.
-  O shader adiciona scanlines, moldura brilhante, flicker de abertura e ruído.
+  Painel holográfico GRANDE de código ao lado do astronauta.
+  O código é desenhado em canvas 2D (texto nítido) e só é redesenhado
+  quando muda. A cada troca de astronauta um novo trecho é digitado.
 */
-const W = 768;
-const H = 492;
+const W = 1024;
+const H = 704;
+const CPS = 42; // caracteres por segundo
 
 const COLORS = {
   kw: '#7fb0ff',
@@ -30,64 +31,67 @@ const fragment = /* glsl */ `
   uniform sampler2D uMap;
   uniform float uOpen;
   uniform float uTime;
+  uniform float uGlitch;
   varying vec2 vUv;
   float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
   void main() {
-    // abertura: revela do centro para as bordas (vertical)
     float reveal = step(abs(vUv.y - 0.5) * 2.0, uOpen);
     vec2 uv = vUv;
-    // leve distorção horizontal ocasional (glitch muito sutil)
-    float g = step(0.985, hash(vec2(floor(uTime * 8.0), floor(uv.y * 30.0))));
-    uv.x += g * 0.006;
+    float g = step(0.985 - uGlitch * 0.2, hash(vec2(floor(uTime * 12.0), floor(uv.y * 40.0))));
+    uv.x += g * (0.006 + uGlitch * 0.02);
 
     vec4 tex = texture2D(uMap, uv);
     vec3 base = vec3(0.04, 0.16, 0.42);
     float edgeX = min(vUv.x, 1.0 - vUv.x);
     float edgeY = min(vUv.y, 1.0 - vUv.y);
-    float edge = min(edgeX * 1.6, edgeY);
-    float frame = smoothstep(0.012, 0.0, edge) * 0.9 + smoothstep(0.08, 0.0, edge) * 0.25;
-    float scan = 0.82 + 0.18 * sin(vUv.y * 420.0 + uTime * 3.0);
-    float sweep = exp(-pow((vUv.y - fract(uTime * 0.18)) * 18.0, 2.0)) * 0.18;
+    float edge = min(edgeX * 1.55, edgeY);
+    float frame = smoothstep(0.008, 0.0, edge) * 0.95 + smoothstep(0.06, 0.0, edge) * 0.22;
+    // cantoneiras
+    float cx = step(edgeX, 0.06) * step(edgeY, 0.09);
+    frame += cx * smoothstep(0.016, 0.0, edge) * 0.8;
+    float scan = 0.84 + 0.16 * sin(vUv.y * 560.0 + uTime * 3.0);
+    float sweep = exp(-pow((vUv.y - fract(uTime * 0.16)) * 16.0, 2.0)) * 0.16;
     float flicker = mix(0.55 + 0.45 * step(0.4, hash(vec2(floor(uTime * 30.0), 1.0))), 1.0, smoothstep(0.6, 1.0, uOpen));
 
-    vec3 col = base * 0.6 + tex.rgb * tex.a * 1.7;
+    vec3 col = base * 0.6 + tex.rgb * tex.a * 1.75;
     col += vec3(0.35, 0.62, 1.0) * (frame + sweep);
-    float a = (0.3 + tex.a * 0.9 + frame * 0.8 + sweep) * scan * flicker * reveal * smoothstep(0.0, 0.25, uOpen);
+    float a = (0.34 + tex.a * 0.9 + frame * 0.8 + sweep) * scan * flicker * reveal * smoothstep(0.0, 0.25, uOpen);
     gl_FragColor = vec4(col * scan, clamp(a, 0.0, 1.0));
   }
 `;
 
-function drawFrame(ctx, typedChars, caretOn, showOutput) {
+const totalChars = (lines) => lines.reduce((n, line) => n + line.reduce((m, [t]) => m + t.length, 0) + 1, 0);
+const TOTALS = HOLO_CODES.map((c) => totalChars(c.lines));
+
+function drawFrame(ctx, snippet, typedChars, caretOn, showOutput) {
   ctx.clearRect(0, 0, W, H);
 
-  // barra de título
   ctx.fillStyle = 'rgba(120,170,255,0.16)';
-  ctx.fillRect(0, 0, W, 44);
+  ctx.fillRect(0, 0, W, 58);
   ['#4c8dff', '#8ab2ff', '#cfe0ff'].forEach((c, i) => {
     ctx.beginPath();
     ctx.fillStyle = c;
-    ctx.arc(26 + i * 22, 22, 6, 0, Math.PI * 2);
+    ctx.arc(34 + i * 28, 29, 8, 0, Math.PI * 2);
     ctx.fill();
   });
-  ctx.font = '500 19px "IBM Plex Mono", monospace';
-  ctx.fillStyle = 'rgba(210,225,255,0.85)';
-  ctx.fillText('alexSousaTech.js', 104, 29);
+  ctx.font = '500 25px "IBM Plex Mono", monospace';
+  ctx.fillStyle = 'rgba(215,228,255,0.92)';
+  ctx.fillText(snippet.file, 136, 38);
   ctx.textAlign = 'right';
-  ctx.fillStyle = 'rgba(140,180,255,0.75)';
-  ctx.fillText('AS · TECH', W - 22, 29);
+  ctx.fillStyle = 'rgba(140,180,255,0.8)';
+  ctx.fillText('AS · TECH', W - 30, 38);
   ctx.textAlign = 'left';
 
-  // código
-  const lineH = 31;
-  const top = 80;
-  ctx.font = '500 21px "IBM Plex Mono", monospace';
+  const lineH = 44;
+  const top = 108;
+  ctx.font = '500 30px "IBM Plex Mono", monospace';
   let remaining = typedChars;
   let caret = null;
-  HOLO_CODE.forEach((tokens, li) => {
+  snippet.lines.forEach((tokens, li) => {
     const y = top + li * lineH;
     ctx.fillStyle = 'rgba(120,150,210,0.45)';
-    ctx.fillText(String(li + 1).padStart(2, ' '), 18, y);
-    let x = 66;
+    ctx.fillText(String(li + 1).padStart(2, ' '), 22, y);
+    let x = 84;
     if (remaining <= 0) return;
     for (const [text, kind] of tokens) {
       if (remaining <= 0) break;
@@ -97,30 +101,28 @@ function drawFrame(ctx, typedChars, caretOn, showOutput) {
       ctx.fillText(part, x, y);
       x += ctx.measureText(part).width;
     }
-    remaining -= 1; // quebra de linha
+    remaining -= 1;
     caret = { x, y };
   });
 
   if (showOutput) {
-    const y = top + HOLO_CODE.length * lineH + 10;
+    const y = top + snippet.lines.length * lineH + 14;
     ctx.fillStyle = 'rgba(94,225,255,0.95)';
-    ctx.fillText('✓ deploy concluído → Alex Sousa Tech', 66, y);
+    ctx.fillText(snippet.output, 84, y);
   }
 
   if (caret && caretOn) {
     ctx.fillStyle = '#9fd0ff';
-    ctx.fillRect(caret.x + 2, caret.y - 18, 11, 23);
+    ctx.fillRect(caret.x + 3, caret.y - 25, 15, 31);
   }
 }
 
-const TOTAL_CHARS = HOLO_CODE.reduce((n, line) => n + line.reduce((m, [t]) => m + t.length, 0) + 1, 0);
-
-export default function HoloScreen({ clock, size = [2.0, 1.28], ...props }) {
+export default function HoloScreen({ clock, size = [3.4, 2.34], ...props }) {
   const matRef = useRef();
   const meshRef = useRef();
-  const state = useRef({ typed: -1, caret: false, output: false, fontReady: false });
+  const state = useRef({ key: '' });
 
-  const { canvas, ctx, texture } = useMemo(() => {
+  const { ctx, texture } = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = W;
     canvas.height = H;
@@ -129,17 +131,14 @@ export default function HoloScreen({ clock, size = [2.0, 1.28], ...props }) {
     texture.minFilter = THREE.LinearFilter;
     texture.generateMipmaps = false;
     texture.anisotropy = 4;
-    return { canvas, ctx, texture };
+    return { ctx, texture };
   }, []);
 
   useEffect(() => {
     let alive = true;
     if (document.fonts && document.fonts.load) {
-      document.fonts.load('500 21px "IBM Plex Mono"').finally(() => {
-        if (alive) {
-          state.current.fontReady = true;
-          state.current.typed = -1; // força redesenho com a fonte correta
-        }
+      document.fonts.load('500 27px "IBM Plex Mono"').finally(() => {
+        if (alive) state.current.key = ''; // força redesenho com a fonte correta
       });
     }
     return () => {
@@ -148,27 +147,35 @@ export default function HoloScreen({ clock, size = [2.0, 1.28], ...props }) {
     };
   }, [texture]);
 
-  const uniforms = useMemo(() => ({ uMap: { value: texture }, uOpen: { value: 0 }, uTime: { value: 0 } }), [texture]);
+  const uniforms = useMemo(
+    () => ({ uMap: { value: texture }, uOpen: { value: 0 }, uTime: { value: 0 }, uGlitch: { value: 0 } }),
+    [texture]
+  );
 
   useFrame((s) => {
     const t = clock.current;
     const open = easeOutExpo(progress(t, TIMELINE.holoOpen));
+    const vs = variantState(t, ASTRO_VARIANTS.length);
     const u = matRef.current.uniforms;
     u.uOpen.value = open;
     u.uTime.value = s.clock.elapsedTime;
+    // glitch curto durante a troca de astronauta
+    u.uGlitch.value = vs.cycle > 0 ? Math.max(0, 1 - vs.cycleTime / 0.8) : 0;
     meshRef.current.visible = open > 0.001;
     meshRef.current.position.y = props.position[1] + Math.sin(s.clock.elapsedTime * 0.9) * 0.03;
 
-    // digitação: ~38 caracteres/s
-    const typed = Math.max(0, Math.min(TOTAL_CHARS, Math.floor((t - TIMELINE.codeStart) * 38)));
+    const idx = vs.current % HOLO_CODES.length;
+    const snippet = HOLO_CODES[idx];
+    const total = TOTALS[idx];
+    const typeStart = vs.cycle === 0 ? TIMELINE.codeStart : 0.6;
+    const elapsed = (vs.cycle === 0 ? t : vs.cycleTime) - typeStart;
+    const typed = Math.max(0, Math.min(total, Math.floor(elapsed * CPS)));
     const caretOn = Math.floor(s.clock.elapsedTime * 2.2) % 2 === 0;
-    const output = typed >= TOTAL_CHARS && t > TIMELINE.codeStart + TOTAL_CHARS / 38 + 0.8;
-    const st = state.current;
-    if (open > 0 && (typed !== st.typed || caretOn !== st.caret || output !== st.output)) {
-      st.typed = typed;
-      st.caret = caretOn;
-      st.output = output;
-      drawFrame(ctx, typed, caretOn, output);
+    const output = typed >= total && elapsed > total / CPS + 0.6;
+    const key = `${idx}|${typed}|${caretOn}|${output}`;
+    if (open > 0 && key !== state.current.key) {
+      state.current.key = key;
+      drawFrame(ctx, snippet, typed, caretOn, output);
       texture.needsUpdate = true;
     }
   });
@@ -189,3 +196,5 @@ export default function HoloScreen({ clock, size = [2.0, 1.28], ...props }) {
     </mesh>
   );
 }
+
+export { SWITCH };

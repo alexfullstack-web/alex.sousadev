@@ -1,0 +1,105 @@
+/* =========================================================
+   Missão Terra → Lua (scroll)
+   ========================================================= */
+.mission { position: relative; z-index: 1; height: 600vh; }
+.mission--static { height: auto; }
+.mission__sticky {
+  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #02040a;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.mission__backdrop { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 110%, rgba(30, 80, 200, 0.35), transparent 55%), url('/img/hero/space-sm.webp') center / cover; opacity: 0.6; }
+.mission__canvas { position: absolute !important; inset: 0; opacity: 0; transition: opacity 1.2s ease; }
+.mission.is-ready .mission__canvas { opacity: 1; }
+.mission__shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(2, 4, 10, 0.78) 0%, rgba(2, 4, 10, 0.2) 30%, rgba(2, 4, 10, 0) 45%, rgba(2, 4, 10, 0) 55%, rgba(2, 4, 10, 0.25) 70%, rgba(2, 4, 10, 0.7) 100%); }
+
+.mission__ui {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  max-width: 1440px; margin: 0 auto;
+  padding: calc(var(--nav-h) + 26px) var(--gutter) 28px;
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) 1fr minmax(380px, 560px);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 'head . .' 'card . code' 'hud hud hud';
+  column-gap: 24px;
+}
+.mission__ui > * { pointer-events: auto; min-width: 0; }
+.mission__head { grid-area: head; }
+.mission__heading { font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.15; letter-spacing: -0.01em; max-width: 18ch; }
+.mission__card-slot { grid-area: card; align-self: center; }
+.mission__code { grid-area: code; align-self: center; transition: opacity 0.6s ease, transform 0.6s ease; }
+/* pouso: o painel sai para revelar a bandeira e a Terra ao fundo */
+.mission.is-landed .mission__code { opacity: 0; transform: translateX(40px); pointer-events: none; }
+.mission__hud { grid-area: hud; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+
+.mission-card { padding: 26px 26px 24px; border: 1px solid var(--line-strong); border-radius: 16px; background: linear-gradient(160deg, rgba(10, 22, 50, 0.72), rgba(4, 9, 22, 0.78)); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 30px 70px -30px rgba(47, 123, 255, 0.6); }
+.mission-card__step { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--accent-2); }
+.mission-card__label { font-family: var(--font-display); font-size: clamp(1.8rem, 2.8vw, 2.5rem); line-height: 1.05; margin: 10px 0 6px; letter-spacing: 0.02em; background: linear-gradient(90deg, #fff, #9cc2ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mission-card__title { font-family: var(--font-display); font-weight: 600; font-size: 1.08rem; color: #dce6f7; }
+.mission-card__desc { color: var(--text-dim); font-size: 0.95rem; margin: 10px 0 16px; }
+.mission-card__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mission-card__chips li { font-family: var(--font-mono); font-size: 0.7rem; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(47, 123, 255, 0.1); }
+.mission-card__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.mission-card--final { border-color: rgba(140, 190, 255, 0.6); box-shadow: 0 0 50px -10px rgba(47, 123, 255, 0.7); }
+
+.mission__code .code-panel__body { font-size: clamp(0.82rem, 1.05vw, 1rem); min-height: 22em; }
+
+.mission__telemetry { display: flex; gap: 26px; font-family: var(--font-mono); }
+.mission__telemetry span { display: block; font-size: 0.66rem; letter-spacing: 0.2em; color: var(--text-faint); }
+.mission__telemetry strong { font-size: 1.15rem; font-weight: 500; color: #e9eef7; }
+.mission__telemetry b { font-weight: 500; color: #9cc2ff; font-variant-numeric: tabular-nums; }
+
+.mission__track { display: flex; align-items: flex-end; gap: 6px; }
+.mission__dot { position: relative; width: 74px; height: 26px; border: 0; background: none; padding: 0; display: flex; flex-direction: column; justify-content: flex-end; color: var(--text-faint); }
+.mission__dot::before { content: ''; display: block; height: 3px; border-radius: 3px; background: rgba(140, 180, 255, 0.2); transition: background 0.3s ease, box-shadow 0.3s ease; }
+.mission__dot.is-done::before { background: rgba(76, 141, 255, 0.7); }
+.mission__dot.is-active::before { background: #8ab2ff; box-shadow: 0 0 10px #4c8dff; }
+.mission__dot-label { position: absolute; top: 0; left: 0; right: 0; font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; transition: color 0.3s ease; }
+.mission__dot.is-active .mission__dot-label, .mission__dot:hover .mission__dot-label { color: #dbe6fa; }
+
+.mission__hint { position: absolute; left: 50%; bottom: 90px; transform: translateX(-50%); font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); pointer-events: none; }
+.mission__hint span { display: inline-block; margin-left: 6px; animation: bob 1.4s ease-in-out infinite; color: var(--accent-2); }
+@keyframes bob { 50% { transform: translateY(5px); } }
+
+/* versão estática */
+.mission-static { max-width: var(--max-w); margin: 0 auto; padding: 120px var(--gutter); }
+.mission-static__list { display: grid; gap: 28px; }
+.mission-static__item { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 20px; align-items: start; }
+
+/* tablet/celular em pé */
+@media (max-aspect-ratio: 20/21), (max-width: 900px) {
+  .mission { height: 520vh; }
+  .mission__ui {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-areas: 'head' 'card' '.' 'code' 'hud';
+    row-gap: 10px;
+    padding: calc(var(--nav-h) + 12px) var(--gutter) 14px;
+  }
+  .mission__shade { background: linear-gradient(180deg, rgba(2, 4, 10, 0.85) 0%, rgba(2, 4, 10, 0.3) 36%, rgba(2, 4, 10, 0) 50%, rgba(2, 4, 10, 0.4) 64%, rgba(2, 4, 10, 0.85) 100%); }
+  .mission__head .section-head__kicker { margin-bottom: 4px; font-size: 0.66rem; }
+  .mission__heading { font-size: 1.05rem; max-width: none; }
+  .mission__card-slot, .mission__code { align-self: auto; }
+  .mission-card { padding: 14px 16px; border-radius: 12px; }
+  .mission-card__label { font-size: 1.45rem; margin: 4px 0 2px; }
+  .mission-card__title { font-size: 0.92rem; }
+  .mission-card__desc { display: none; }
+  .mission-card__chips { display: none; }
+  .mission-card--final .mission-card__desc { display: block; font-size: 0.85rem; margin: 6px 0 0; }
+  .mission-card__actions { margin-top: 12px; }
+  .mission-card__actions .ast-btn { padding: 10px 14px; font-size: 0.84rem; }
+  .mission__code .code-panel__bar { padding: 8px 12px; }
+  .mission__code .code-panel__body { font-size: 0.7rem; line-height: 1.6; min-height: 0; max-height: 27vh; padding: 10px 12px; }
+  .mission__hud { flex-direction: column; align-items: stretch; gap: 8px; }
+  .mission__telemetry { justify-content: space-between; }
+  .mission__telemetry strong { font-size: 0.9rem; }
+  .mission__track { gap: 4px; }
+  .mission__dot { flex: 1; width: auto; height: 6px; }
+  .mission__dot-label { display: none; }
+  .mission__hint { display: none; }
+  .mission-static__item { grid-template-columns: 1fr; }
+}
+@media (max-width: 1180px) and (min-aspect-ratio: 20/21) and (min-width: 901px) {
+  .mission__ui { grid-template-columns: minmax(260px, 320px) 1fr minmax(340px, 440px); }
+  .mission__dot { width: 58px; }
+}

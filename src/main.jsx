@@ -1,8 +1,7 @@
 import { createRoot } from 'react-dom/client';
-import HeroSpace from './hero/HeroSpace.jsx';
+import App from './App.jsx';
+import './styles/site.css';
 import './hero/hero.css';
+import './mission/mission.css';
 
-const mount = document.getElementById('hero-root');
-if (mount) {
-  createRoot(mount).render(<HeroSpace />);
-}
+createRoot(document.getElementById('root')).render(<App />);

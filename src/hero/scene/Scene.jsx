@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { TIMELINE, TECH_TAGS, progress, easeOutCubic, easeInOutCubic, lerp, clamp01 } from '../config.js';
+import { TIMELINE, TECH_TAGS, ASTRO_VARIANTS, progress, easeOutCubic, easeInOutCubic, lerp, clamp01 } from '../config.js';
 import Backdrop from './Backdrop.jsx';
 import Starfield from './Starfield.jsx';
 import FlareStars from './FlareStars.jsx';
@@ -23,10 +23,10 @@ function computeLayout(width, height, contentBottom, contentRight) {
     // área livre à direita do texto; o astronauta + holograma precisam caber nela
     const left = (contentRight - 0.5) * visW + 0.15;
     const right = visW / 2 - 0.1;
-    const scale = Math.min(0.98, (visH * 0.95) / ASTRO_H, (right - left) / 4.85);
-    const x = Math.min(right - 2.75 * scale, Math.max(left + 2.1 * scale, visW * 0.23));
+    const scale = Math.min(0.98, (visH * 0.95) / ASTRO_H, (right - left) / 6.25);
+    const x = Math.min(right - 4.15 * scale, Math.max(left + 2.1 * scale, visW * 0.2));
     const y = -visH / 2 + (scale * ASTRO_H) / 2 - 0.55 * scale;
-    return { mobile: false, x, y, scale, spread: 1, spreadY: 1, holo: { pos: [1.72, 1.8, 0.45], scale: 1 } };
+    return { mobile: false, x, y, scale, spread: 1, spreadY: 1, holo: { pos: [2.2, 2.05, 0.5], scale: 1 } };
   }
   // retrato (celular / tablet em pé): astronauta na metade inferior
   const scale = Math.min(0.9, (visW * 0.98) / 4.9);
@@ -39,7 +39,7 @@ function computeLayout(width, height, contentBottom, contentRight) {
     scale,
     spread: 0.62,
     spreadY: 0.8,
-    holo: { pos: [1.3, 2.15, 0.5], scale: 0.72 },
+    holo: { pos: [1.0, 2.55, 0.6], scale: 0.52 },
   };
 }
 
@@ -57,18 +57,20 @@ export default function Scene({ quality, settings, pointer, tagEls, captionEl, o
   const tagWidths = useRef([]);
   const v = useMemo(() => new THREE.Vector3(), []);
 
-  const [astroTex, spaceTex] = useLoader(THREE.TextureLoader, [
-    quality === 'high' ? 'img/hero/astronaut.webp' : 'img/hero/astronaut-sm.webp',
+  const loaded = useLoader(THREE.TextureLoader, [
+    ...ASTRO_VARIANTS.map((v) => (quality === 'high' ? v.src : v.srcSm)),
     quality === 'high' ? 'img/hero/space.webp' : 'img/hero/space-sm.webp',
   ]);
+  const astroTextures = loaded.slice(0, ASTRO_VARIANTS.length);
+  const spaceTex = loaded[loaded.length - 1];
 
   useMemo(() => {
-    [astroTex, spaceTex].forEach((t) => {
+    loaded.forEach((t) => {
       t.colorSpace = THREE.NoColorSpace;
       t.anisotropy = 4;
     });
     spaceTex.wrapS = spaceTex.wrapT = THREE.RepeatWrapping;
-  }, [astroTex, spaceTex]);
+  }, [loaded, spaceTex]);
 
   const layout = useMemo(
     () => computeLayout(size.width, size.height, contentBottom, contentRight),
@@ -167,11 +169,11 @@ export default function Scene({ quality, settings, pointer, tagEls, captionEl, o
   return (
     <>
       <Backdrop texture={spaceTex} />
-      <Planet position={layout.mobile ? [7, 13, -46] : [25, 13.5, -50]} radius={layout.mobile ? 4 : 4.6} />
+      <Planet position={layout.mobile ? [7, 13, -46] : [27, 15, -56]} radius={layout.mobile ? 3.6 : 4} />
       {settings.rays && <LightRays ref={rays} size={[60, 34]} position={[6, 3, -20]} />}
       <FlareStars count={settings.flares} />
       <Starfield count={settings.stars} clock={clock} />
-      <Astronaut texture={astroTex} clock={clock} layout={layout} pointer={pointer} groupRef={astroGroup} />
+      <Astronaut textures={astroTextures} clock={clock} layout={layout} pointer={pointer} groupRef={astroGroup} />
       <DustParticles count={settings.dust} clock={clock} />
     </>
   );

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { LazyMotion, domAnimation, m, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { TECH_TAGS, canUseWebGL, detectQuality } from './config.js';
 
 const HeroCanvas = lazy(() => import('./HeroCanvas.jsx'));
@@ -105,7 +105,6 @@ export default function HeroSpace() {
   }, []);
 
   return (
-    <LazyMotion features={domAnimation} strict>
       <section
         ref={sectionRef}
         className={`ast-hero ${ready ? 'is-ready' : ''} ast-hero--${mode}`}
@@ -175,6 +174,5 @@ export default function HeroSpace() {
           </m.div>
         </div>
       </section>
-    </LazyMotion>
   );
 }

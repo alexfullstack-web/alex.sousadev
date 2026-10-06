@@ -25,26 +25,123 @@ export const TECH_TAGS = [
   { label: 'JAVASCRIPT', pos: [-1.75, 0.35, 1.2], phase: 2.1, mobile: false },
   { label: 'NODE.JS', pos: [-1.9, -0.75, 1.0], phase: 2.8, mobile: true },
   { label: 'BACK-END', pos: [-1.6, -1.75, 0.6], phase: 0.7, mobile: true },
-  { label: 'IA', pos: [1.05, 3.25, -0.3], phase: 1.9, mobile: false },
-  { label: 'APIs', pos: [2.75, 0.3, 0.6], phase: 0.4, mobile: true },
+  { label: 'IA', pos: [2.05, -2.55, 0.2], phase: 1.9, mobile: false },
+  { label: 'APIs', pos: [2.85, 0.15, 0.6], phase: 0.4, mobile: true },
   { label: 'BANCO DE DADOS', pos: [2.6, -0.7, 0.3], phase: 2.4, mobile: false },
-  { label: 'CLOUD', pos: [2.45, -1.65, 0.5], phase: 1.1, mobile: true },
+  { label: 'CLOUD', pos: [2.75, -1.65, 0.5], phase: 1.1, mobile: true },
 ];
 
-// Código digitado no holograma do notebook (tokens: [texto, tipo])
-export const HOLO_CODE = [
-  [['const ', 'kw'], ['alexSousaTech', 'id'], [' = {', 'p']],
-  [['  desenvolvimento', 'prop'], [': ', 'p'], ['true', 'bool'], [',', 'p']],
-  [['  tecnologia', 'prop'], [': ', 'p'], ['true', 'bool'], [',', 'p']],
-  [['  inovacao', 'prop'], [': ', 'p'], ['true', 'bool'], [',', 'p']],
-  [['  stack', 'prop'], [': [', 'p'], ["'React'", 'str'], [', ', 'p'], ["'Node.js'", 'str'], ['],', 'p']],
-  [['};', 'p']],
-  [],
-  [['function ', 'kw'], ['criarSolucao', 'fn'], ['() {', 'p']],
-  [['  return ', 'kw'], ['alexSousaTech', 'id'], [';', 'p']],
-  [['}', 'p']],
-  [],
-  [['deploy', 'fn'], ['(', 'p'], ['criarSolucao', 'fn'], ['());', 'p']],
+/* Astronautas que se revezam na hero (troca com dissolve holográfico). */
+export const ASTRO_VARIANTS = [
+  {
+    key: 'laptop',
+    src: 'img/hero/astronaut.webp',
+    srcSm: 'img/hero/astronaut-sm.webp',
+    h: 6.6,
+    aspect: 1024 / 1536,
+    top: 3.3,
+    visor: { c: [0.505, 0.83], r: [0.128, 0.088], amount: 1 },
+    laptop: true,
+    fade: 0.16,
+  },
+  {
+    key: 'thumbs',
+    src: 'img/hero/astro-thumbs.webp',
+    srcSm: 'img/hero/astro-thumbs-sm.webp',
+    h: 5.5,
+    aspect: 1223 / 1254,
+    top: 3.3,
+    visor: { c: [0.53, 0.81], r: [0.155, 0.1], amount: 0.5 },
+    laptop: false,
+    fade: 0.26,
+  },
+  {
+    key: 'alex',
+    src: 'img/hero/astro-alex.webp',
+    srcSm: 'img/hero/astro-alex-sm.webp',
+    h: 5.0,
+    aspect: 1061 / 1436,
+    top: 3.2,
+    visor: null,
+    laptop: false,
+    fade: 0.24,
+  },
+];
+
+export const SWITCH = { start: 9.5, period: 8, outDur: 0.9, inStart: 0.35, inEnd: 1.5 };
+
+/* Estado da troca de astronautas no instante t: visibilidade (0..1) de cada variante. */
+export function variantState(t, n) {
+  const reveal = new Array(n).fill(0);
+  if (t < SWITCH.start) {
+    reveal[0] = 1;
+    return { reveal, current: 0, cycleTime: t, cycle: 0 };
+  }
+  const k = Math.floor((t - SWITCH.start) / SWITCH.period) + 1;
+  const local = (t - SWITCH.start) % SWITCH.period;
+  const cur = k % n;
+  const prev = (k - 1) % n;
+  const sm = (a, b, x) => {
+    const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
+    return u * u * (3 - 2 * u);
+  };
+  reveal[prev] = 1 - sm(0, SWITCH.outDur, local);
+  reveal[cur] = Math.max(reveal[cur], sm(SWITCH.inStart, SWITCH.inEnd, local));
+  return { reveal, current: cur, cycleTime: local, cycle: k };
+}
+
+// Código digitado no holograma (um trecho por astronauta) — tokens: [texto, tipo]
+export const HOLO_CODES = [
+  {
+    file: 'alexSousaTech.js',
+    output: '✓ deploy concluído → Alex Sousa Tech',
+    lines: [
+      [['const ', 'kw'], ['alexSousaTech', 'id'], [' = {', 'p']],
+      [['  desenvolvimento', 'prop'], [': ', 'p'], ['true', 'bool'], [',', 'p']],
+      [['  tecnologia', 'prop'], [': ', 'p'], ['true', 'bool'], [',', 'p']],
+      [['  inovacao', 'prop'], [': ', 'p'], ['true', 'bool'], [',', 'p']],
+      [['  stack', 'prop'], [': [', 'p'], ["'React'", 'str'], [', ', 'p'], ["'Node.js'", 'str'], [', ', 'p'], ["'Prisma'", 'str'], ['],', 'p']],
+      [['};', 'p']],
+      [],
+      [['function ', 'kw'], ['criarSolucao', 'fn'], ['() {', 'p']],
+      [['  return ', 'kw'], ['alexSousaTech', 'id'], [';', 'p']],
+      [['}', 'p']],
+      [],
+      [['deploy', 'fn'], ['(', 'p'], ['criarSolucao', 'fn'], ['());', 'p']],
+    ],
+  },
+  {
+    file: 'Hero.jsx',
+    output: '✓ interface renderizada em 60 fps',
+    lines: [
+      [['import ', 'kw'], ['{ motion } ', 'id'], ['from ', 'kw'], ["'framer-motion'", 'str'], [';', 'p']],
+      [],
+      [['export default function ', 'kw'], ['Hero', 'fn'], ['() {', 'p']],
+      [['  return ', 'kw'], ['(', 'p']],
+      [['    <', 'p'], ['motion.section', 'fn'], [' animate', 'prop'], ['={{ opacity: ', 'p'], ['1', 'bool'], [' }}>', 'p']],
+      [['      <', 'p'], ['h1', 'fn'], ['>', 'p'], ['Alex Sousa Tech', 'id'], ['</', 'p'], ['h1', 'fn'], ['>', 'p']],
+      [['      <', 'p'], ['Astronauta', 'fn'], [' notebook', 'prop'], [' />', 'p']],
+      [['    </', 'p'], ['motion.section', 'fn'], ['>', 'p']],
+      [['  );', 'p']],
+      [['}', 'p']],
+    ],
+  },
+  {
+    file: 'server.js',
+    output: '🚀 API online na porta 3000',
+    lines: [
+      [['import ', 'kw'], ['express ', 'id'], ['from ', 'kw'], ["'express'", 'str'], [';', 'p']],
+      [],
+      [['const ', 'kw'], ['app', 'id'], [' = ', 'p'], ['express', 'fn'], ['();', 'p']],
+      [['app.', 'p'], ['use', 'fn'], ['(express.', 'p'], ['json', 'fn'], ['());', 'p']],
+      [],
+      [['app.', 'p'], ['get', 'fn'], ['(', 'p'], ["'/api/status'", 'str'], [', (req, res) => {', 'p']],
+      [['  res.', 'p'], ['json', 'fn'], ['({ ', 'p'], ['online', 'prop'], [': ', 'p'], ['true', 'bool'], [' });', 'p']],
+      [['});', 'p']],
+      [],
+      [['app.', 'p'], ['listen', 'fn'], ['(', 'p'], ['3000', 'bool'], [');', 'p']],
+    ],
+  },
 ];
 
 export function detectQuality() {
