@@ -70,30 +70,11 @@ export const TIMELINE = [
 ];
 
 /*
-  Etapas da missão do foguete (Terra → Lua).
-  range: fração do scroll da seção em que a etapa fica ativa.
+  Etapas de tecnologia da viagem (os portões que o foguete atravessa).
+  range: trecho da viagem (0 = plataforma na Terra, 1 = pouso na Lua).
   code: linhas com tokens [texto, tipo] para o painel de código.
 */
 export const MISSION_STAGES = [
-  {
-    key: 'ignicao',
-    label: 'IGNIÇÃO',
-    title: 'Todo projeto começa na base de lançamento',
-    desc: 'Entendo o problema, defino o escopo e desenho a arquitetura antes da primeira linha de código.',
-    chips: ['Requisitos', 'Escopo', 'Arquitetura'],
-    file: 'missao.config.js',
-    range: [0, 0.1],
-    code: [
-      [['const ', 'kw'], ['missao', 'var'], [' = {', 'p']],
-      [['  cliente', 'prop'], [': ', 'p'], ["'sua empresa'", 'str'], [',', 'p']],
-      [['  objetivo', 'prop'], [': ', 'p'], ["'sistema web completo'", 'str'], [',', 'p']],
-      [['  etapas', 'prop'], [': [', 'p'], ["'front'", 'str'], [', ', 'p'], ["'back'", 'str'], [', ', 'p'], ["'dados'", 'str'], ['],', 'p']],
-      [['  destino', 'prop'], [': ', 'p'], ["'🌕 produção'", 'str'], [',', 'p']],
-      [['};', 'p']],
-      [],
-      [['await ', 'kw'], ['lancar', 'fn'], ['(missao);', 'p']],
-    ],
-  },
   {
     key: 'front',
     label: 'FRONT-END',
@@ -101,7 +82,7 @@ export const MISSION_STAGES = [
     desc: 'Telas em React com componentes reutilizáveis, pensadas para desktop, tablet e celular.',
     chips: ['React', 'JavaScript', 'HTML5', 'CSS3'],
     file: 'Dashboard.jsx',
-    range: [0.1, 0.22],
+    range: [0.2, 0.3],
     code: [
       [['import ', 'kw'], ['{ useEffect, useState } ', 'var'], ['from ', 'kw'], ["'react'", 'str'], [';', 'p']],
       [],
@@ -123,7 +104,7 @@ export const MISSION_STAGES = [
     desc: 'APIs com Express, autenticação JWT e senhas protegidas com bcrypt.',
     chips: ['Node.js', 'Express', 'JWT', 'bcrypt'],
     file: 'auth.routes.js',
-    range: [0.22, 0.34],
+    range: [0.3, 0.4],
     code: [
       [['router', 'var'], ['.', 'p'], ['post', 'fn'], ["('/login'", 'str'], [', ', 'p'], ['async ', 'kw'], ['(req, res) => {', 'p']],
       [['  const ', 'kw'], ['{ email, senha }', 'var'], [' = req.body;', 'p']],
@@ -146,7 +127,7 @@ export const MISSION_STAGES = [
     desc: 'Rotas REST claras e integrações com serviços externos, documentadas e previsíveis.',
     chips: ['REST', 'JSON', 'Integrações'],
     file: 'clientes.routes.js',
-    range: [0.34, 0.46],
+    range: [0.4, 0.5],
     code: [
       [['const ', 'kw'], ['rotas', 'var'], [' = ', 'p'], ['Router', 'fn'], ['();', 'p']],
       [],
@@ -166,7 +147,7 @@ export const MISSION_STAGES = [
     desc: 'Modelagem com Prisma e MongoDB pensada para manutenção e crescimento.',
     chips: ['Prisma', 'MongoDB'],
     file: 'schema.prisma',
-    range: [0.46, 0.58],
+    range: [0.5, 0.6],
     code: [
       [['model ', 'kw'], ['Cliente ', 'tag'], ['{', 'p']],
       [['  id', 'prop'], ['        String   ', 'var'], ['@id @default(auto()) @map("_id")', 'fn']],
@@ -188,7 +169,7 @@ export const MISSION_STAGES = [
     desc: 'Deploy em nuvem com variáveis de ambiente, build otimizado e monitoramento.',
     chips: ['Deploy', 'Variáveis de ambiente', 'Build'],
     file: 'server.js',
-    range: [0.58, 0.7],
+    range: [0.6, 0.7],
     code: [
       [['import ', 'kw'], ['app ', 'var'], ['from ', 'kw'], ["'./app.js'", 'str'], [';', 'p']],
       [],
@@ -209,7 +190,7 @@ export const MISSION_STAGES = [
     desc: 'Assistentes como a Mariana IA, integrados ao sistema para atender usuários em tempo real.',
     chips: ['API de IA', 'Chatbots', 'Automação'],
     file: 'mariana.service.js',
-    range: [0.7, 0.88],
+    range: [0.7, 0.84],
     code: [
       [['export async function ', 'kw'], ['responder', 'fn'], ['(pergunta) {', 'p']],
       [['  const ', 'kw'], ['resposta', 'var'], [' = ', 'p'], ['await ', 'kw'], ['ia.', 'var'], ['gerar', 'fn'], ['({', 'p']],
@@ -222,23 +203,28 @@ export const MISSION_STAGES = [
       [['}', 'p']],
     ],
   },
-  {
-    key: 'lua',
-    label: 'POUSO NA LUA',
-    title: 'Missão cumprida: projeto no ar',
-    desc: 'Do planejamento ao deploy, cada etapa entregue com qualidade. Qual é a próxima missão?',
-    chips: ['Entrega', 'Suporte', 'Evolução'],
-    file: 'resultado.log',
-    range: [0.88, 1],
-    code: [
-      [['✓ ', 'ok'], ['front-end', 'var'], ['      pronto', 'cm']],
-      [['✓ ', 'ok'], ['back-end', 'var'], ['       pronto', 'cm']],
-      [['✓ ', 'ok'], ['apis', 'var'], ['           pronto', 'cm']],
-      [['✓ ', 'ok'], ['banco de dados', 'var'], [' pronto', 'cm']],
-      [['✓ ', 'ok'], ['cloud', 'var'], ['          pronto', 'cm']],
-      [['✓ ', 'ok'], ['ia', 'var'], ['             pronto', 'cm']],
-      [],
-      [['🌕 pouso confirmado — ', 'str'], ['Alex Sousa Tech', 'tag']],
-    ],
-  },
 ];
+
+/* Janelas cinematográficas: trechos em que a viagem aparece sem conteúdo por cima. */
+export const JOURNEY_WINDOWS = {
+  decolagem: {
+    kicker: '// T-0 · Ignição',
+    title: 'Decolagem',
+    text: 'Toda missão começa na base de lançamento: entendo o problema, defino o escopo e desenho a arquitetura antes da primeira linha de código.',
+  },
+  orbita: {
+    kicker: '// Órbita terrestre',
+    title: 'A Terra fica para trás',
+    text: 'Com a arquitetura definida, o projeto ganha velocidade. Próxima parada: as tecnologias que colocam o sistema no ar.',
+  },
+  aproximacao: {
+    kicker: '// Aproximação lunar',
+    title: 'Manobra de pouso',
+    text: 'Testes, ajustes finais e deploy. O foguete gira, liga os motores de frenagem e desce com precisão.',
+  },
+  pouso: {
+    kicker: '// 384.400 km · Destino alcançado',
+    title: 'Missão cumprida: projeto no ar',
+    text: 'Do planejamento ao deploy, cada etapa entregue com qualidade. Qual é a próxima missão?',
+  },
+};

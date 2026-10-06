@@ -285,7 +285,6 @@ export function Contact() {
   ];
   return (
     <section className="section contact" id="contato">
-      <div className="contact__planet" aria-hidden="true" />
       <SectionHead
         kicker="// 06 — Contato"
         title="Vamos lançar seu próximo projeto?"

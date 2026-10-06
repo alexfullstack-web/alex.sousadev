@@ -1,37 +1,26 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, m, useMotionValueEvent, useReducedMotion, useScroll } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, m } from 'framer-motion';
 import { MISSION_STAGES } from '../data/site.js';
 import { stageIndex } from './missionPath.js';
 import CodePanel from '../components/CodePanel.jsx';
-import { canUseWebGL, detectQuality } from '../hero/config.js';
+import { subscribe, scrollToProgress } from '../journey/journeyStore.js';
+import { Telemetry, useJourneyMode } from '../journey/Journey.jsx';
 
-const MissionCanvas = lazy(() => import('./MissionCanvas.jsx'));
-
-function usePortrait() {
-  const get = () => typeof window !== 'undefined' && window.innerWidth / window.innerHeight < 1.05;
-  const [portrait, setPortrait] = useState(get);
-  useEffect(() => {
-    const on = () => setPortrait(get());
-    window.addEventListener('resize', on);
-    return () => window.removeEventListener('resize', on);
-  }, []);
-  return portrait;
-}
-
+/*
+  Seção Missão: enquanto ela rola, o foguete (no fundo fixo do site)
+  atravessa os portões de tecnologia. Aqui ficam só a interface:
+  cartão da etapa, painel de código grande e telemetria.
+*/
 function StageCard({ stage, index }) {
-  const isLast = stage.key === 'lua';
   return (
     <m.div
-      key={stage.key}
-      className={`mission-card ${isLast ? 'mission-card--final' : ''}`}
+      className="mission-card"
       initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       exit={{ opacity: 0, y: -14, filter: 'blur(6px)' }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
     >
-      <p className="mission-card__step">
-        {index === 0 ? 'T-0 · CONTAGEM' : isLast ? 'DESTINO ALCANÇADO' : `ETAPA ${String(index).padStart(2, '0')} / 06`}
-      </p>
+      <p className="mission-card__step">{`PORTÃO ${String(index + 1).padStart(2, '0')} / ${String(MISSION_STAGES.length).padStart(2, '0')}`}</p>
       <h3 className="mission-card__label">{stage.label}</h3>
       <p className="mission-card__title">{stage.title}</p>
       <p className="mission-card__desc">{stage.desc}</p>
@@ -40,16 +29,6 @@ function StageCard({ stage, index }) {
           <li key={c}>{c}</li>
         ))}
       </ul>
-      {isLast && (
-        <div className="mission-card__actions">
-          <a className="ast-btn ast-btn--primary" href="#contato">
-            Lançar meu projeto
-          </a>
-          <a className="ast-btn ast-btn--ghost" href="#projetos">
-            Ver projetos
-          </a>
-        </div>
-      )}
     </m.div>
   );
 }
@@ -59,7 +38,7 @@ function StaticMission() {
     <div className="mission-static">
       <div className="section-head section-head--center">
         <p className="section-head__kicker">// 03 — Missão</p>
-        <h2 className="section-head__title">Da Terra à Lua: como um projeto decola</h2>
+        <h2 className="section-head__title">Os portões de tecnologia</h2>
       </div>
       <ol className="mission-static__list">
         {MISSION_STAGES.map((s, i) => (
@@ -74,87 +53,40 @@ function StaticMission() {
 }
 
 export default function Mission() {
-  const sectionRef = useRef(null);
-  const reduce = useReducedMotion();
-  const portrait = usePortrait();
-  const [mode, setMode] = useState('pending');
-  const [near, setNear] = useState(false);
-  const [inView, setInView] = useState(false);
-  const [ready, setReady] = useState(false);
+  const mode = useJourneyMode();
   const [stage, setStage] = useState(0);
-  const [landed, setLanded] = useState(false);
-  const [quality] = useState(detectQuality);
-  const progressRef = useRef(0);
-  const hudRef = useRef({});
 
-  useEffect(() => {
-    setMode(reduce || !canUseWebGL() ? 'static' : '3d');
-  }, [reduce]);
-
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    progressRef.current = v;
-    const s = stageIndex(v);
-    setStage((prev) => (prev === s ? prev : s));
-    const l = v > 0.955;
-    setLanded((prev) => (prev === l ? prev : l));
-  });
-
-  // monta o 3D um pouco antes de a seção aparecer; pausa fora da tela
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el || mode !== '3d') return undefined;
-    const pre = new IntersectionObserver(([e]) => e.isIntersecting && setNear(true), { rootMargin: '120% 0px' });
-    const vis = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0 });
-    pre.observe(el);
-    vis.observe(el);
-    return () => {
-      pre.disconnect();
-      vis.disconnect();
-    };
-  }, [mode]);
-
-  const goTo = (i) => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const total = el.offsetHeight - window.innerHeight;
-    const r = MISSION_STAGES[i].range;
-    const target = el.offsetTop + total * Math.min(0.995, r[0] + (r[1] - r[0]) * 0.5);
-    window.scrollTo({ top: target, behavior: 'smooth' });
-  };
+  useEffect(
+    () =>
+      subscribe((p) => {
+        const s = stageIndex(p);
+        setStage((prev) => (prev === s ? prev : s));
+      }),
+    []
+  );
 
   if (mode === 'static') {
     return (
-      <section id="missao" className="mission mission--static" ref={sectionRef}>
+      <section id="missao" className="mission mission--static">
         <StaticMission />
       </section>
     );
   }
 
   const current = MISSION_STAGES[stage];
+  const goTo = (i) => {
+    const r = MISSION_STAGES[i].range;
+    scrollToProgress((r[0] + r[1]) / 2);
+  };
 
   return (
-    <section id="missao" className={`mission ${ready ? 'is-ready' : ''} ${landed ? 'is-landed' : ''}`} ref={sectionRef} aria-label="Missão: da Terra à Lua">
+    <section id="missao" className="mission" aria-label="Missão: portões de tecnologia">
       <div className="mission__sticky">
-        <div className="mission__backdrop" aria-hidden="true" />
-        {near && (
-          <Suspense fallback={null}>
-            <MissionCanvas
-              quality={quality}
-              active={inView}
-              progressRef={progressRef}
-              portrait={portrait}
-              hudRef={hudRef}
-              onReady={() => setReady(true)}
-            />
-          </Suspense>
-        )}
         <div className="mission__shade" aria-hidden="true" />
-
         <div className="mission__ui">
           <header className="mission__head">
             <p className="section-head__kicker">// 03 — Missão</p>
-            <h2 className="mission__heading">Da Terra à Lua: como um projeto decola</h2>
+            <h2 className="mission__heading">Os portões de tecnologia</h2>
           </header>
 
           <div className="mission__card-slot">
@@ -168,20 +100,7 @@ export default function Mission() {
           </div>
 
           <div className="mission__hud">
-            <div className="mission__telemetry" aria-hidden="true">
-              <div>
-                <span>ALTITUDE</span>
-                <strong>
-                  <b ref={(el) => (hudRef.current.alt = el)}>0</b> km
-                </strong>
-              </div>
-              <div>
-                <span>VELOCIDADE</span>
-                <strong>
-                  <b ref={(el) => (hudRef.current.vel = el)}>0,0</b> km/s
-                </strong>
-              </div>
-            </div>
+            <Telemetry className="mission__telemetry" />
             <nav className="mission__track" aria-label="Etapas da missão">
               {MISSION_STAGES.map((s, i) => (
                 <button
@@ -189,7 +108,7 @@ export default function Mission() {
                   type="button"
                   className={`mission__dot ${i === stage ? 'is-active' : ''} ${i < stage ? 'is-done' : ''}`}
                   onClick={() => goTo(i)}
-                  aria-label={`Ir para a etapa ${s.label}`}
+                  aria-label={`Ir para o portão ${s.label}`}
                   aria-current={i === stage ? 'step' : undefined}
                 >
                   <span className="mission__dot-label">{s.label}</span>
@@ -197,12 +116,6 @@ export default function Mission() {
               ))}
             </nav>
           </div>
-
-          {stage === 0 && (
-            <p className="mission__hint" aria-hidden="true">
-              Role para lançar <span>↓</span>
-            </p>
-          )}
         </div>
       </div>
     </section>

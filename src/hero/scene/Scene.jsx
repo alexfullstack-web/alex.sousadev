@@ -59,9 +59,12 @@ export default function Scene({ quality, settings, pointer, tagEls, captionEl, o
 
   const loaded = useLoader(THREE.TextureLoader, [
     ...ASTRO_VARIANTS.map((v) => (quality === 'high' ? v.src : v.srcSm)),
+    'img/space/earth-day.webp',
+    'img/space/earth-night-sm.webp',
     quality === 'high' ? 'img/hero/space.webp' : 'img/hero/space-sm.webp',
   ]);
   const astroTextures = loaded.slice(0, ASTRO_VARIANTS.length);
+  const [earthDay, earthNight] = loaded.slice(ASTRO_VARIANTS.length, ASTRO_VARIANTS.length + 2);
   const spaceTex = loaded[loaded.length - 1];
 
   useMemo(() => {
@@ -169,7 +172,7 @@ export default function Scene({ quality, settings, pointer, tagEls, captionEl, o
   return (
     <>
       <Backdrop texture={spaceTex} />
-      <Planet position={layout.mobile ? [7, 13, -46] : [27, 15, -56]} radius={layout.mobile ? 3.6 : 4} />
+      <Planet day={earthDay} night={earthNight} position={layout.mobile ? [7, 13, -46] : [27, 15, -56]} radius={layout.mobile ? 3.6 : 4.6} />
       {settings.rays && <LightRays ref={rays} size={[60, 34]} position={[6, 3, -20]} />}
       <FlareStars count={settings.flares} />
       <Starfield count={settings.stars} clock={clock} />

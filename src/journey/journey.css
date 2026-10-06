@@ -1,0 +1,61 @@
+/* =========================================================
+   Viagem do foguete — fundo fixo do site + janelas
+   ========================================================= */
+.journey { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 120%, #071433 0%, #02040a 60%); }
+.journey__canvas { position: absolute !important; inset: 0; opacity: 0; transition: opacity 1.4s ease; }
+.journey.is-ready .journey__canvas { opacity: 1; }
+
+/* véu atrás do conteúdo das seções para manter a leitura sobre a cena 3D */
+.section { isolation: isolate; }
+.section::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0; bottom: 0;
+  left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background: linear-gradient(180deg, rgba(2, 4, 10, 0) 0%, rgba(2, 4, 10, 0.8) 14%, rgba(2, 4, 10, 0.8) 86%, rgba(2, 4, 10, 0) 100%);
+  pointer-events: none;
+}
+.contact::before { left: 0; right: 0; background: linear-gradient(180deg, rgba(2, 4, 10, 0) 0%, rgba(2, 4, 10, 0.35) 30%, rgba(2, 4, 10, 0.55) 100%); }
+
+/* telemetria */
+.telemetry { display: flex; gap: 26px; font-family: var(--font-mono); }
+.telemetry span { display: block; font-size: 0.66rem; letter-spacing: 0.2em; color: var(--text-faint); }
+.telemetry strong { font-size: 1.15rem; font-weight: 500; color: #e9eef7; }
+.telemetry b { font-weight: 500; color: #9cc2ff; font-variant-numeric: tabular-nums; }
+
+/* janelas cinematográficas */
+.jwin { position: relative; z-index: 1; }
+.jwin__sticky {
+  position: sticky; top: 0; height: 100vh; height: 100svh;
+  max-width: 1440px; margin: 0 auto;
+  padding: calc(var(--nav-h) + 24px) var(--gutter) 40px;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 24px;
+  pointer-events: none;
+}
+.jwin__sticky::before {
+  content: ''; position: absolute; left: calc(50% - 50vw); right: calc(50% - 50vw); bottom: 0; height: 55%; z-index: -1;
+  background: linear-gradient(0deg, rgba(2, 4, 10, 0.75), transparent);
+}
+.jwin__caption { max-width: 520px; pointer-events: auto; }
+.jwin__kicker { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 10px; }
+.jwin__title { font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1; letter-spacing: -0.02em; text-shadow: 0 4px 40px rgba(2, 4, 10, 0.8); }
+.jwin__text { margin-top: 14px; color: #c3cee0; font-size: 1.05rem; text-shadow: 0 2px 20px rgba(2, 4, 10, 0.9); }
+.jwin__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+.jwin__telemetry { position: absolute; right: var(--gutter); bottom: 40px; }
+.jwin--static { padding: 90px 0; }
+.jwin--static .jwin__sticky { position: relative; height: auto; padding-top: 0; }
+.jwin--static .jwin__sticky::before { display: none; }
+
+/* barra Terra → Lua */
+.journey-bar { position: fixed; z-index: 90; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 999px; background: rgba(3, 6, 14, 0.7); border: 1px solid var(--line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.18em; color: var(--text-faint); transition: opacity 0.4s ease; }
+.journey-bar__track { position: relative; width: 180px; height: 2px; background: rgba(140, 180, 255, 0.18); border-radius: 2px; }
+.journey-bar__fill { position: absolute; inset: 0; background: linear-gradient(90deg, #2f7bff, #9cc2ff); transform-origin: 0 50%; transform: scaleX(0); box-shadow: 0 0 8px #4c8dff; }
+.journey-bar__rocket { position: absolute; top: 50%; left: 0; transform: translate(-50%, -50%) rotate(90deg); font-size: 0.7rem; color: #fff; text-shadow: 0 0 8px #4c8dff; }
+
+@media (max-width: 760px), (max-aspect-ratio: 20/21) {
+  .jwin__sticky { padding-bottom: 96px; }
+  .jwin__telemetry { left: var(--gutter); right: var(--gutter); bottom: 28px; justify-content: space-between; }
+  .jwin__text { font-size: 0.95rem; }
+  .journey-bar { display: none; }
+}
