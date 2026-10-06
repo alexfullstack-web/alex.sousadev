@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alex Sousa | Desenvolvedor Full Stack</title>
+  <title>Alex Sousa Tech | Desenvolvedor Full Stack</title>
   <meta name="description"
     content="Alex Sousa, desenvolvedor Full Stack. Node.js, Express, JWT, Prisma e MongoDB. Conheça o ERP Alex Sousa e a assistente Mariana IA." />
   <meta name="theme-color" content="#0A0E14" />
@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/animations.css" />
   <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="preload" as="image" href="img/hero/space-sm.webp" type="image/webp" />
 </head>
 
 <body>
@@ -57,46 +58,23 @@
   </header>
 
   <main id="conteudo">
-    <!-- ================= HERO ================= -->
-    <section class="hero" id="inicio">
-      <div class="hero__grid" aria-hidden="true"></div>
-
-      <div class="hero__inner">
-        <div class="hero__content">
-          <p class="hero__eyebrow">Desenvolvedor Full Stack</p>
-          <h1 class="hero__title">Alex Sousa</h1>
-          <p class="hero__lede">
-            Construo sistemas web do frontend ao banco de dados: interfaces
-            claras, APIs seguras e dados bem estruturados.
-          </p>
-
-          <div class="hero__actions">
-            <a href="#projetos" class="btn btn--primary">Ver projetos</a>
-            <a href="#contato" class="btn btn--ghost">Entrar em contato</a>
+    <!-- ================= HERO (React + Three.js) ================= -->
+    <div id="hero-root">
+      <noscript>
+        <section class="ast-hero" id="inicio">
+          <div class="ast-hero__inner">
+            <div class="ast-hero__content">
+              <h1 class="ast-hero__title">Alex Sousa <span class="ast-hero__title-accent">Tech</span></h1>
+              <p class="ast-hero__tagline">Desenvolvimento • Tecnologia • Inovação</p>
+              <div class="ast-hero__actions">
+                <a href="#projetos" class="ast-btn ast-btn--primary">Conheça meus projetos</a>
+                <a href="#contato" class="ast-btn ast-btn--ghost">Fale comigo</a>
+              </div>
+            </div>
           </div>
-
-          <ul class="hero__stack" aria-label="Tecnologias principais">
-            <li>JavaScript</li>
-            <li>Node.js</li>
-            <li>Express</li>
-            <li>Prisma</li>
-            <li>MongoDB</li>
-            <li>JWT</li>
-          </ul>
-        </div>
-
-        <div class="hero__portrait">
-          <div class="hero__portrait-frame">
-            <img src="img/perfil.jpeg" alt="Foto de Alex Sousa" width="600" height="600" fetchpriority="high"
-              decoding="async" />
-          </div>
-          <div class="hero__portrait-card">
-            <span class="hero__portrait-dot" aria-hidden="true"></span>
-            Disponível para novos projetos
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      </noscript>
+    </div>
 
     <!-- ================= SOBRE MIM ================= -->
     <section class="about" id="sobre">
@@ -387,6 +365,7 @@
     </div>
   </footer>
 
+  <script type="module" src="/src/main.jsx"></script>
   <script src="js/main.js" defer></script>
   <script src="js/animations.js" defer></script>
   <script src="js/bg.js" defer></script>
