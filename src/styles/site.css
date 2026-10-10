@@ -60,14 +60,28 @@ main, footer { position: relative; z-index: 1; }
 /* ---------------------------------------------------------
    FUNDO ESPACIAL GLOBAL
 --------------------------------------------------------- */
-.space-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at 50% 120%, #071433 0%, var(--bg) 60%); }
+.space-bg {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(30, 80, 210, 0.32), transparent 70%),
+    radial-gradient(ellipse 70% 55% at 85% 80%, rgba(20, 60, 190, 0.3), transparent 70%),
+    radial-gradient(ellipse at 50% 120%, #0a1c4a 0%, #040a1c 55%, #02050f 100%);
+}
+/* foto real de espaço profundo (nebulosas azuis) bem suave atrás das estrelas */
+.space-bg::before {
+  content: ''; position: absolute; inset: -5%;
+  background: url('/img/hero/space.webp') center / cover no-repeat;
+  opacity: 0.38; mix-blend-mode: screen;
+  animation: space-drift 90s ease-in-out infinite alternate;
+}
+@keyframes space-drift { to { transform: scale(1.08) translate3d(-1.5%, -1%, 0); } }
 .space-bg__stars { position: absolute; left: 0; right: 0; top: 0; height: calc(100% + var(--tile, 900px)); background-repeat: repeat; will-change: transform; }
 .space-bg__stars--0 { opacity: 0.7; }
 .space-bg__stars--2 { animation: twinkle 6s ease-in-out infinite alternate; }
 @keyframes twinkle { from { opacity: 0.55; } to { opacity: 1; } }
 .space-bg__nebula { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; will-change: transform; }
-.space-bg__nebula--a { width: 70vmax; height: 50vmax; left: -20vmax; top: 10vh; background: radial-gradient(closest-side, rgba(28, 72, 190, 0.35), transparent); animation: drift-a 40s ease-in-out infinite alternate; }
-.space-bg__nebula--b { width: 60vmax; height: 45vmax; right: -18vmax; bottom: -10vh; background: radial-gradient(closest-side, rgba(70, 40, 190, 0.22), transparent); animation: drift-b 50s ease-in-out infinite alternate; }
+.space-bg__nebula--a { width: 70vmax; height: 50vmax; left: -20vmax; top: 10vh; background: radial-gradient(closest-side, rgba(40, 100, 255, 0.35), transparent); animation: drift-a 40s ease-in-out infinite alternate; }
+.space-bg__nebula--b { width: 60vmax; height: 45vmax; right: -18vmax; bottom: -10vh; background: radial-gradient(closest-side, rgba(30, 90, 230, 0.3), transparent); animation: drift-b 50s ease-in-out infinite alternate; }
 @keyframes drift-a { to { transform: translate3d(8vw, 10vh, 0) scale(1.1); } }
 @keyframes drift-b { to { transform: translate3d(-10vw, -8vh, 0) scale(1.15); } }
 .space-bg__shooting { position: absolute; width: 140px; height: 1px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), transparent); opacity: 0; transform: rotate(-24deg); }
@@ -307,3 +321,26 @@ main, footer { position: relative; z-index: 1; }
   .project__modules { gap: 8px; padding: 18px; }
   .project__modules span { font-size: 0.7rem; padding: 7px 10px; }
 }
+
+/* ---------------------------------------------------------
+   SITES PARA CLIENTES
+--------------------------------------------------------- */
+.clients__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.client-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: linear-gradient(170deg, rgba(12, 24, 52, 0.7), rgba(4, 9, 22, 0.8)); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; }
+.client-card:hover { border-color: rgba(110, 160, 255, 0.6); box-shadow: 0 24px 60px -24px rgba(47, 123, 255, 0.65); transform: translateY(-4px); }
+.client-card__window { display: block; margin: 14px 14px 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(140, 180, 255, 0.18); background: #050a16; }
+.client-card__bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: rgba(140, 180, 255, 0.08); border-bottom: 1px solid rgba(140, 180, 255, 0.12); }
+.client-card__bar i { width: 8px; height: 8px; border-radius: 50%; background: rgba(140, 180, 255, 0.35); }
+.client-card__url { margin-left: 8px; flex: 1; min-width: 0; padding: 3px 10px; border-radius: 999px; background: rgba(2, 5, 15, 0.7); font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.client-card__shot { display: block; aspect-ratio: 16 / 10; overflow: hidden; }
+.client-card__shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+.client-card:hover .client-card__shot img { transform: scale(1.06); }
+.client-card__body { display: flex; flex-direction: column; flex: 1; padding: 20px 22px 22px; }
+.client-card__category { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-2); }
+.client-card__title { font-size: 1.3rem; margin: 6px 0 8px; }
+.client-card__desc { color: var(--text-dim); font-size: 0.92rem; line-height: 1.6; flex: 1; }
+.client-card__link { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line-strong); background: rgba(47, 123, 255, 0.1); font-size: 0.88rem; font-weight: 600; transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease; }
+.client-card__link svg { width: 16px; height: 16px; }
+.client-card__link:hover { border-color: var(--accent); background: rgba(47, 123, 255, 0.22); box-shadow: 0 0 18px rgba(47, 123, 255, 0.4); }
+@media (max-width: 1080px) { .clients__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .clients__grid { grid-template-columns: 1fr; } }

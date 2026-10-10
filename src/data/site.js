@@ -15,6 +15,7 @@ export const NAV = [
   { id: 'tecnologias', label: 'Stack' },
   { id: 'missao', label: 'Missão' },
   { id: 'projetos', label: 'Projetos' },
+  { id: 'clientes', label: 'Clientes' },
   { id: 'experiencia', label: 'Experiência' },
 ];
 
@@ -70,8 +71,8 @@ export const TIMELINE = [
 ];
 
 /*
-  Etapas de tecnologia da viagem (os portões que o foguete atravessa).
-  range: trecho da viagem (0 = plataforma na Terra, 1 = pouso na Lua).
+  Etapas de tecnologia da seção Missão (uma por trecho da rolagem da seção).
+  code: linhas com tokens [texto, tipo] para o painel de código.
   code: linhas com tokens [texto, tipo] para o painel de código.
 */
 export const MISSION_STAGES = [
@@ -82,7 +83,6 @@ export const MISSION_STAGES = [
     desc: 'Telas em React com componentes reutilizáveis, pensadas para desktop, tablet e celular.',
     chips: ['React', 'JavaScript', 'HTML5', 'CSS3'],
     file: 'Dashboard.jsx',
-    range: [0.2, 0.3],
     code: [
       [['import ', 'kw'], ['{ useEffect, useState } ', 'var'], ['from ', 'kw'], ["'react'", 'str'], [';', 'p']],
       [],
@@ -104,7 +104,6 @@ export const MISSION_STAGES = [
     desc: 'APIs com Express, autenticação JWT e senhas protegidas com bcrypt.',
     chips: ['Node.js', 'Express', 'JWT', 'bcrypt'],
     file: 'auth.routes.js',
-    range: [0.3, 0.4],
     code: [
       [['router', 'var'], ['.', 'p'], ['post', 'fn'], ["('/login'", 'str'], [', ', 'p'], ['async ', 'kw'], ['(req, res) => {', 'p']],
       [['  const ', 'kw'], ['{ email, senha }', 'var'], [' = req.body;', 'p']],
@@ -127,7 +126,6 @@ export const MISSION_STAGES = [
     desc: 'Rotas REST claras e integrações com serviços externos, documentadas e previsíveis.',
     chips: ['REST', 'JSON', 'Integrações'],
     file: 'clientes.routes.js',
-    range: [0.4, 0.5],
     code: [
       [['const ', 'kw'], ['rotas', 'var'], [' = ', 'p'], ['Router', 'fn'], ['();', 'p']],
       [],
@@ -147,7 +145,6 @@ export const MISSION_STAGES = [
     desc: 'Modelagem com Prisma e MongoDB pensada para manutenção e crescimento.',
     chips: ['Prisma', 'MongoDB'],
     file: 'schema.prisma',
-    range: [0.5, 0.6],
     code: [
       [['model ', 'kw'], ['Cliente ', 'tag'], ['{', 'p']],
       [['  id', 'prop'], ['        String   ', 'var'], ['@id @default(auto()) @map("_id")', 'fn']],
@@ -169,7 +166,6 @@ export const MISSION_STAGES = [
     desc: 'Deploy em nuvem com variáveis de ambiente, build otimizado e monitoramento.',
     chips: ['Deploy', 'Variáveis de ambiente', 'Build'],
     file: 'server.js',
-    range: [0.6, 0.7],
     code: [
       [['import ', 'kw'], ['app ', 'var'], ['from ', 'kw'], ["'./app.js'", 'str'], [';', 'p']],
       [],
@@ -190,7 +186,6 @@ export const MISSION_STAGES = [
     desc: 'Assistentes como a Mariana IA, integrados ao sistema para atender usuários em tempo real.',
     chips: ['API de IA', 'Chatbots', 'Automação'],
     file: 'mariana.service.js',
-    range: [0.7, 0.84],
     code: [
       [['export async function ', 'kw'], ['responder', 'fn'], ['(pergunta) {', 'p']],
       [['  const ', 'kw'], ['resposta', 'var'], [' = ', 'p'], ['await ', 'kw'], ['ia.', 'var'], ['gerar', 'fn'], ['({', 'p']],
@@ -205,26 +200,54 @@ export const MISSION_STAGES = [
   },
 ];
 
-/* Janelas cinematográficas: trechos em que a viagem aparece sem conteúdo por cima. */
-export const JOURNEY_WINDOWS = {
-  decolagem: {
-    kicker: '// T-0 · Ignição',
-    title: 'Decolagem',
-    text: 'Toda missão começa na base de lançamento: entendo o problema, defino o escopo e desenho a arquitetura antes da primeira linha de código.',
+/* Sites que desenvolvi para clientes (imagens em public/img/projetos). */
+export const CLIENT_PROJECTS = [
+  {
+    id: 'salao-premium',
+    title: 'Maison Élan',
+    category: 'Salão de beleza',
+    desc: 'Site premium para hair atelier, com serviços, galeria de transformações, equipe e agendamento.',
+    image: 'img/projetos/salao-premium.webp',
+    url: 'https://salao-premium-one.vercel.app/',
   },
-  orbita: {
-    kicker: '// Órbita terrestre',
-    title: 'A Terra fica para trás',
-    text: 'Com a arquitetura definida, o projeto ganha velocidade. Próxima parada: as tecnologias que colocam o sistema no ar.',
+  {
+    id: 'clinica-odonto',
+    title: 'Clínica Odontológica',
+    category: 'Saúde',
+    desc: 'Site para clínica de odontologia estética, com tratamentos, estrutura, resultados e agendamento pelo WhatsApp.',
+    image: 'img/projetos/clinica-odonto.webp',
+    url: 'https://clinica-odonto-nine-delta.vercel.app/',
   },
-  aproximacao: {
-    kicker: '// Aproximação lunar',
-    title: 'Manobra de pouso',
-    text: 'Testes, ajustes finais e deploy. O foguete gira, liga os motores de frenagem e desce com precisão.',
+  {
+    id: 'advocacia',
+    title: 'Valença Moraes Advocacia',
+    category: 'Advocacia',
+    desc: 'Site institucional para escritório de advocacia, com áreas de atuação, equipe, depoimentos e agendamento de consulta.',
+    image: 'img/projetos/advocacia.webp',
+    url: 'https://advocacia-theta-ruddy.vercel.app/',
   },
-  pouso: {
-    kicker: '// 384.400 km · Destino alcançado',
-    title: 'Missão cumprida: projeto no ar',
-    text: 'Do planejamento ao deploy, cada etapa entregue com qualidade. Qual é a próxima missão?',
+  {
+    id: 'doce-neve',
+    title: 'Doce Neve',
+    category: 'Sorveteria',
+    desc: 'Site para sorveteria artesanal, com vitrine de sabores, montagem do pedido e pedido pelo WhatsApp.',
+    image: 'img/projetos/doce-neve.webp',
+    url: 'https://doce-neve.vercel.app/',
   },
-};
+  {
+    id: 'brasa-burger',
+    title: 'Brasa Burger Co.',
+    category: 'Hamburgueria',
+    desc: 'Cardápio digital para hamburgueria artesanal, com destaques, combos, carrinho e pedido pelo WhatsApp.',
+    image: 'img/projetos/brasa-burger.webp',
+    url: 'https://brasa-burger-eta.vercel.app/',
+  },
+  {
+    id: 'serralheria',
+    title: 'Serralheria',
+    category: 'Serviços',
+    desc: 'Site para serralheria com serviços em ferro e aço, portfólio, depoimentos e pedido de orçamento.',
+    image: 'img/projetos/serralheria.webp',
+    url: 'https://serralheria-alpha.vercel.app/',
+  },
+];

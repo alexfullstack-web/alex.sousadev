@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { m, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
-import { CONTACT, PIPELINE, PROJECTS, STACK_GROUPS, TIMELINE, TRAITS } from '../data/site.js';
+import { CLIENT_PROJECTS, CONTACT, PIPELINE, PROJECTS, STACK_GROUPS, TIMELINE, TRAITS } from '../data/site.js';
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -225,11 +225,54 @@ export function Projects() {
   );
 }
 
+/* ------------------------- SITES PARA CLIENTES ------------------------- */
+const domainOf = (url) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+export function ClientProjects() {
+  return (
+    <section className="section clients" id="clientes">
+      <SectionHead
+        kicker="// 05 — Sites para clientes"
+        title="Projetos no ar"
+        lede="Sites que desenvolvi para negócios reais. Clique para abrir e navegar."
+      />
+      <div className="clients__grid">
+        {CLIENT_PROJECTS.map((p, i) => (
+          <Reveal key={p.id} as="article" className="client-card" delay={(i % 3) * 0.08}>
+            <a className="client-card__window" href={p.url} target="_blank" rel="noopener" aria-label={`Abrir o site ${p.title}`}>
+              <span className="client-card__bar" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+                <span className="client-card__url">{domainOf(p.url)}</span>
+              </span>
+              <span className="client-card__shot">
+                <img src={p.image} alt={`Página inicial do site ${p.title}`} width="1200" height="750" loading="lazy" decoding="async" />
+              </span>
+            </a>
+            <div className="client-card__body">
+              <p className="client-card__category">{p.category}</p>
+              <h3 className="client-card__title">{p.title}</h3>
+              <p className="client-card__desc">{p.desc}</p>
+              <a className="client-card__link" href={p.url} target="_blank" rel="noopener">
+                Ver site
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M7 13l6-6M8 7h5v5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* ---------------------------- EXPERIÊNCIA ---------------------------- */
 export function Experience() {
   return (
     <section className="section experience" id="experiencia">
-      <SectionHead kicker="// 05 — Trajetória" title="Experiência" />
+      <SectionHead kicker="// 06 — Trajetória" title="Experiência" />
       <div className="trajectory">
         <div className="trajectory__line" aria-hidden="true">
           <span className="trajectory__satellite" />
@@ -286,7 +329,7 @@ export function Contact() {
   return (
     <section className="section contact" id="contato">
       <SectionHead
-        kicker="// 06 — Contato"
+        kicker="// 07 — Contato"
         title="Vamos lançar seu próximo projeto?"
         lede="Estou aberto a oportunidades, projetos e conexões profissionais."
         center
