@@ -1,62 +1,66 @@
-# Alex Sousa Tech — Portfolio
+# Alex Sousa Tech — Portfólio V4
 
-Portfólio de Alex Sousa, desenvolvedor Full Stack. Fundo espacial azul com estrelas em todo o site,
-hero 3D com astronautas que se revezam e painel de código grande, e vitrine dos sites feitos para clientes.
+Site institucional e portfólio de Alex Sousa, **controlado pelo Business OS**: projetos, serviços,
+textos, WhatsApp, orçamentos e atendimento vêm da API do sistema. Nenhum projeto fica fixo no código.
 
-React + Vite + Three.js (React Three Fiber, só na hero) + Framer Motion. Sem TypeScript e sem backend.
+React + Vite + React Router + Axios + Lucide. JavaScript puro (sem TypeScript). Sem backend próprio:
+usa a API do Business OS.
 
 ## Executar
 
 ```bash
+cp .env.example .env      # preencha VITE_API_URL, VITE_EMPRESA e VITE_SITE_URL
 npm install
-npm run dev       # http://localhost:5173
-npm run build     # gera dist/
-npm run preview   # serve o build de produção
+npm run dev               # http://localhost:5173
+npm run build             # gera dist/ (antes, gera sitemap.xml e robots.txt com os projetos publicados)
+npm run preview
 ```
 
-Publicação: rode `npm run build` e publique `dist/` (na Vercel o preset **Vite** é detectado sozinho).
+| Variável | O que é |
+|---|---|
+| `VITE_API_URL` | API do Business OS, terminando em `/api` |
+| `VITE_EMPRESA` | slug da empresa no Business OS (aparece em Projetos e ideias → Site público) |
+| `VITE_SITE_URL` | endereço público deste site (SEO, Open Graph, sitemap) |
+| `VITE_TURNSTILE_SITE_KEY` | opcional — chave **pública** do Turnstile, se o backend usar `TURNSTILE_SECRET_KEY` |
+
+Tudo que começa com `VITE_` vai para o navegador: **nunca** coloque chaves de IA ou segredos aqui.
+A chave da IA fica só no backend (`OPENROUTER_API_KEY`).
+
+## Publicar na Vercel
+
+1. Preset **Vite**; configure as variáveis acima no projeto da Vercel.
+2. `vercel.json` já faz as rotas da SPA (`/projetos/:slug`) e define cache e cabeçalhos de segurança.
+3. No backend, inclua o domínio do site em `CORS_ORIGINS`.
+4. No Business OS → Projetos e ideias → **Site público**, ligue o site. Enquanto estiver desligado,
+   o site mostra "em manutenção".
 
 ## Estrutura
 
 ```text
-index.html
-public/img/
-├── hero/                 astronautas recortados + foto de espaço profundo
-├── projetos/             capturas dos sites de clientes
-└── site/                 logo, fotos e imagens dos projetos
 src/
-├── App.jsx               ordem das seções
-├── data/site.js          TODO o conteúdo: contatos, projetos, sites de clientes, stack e etapas da Missão
-├── styles/site.css       tema espacial, seções, cartões e painel de código
+├── App.jsx                 rotas, fundo, navegação, rodapé, WhatsApp e João Pedro IA
+├── api.js / config.js      cliente da API pública (só rotas públicas)
+├── context/SiteContext.jsx dados do site vindos do Business OS
 ├── components/
-│   ├── SpaceBackground.jsx   fundo azul com estrelas (parallax, nebulosas, estrelas cadentes)
-│   ├── Navbar.jsx            menu, seção ativa e barra de progresso
-│   ├── CodePanel.jsx         painel de código grande com digitação
-│   └── Sections.jsx          Sobre, Stack, Projetos, Sites para clientes, Experiência, Contato, Rodapé
-├── hero/                 hero 3D (astronautas, holograma de código, estrelas)
-└── mission/Mission.jsx   seção "Do código ao deploy": 6 etapas com cartão e código, guiada pela rolagem
+│   ├── TechBackground.jsx  fundo animado (partículas, trilhas de circuito com pulsos, parallax) em um canvas
+│   ├── LoadingScreen.jsx   tela de carregamento com a logo AS (1ª visita da sessão)
+│   ├── JoaoPedro.jsx       assistente (Central de Atendimento do Business OS, origem PORTFOLIO)
+│   ├── QuoteForm.jsx       orçamento: registrar, pedir contato ou continuar pelo WhatsApp
+│   └── QuoteStatus.jsx     andamento dos pedidos feitos neste navegador
+├── pages/                  Início, Projetos, Projeto (/projetos/:slug), Orçamento, Privacidade, 404
+└── styles/                 base (tokens, botões chanfrados), seções, widgets
+scripts/gerar-sitemap.mjs   sitemap.xml + robots.txt no build
 ```
 
-## Adicionar um site de cliente
+## Comportamentos importantes
 
-1. Salve a captura em `public/img/projetos/nome.webp` (formato 16:10).
-2. Adicione um item em `CLIENT_PROJECTS` (`src/data/site.js`) com título, categoria, descrição, imagem e link.
-
-## Hero
-
-- Três astronautas se revezam a cada 8 s com dissolve holográfico (`ASTRO_VARIANTS` e `SWITCH` em `src/hero/config.js`).
-- Holograma grande com um trecho de código diferente para cada astronauta (`HOLO_CODES`).
-- Em desenvolvimento, `?t=12&freeze` pula para o segundo 12 da animação e congela.
-
-## Desempenho e acessibilidade
-
-- three.js só é carregado para a hero, em um chunk separado, quando o navegador está ocioso; a cena pausa fora da tela.
-- O fundo de estrelas é CSS + imagens geradas uma vez (nada roda por frame com a página parada).
-- `prefers-reduced-motion` ou sem WebGL 2: hero estática e Missão em lista, sem baixar three.js.
-
-## Contato
-
-Email: alexsousadev.21@gmail.com  
-GitHub: https://github.com/alexfullstack-web  
-WhatsApp: https://wa.me/5599984686139  
-Instagram: https://instagram.com/alex.sousadev
+- **Projetos**: só os publicados no Business OS. Retirar do site lá tira daqui na hora.
+- **Orçamento**: a confirmação só aparece depois que a API registra o pedido (protocolo
+  `ORC-...`). Falha de rede mostra o erro; tentar de novo não duplica. "Continuar pelo
+  WhatsApp" só abre o WhatsApp com o resumo e **não** registra o pedido.
+- **João Pedro IA**: sem IA configurada no servidor, avisa que está indisponível e oferece
+  formulário, WhatsApp e falar com a equipe (sem respostas inventadas). Nunca informa preços ou prazos.
+- **Desempenho e acessibilidade**: um único canvas leve (pausa em aba oculta, ~30 fps no celular),
+  fontes servidas pelo próprio site, imagens WebP com carregamento sob demanda, foco visível, e
+  `prefers-reduced-motion` desliga as animações.
+- **LGPD**: consentimento para registrar pedidos, página `/privacidade`, só os dados necessários.
