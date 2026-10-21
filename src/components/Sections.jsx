@@ -1,38 +1,6 @@
 import { useRef } from 'react';
 import { m, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { CLIENT_PROJECTS, CONTACT, PIPELINE, PROJECTS, STACK_GROUPS, TIMELINE, TRAITS } from '../data/site.js';
-import { buscarProjetos, urlArquivo } from '../lib/api.js';
-
-/** Projetos publicados no sistema de gestão; se o backend não responder (ou não houver nenhum), usa os de data/site.js. */
-function useProjetos() {
-  const [itens, setItens] = useState(PROJECTS);
-  useEffect(() => {
-    let vivo = true;
-    buscarProjetos()
-      .then((r) => {
-        if (!vivo || !r?.itens?.length) return;
-        setItens(
-          r.itens.map((p, i) => ({
-            id: `p-${p.slug}`,
-            mission: `Missão ${String(i + 1).padStart(2, '0')}`,
-            tag: p.clienteNome ? `${p.tipoRotulo} · ${p.clienteNome}` : p.tipoRotulo,
-            title: p.titulo,
-            desc: p.resumo || '',
-            stack: p.tecnologias || [],
-            modules: [p.categoriaRotulo].filter(Boolean),
-            image: p.capa ? { src: urlArquivo(p.capa.url), alt: p.capa.alt, w: p.capa.largura, h: p.capa.altura } : null,
-            link: p.linkDemonstracao ? { href: p.linkDemonstracao, label: 'Ver projeto' } : { href: '#orcamento', label: 'Quero um parecido', ghost: true },
-          })),
-        );
-      })
-      .catch(() => {});
-    return () => {
-      vivo = false;
-    };
-  }, []);
-  return itens;
-}
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -206,7 +174,6 @@ function TiltCard({ children, className }) {
 }
 
 export function Projects() {
-  const projetos = useProjetos();
   return (
     <section className="section projects" id="projetos">
       <SectionHead
@@ -215,7 +182,7 @@ export function Projects() {
         lede="Projetos com foco em arquitetura Full Stack, autenticação e integração com banco de dados."
       />
       <div className="projects__list">
-        {projetos.map((p, i) => (
+        {PROJECTS.map((p, i) => (
           <Reveal key={p.id} as="article" className={`project ${i % 2 ? 'project--reverse' : ''}`} id={p.id}>
             <TiltCard className="project__visual">
               {p.image ? (
@@ -362,7 +329,7 @@ export function Contact() {
   return (
     <section className="section contact" id="contato">
       <SectionHead
-        kicker="// 08 — Contato"
+        kicker="// 07 — Contato"
         title="Vamos lançar seu próximo projeto?"
         lede="Estou aberto a oportunidades, projetos e conexões profissionais."
         center

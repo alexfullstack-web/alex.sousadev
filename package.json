@@ -1,19 +1,23 @@
 {
   "name": "alex-sousa-portfolio",
   "private": true,
-  "version": "3.0.0",
+  "version": "4.0.0",
+  "description": "Alex Sousa Tech — Portfólio V4 (React + Vite, sem TypeScript), controlado pelo Business OS",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/gerar-sitemap.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/fiber": "^9.8.1",
-    "framer-motion": "^14.0.0",
+    "@fontsource/chakra-petch": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
+    "axios": "^1.7.7",
+    "lucide-react": "^0.446.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "three": "^0.186.1"
+    "react-router-dom": "^7.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.1.2",
