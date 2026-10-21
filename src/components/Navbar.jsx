@@ -1,82 +1,74 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Menu, Send, X } from 'lucide-react';
-import Logo from './Logo.jsx';
-
-export const SECOES = [
-  { id: 'inicio', rotulo: 'Início' },
-  { id: 'sobre', rotulo: 'Sobre' },
-  { id: 'servicos', rotulo: 'Serviços' },
-  { id: 'projetos', rotulo: 'Projetos' },
-  { id: 'tecnologias', rotulo: 'Tecnologias' },
-  { id: 'atendimento', rotulo: 'Contato' },
-];
+import { m, useScroll, useSpring } from 'framer-motion';
+import { NAV } from '../data/site.js';
 
 export default function Navbar() {
-  const { pathname } = useLocation();
-  const [aberto, setAberto] = useState(false);
-  const [ativa, setAtiva] = useState('inicio');
-  const [rolou, setRolou] = useState(false);
-  const home = pathname === '/';
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState('');
+  const { scrollYProgress } = useScroll();
+  const bar = useSpring(scrollYProgress, { stiffness: 140, damping: 30, restDelta: 0.001 });
 
-  useEffect(() => setAberto(false), [pathname]);
   useEffect(() => {
-    const f = () => setRolou(window.scrollY > 12);
-    f();
-    window.addEventListener('scroll', f, { passive: true });
-    return () => window.removeEventListener('scroll', f);
+    const on = () => setScrolled(window.scrollY > 24);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
   }, []);
-  // seção ativa (só na página inicial)
-  useEffect(() => {
-    if (!home || !('IntersectionObserver' in window)) return undefined;
-    const io = new IntersectionObserver(
-      (es) => {
-        for (const e of es) if (e.isIntersecting) setAtiva(e.target.id);
-      },
-      { rootMargin: '-45% 0px -50% 0px' },
-    );
-    const t = setTimeout(() => SECOES.forEach((s) => document.getElementById(s.id) && io.observe(document.getElementById(s.id))), 300);
-    return () => {
-      clearTimeout(t);
-      io.disconnect();
-    };
-  }, [home]);
-  useEffect(() => {
-    if (!aberto) return undefined;
-    const esc = (e) => e.key === 'Escape' && setAberto(false);
-    document.addEventListener('keydown', esc);
-    return () => document.removeEventListener('keydown', esc);
-  }, [aberto]);
 
-  const atual = (id) => {
-    if (id === 'projetos' && pathname.startsWith('/projetos')) return true;
-    return home && ativa === id;
-  };
+  // destaca a seção visível
+  useEffect(() => {
+    const ids = [...NAV.map((n) => n.id), 'contato'];
+    const els = ids.map((id) => document.getElementById(id)).filter(Boolean);
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle('nav-open', open);
+  }, [open]);
+
+  const close = () => setOpen(false);
 
   return (
-    <header className={`nav${rolou || !home ? ' nav--solida' : ''}`}>
-      <div className="nav__dentro">
-        <Logo compacta />
-        <nav className={`nav__links${aberto ? ' nav__links--aberto' : ''}`} aria-label="Principal" id="menu-principal">
-          {SECOES.map((s) => (
-            <Link key={s.id} to={s.id === 'inicio' ? '/' : `/#${s.id}`} className={`nav__link${atual(s.id) ? ' nav__link--ativo' : ''}`} aria-current={atual(s.id) ? 'true' : undefined} onClick={() => setAberto(false)}>
-              {s.rotulo}
-            </Link>
+    <header className={`navbar ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
+      <div className="navbar__inner">
+        <a href="#inicio" className="navbar__brand" onClick={close}>
+          <img src="img/site/logo-128.webp" alt="" width="34" height="34" />
+          <span>
+            Alex Sousa <b>Tech</b>
+          </span>
+        </a>
+
+        <nav className="navbar__nav" id="navbar-nav" aria-label="Navegação principal">
+          {NAV.map((n) => (
+            <a key={n.id} href={`#${n.id}`} className={`navbar__link ${active === n.id ? 'is-active' : ''}`} onClick={close}>
+              {n.label}
+            </a>
           ))}
-          <NavLink to="/orcamento" className="botao botao--primario nav__cta-movel">
-            <Send size={16} aria-hidden="true" /> Solicitar orçamento
-          </NavLink>
+          <a href="#contato" className="navbar__cta" onClick={close}>
+            Contato
+          </a>
         </nav>
-        <div className="nav__acoes">
-          <Link to="/orcamento" className="botao botao--primario botao--p nav__cta">
-            <Send size={15} aria-hidden="true" /> Solicitar orçamento
-          </Link>
-          <button type="button" className="nav__menu" onClick={() => setAberto((x) => !x)} aria-expanded={aberto} aria-controls="menu-principal" aria-label={aberto ? 'Fechar menu' : 'Abrir menu'}>
-            {aberto ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
-          </button>
-        </div>
+
+        <button
+          type="button"
+          className="navbar__toggle"
+          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={open}
+          aria-controls="navbar-nav"
+          onClick={() => setOpen((o) => !o)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </div>
-      {aberto && <button type="button" className="nav__fundo" aria-label="Fechar menu" onClick={() => setAberto(false)} />}
+      <m.div className="navbar__progress" style={{ scaleX: bar }} aria-hidden="true" />
     </header>
   );
 }

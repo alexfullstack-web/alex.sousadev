@@ -17,6 +17,7 @@ export const NAV = [
   { id: 'projetos', label: 'Projetos' },
   { id: 'clientes', label: 'Clientes' },
   { id: 'experiencia', label: 'Experiência' },
+  { id: 'orcamento', label: 'Orçamento' },
 ];
 
 export const TRAITS = ['Aprendizado contínuo', 'Organização', 'Atenção a detalhes', 'Comunicação direta'];
