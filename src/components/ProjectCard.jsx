@@ -8,7 +8,7 @@ export default function ProjectCard({ p, destaque = false }) {
     <article className={`projeto${destaque ? ' projeto--destaque' : ''}`}>
       <Link to={`/projetos/${p.slug}`} className="projeto__capa" tabIndex={-1} aria-hidden="true">
         {p.capaUrl && !falhou ? (
-          <img src={p.capaUrl} alt="" loading="lazy" decoding="async" onError={() => setFalhou(true)} />
+          <img src={p.capaUrl} alt={`Tela do projeto ${p.nome}`} loading="lazy" decoding="async" onError={() => setFalhou(true)} />
         ) : (
           <span className="projeto__sem-capa">
             <ImageOff size={28} aria-hidden="true" />

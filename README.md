@@ -9,10 +9,10 @@ usa a API do Business OS.
 ## Executar
 
 ```bash
-cp .env.example .env      # preencha VITE_API_URL, VITE_EMPRESA e VITE_SITE_URL
+cp .env.example .env      # preencha VITE_API_URL e VITE_EMPRESA
 npm install
 npm run dev               # http://localhost:5173
-npm run build             # gera dist/ (antes, gera sitemap.xml e robots.txt com os projetos publicados)
+npm run build             # gera dist/ com um HTML completo por página pública (scripts/prerender.mjs)
 npm run preview
 ```
 
@@ -20,7 +20,6 @@ npm run preview
 |---|---|
 | `VITE_API_URL` | API do Business OS, terminando em `/api` |
 | `VITE_EMPRESA` | slug da empresa no Business OS (aparece em Projetos e ideias → Site público) |
-| `VITE_SITE_URL` | endereço público deste site (SEO, Open Graph, sitemap) |
 | `VITE_TURNSTILE_SITE_KEY` | opcional — chave **pública** do Turnstile, se o backend usar `TURNSTILE_SECRET_KEY` |
 
 Tudo que começa com `VITE_` vai para o navegador: **nunca** coloque chaves de IA ou segredos aqui.
@@ -29,7 +28,7 @@ A chave da IA fica só no backend (`OPENROUTER_API_KEY`).
 ## Publicar na Vercel
 
 1. Preset **Vite**; configure as variáveis acima no projeto da Vercel.
-2. `vercel.json` já faz as rotas da SPA (`/projetos/:slug`) e define cache e cabeçalhos de segurança.
+2. `vercel.json` já define URLs limpas, 404 real, sitemap dinâmico, redirecionamentos, cache e cabeçalhos de segurança.
 3. No backend, inclua o domínio do site em `CORS_ORIGINS`.
 4. No Business OS → Projetos e ideias → **Site público**, ligue o site. Enquanto estiver desligado,
    o site mostra "em manutenção".
@@ -47,9 +46,11 @@ src/
 │   ├── JoaoPedro.jsx       assistente (Central de Atendimento do Business OS, origem PORTFOLIO)
 │   ├── QuoteForm.jsx       orçamento: registrar, pedir contato ou continuar pelo WhatsApp
 │   └── QuoteStatus.jsx     andamento dos pedidos feitos neste navegador
-├── pages/                  Início, Projetos, Projeto (/projetos/:slug), Orçamento, Privacidade, 404
+├── pages/                  Início, Sobre (/sobre-alex-sousa), Projetos, Projeto (/projetos/:slug), Orçamento, Privacidade, 404
 └── styles/                 base (tokens, botões chanfrados), seções, widgets
-scripts/gerar-sitemap.mjs   sitemap.xml + robots.txt no build
+scripts/prerender.mjs       HTML completo de cada página pública no build
+api/sitemap.js              /sitemap.xml dinâmico (função da Vercel)
+src/seo/                    identidade da marca, metatags e dados estruturados
 ```
 
 ## Comportamentos importantes
@@ -64,3 +65,7 @@ scripts/gerar-sitemap.mjs   sitemap.xml + robots.txt no build
   fontes servidas pelo próprio site, imagens WebP com carregamento sob demanda, foco visível, e
   `prefers-reduced-motion` desliga as animações.
 - **LGPD**: consentimento para registrar pedidos, página `/privacidade`, só os dados necessários.
+
+## SEO
+
+Veja [docs/SEO.md](docs/SEO.md): pré-renderização, sitemap, Cloudflare e Google Search Console.

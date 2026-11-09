@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { SiteProvider } from './context/SiteContext.jsx';
 import TechBackground from './components/TechBackground.jsx';
 import LoadingScreen from './components/LoadingScreen.jsx';
@@ -7,11 +7,13 @@ import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
 import JoaoPedro from './components/JoaoPedro.jsx';
+import ClientOnly from './components/ClientOnly.jsx';
 import Home from './pages/Home.jsx';
 
 const Projetos = lazy(() => import('./pages/Projetos.jsx'));
 const Projeto = lazy(() => import('./pages/Projeto.jsx'));
 const Orcamento = lazy(() => import('./pages/Orcamento.jsx'));
+const SobreAlexSousa = lazy(() => import('./pages/SobreAlexSousa.jsx'));
 const Privacidade = lazy(() => import('./pages/Privacidade.jsx'));
 const NaoEncontrado = lazy(() => import('./pages/NaoEncontrado.jsx'));
 
@@ -39,8 +41,7 @@ function Rolagem() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <SiteProvider>
+    <SiteProvider>
         <TechBackground />
         <LoadingScreen />
         <a className="pular" href="#conteudo">
@@ -52,6 +53,7 @@ export default function App() {
           <Suspense fallback={<div className="pagina" aria-busy="true" />}>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/sobre-alex-sousa" element={<SobreAlexSousa />} />
               <Route path="/projetos" element={<Projetos />} />
               <Route path="/projetos/:slug" element={<Projeto />} />
               <Route path="/orcamento" element={<Orcamento />} />
@@ -62,8 +64,9 @@ export default function App() {
         </main>
         <Footer />
         <WhatsAppFloat />
-        <JoaoPedro />
-      </SiteProvider>
-    </BrowserRouter>
+        <ClientOnly>
+          <JoaoPedro />
+        </ClientOnly>
+    </SiteProvider>
   );
 }

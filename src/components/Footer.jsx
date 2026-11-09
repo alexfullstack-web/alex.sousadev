@@ -27,6 +27,7 @@ export default function Footer() {
               {s.rotulo}
             </Link>
           ))}
+          <Link to="/sobre-alex-sousa">Sobre Alex Sousa</Link>
           <Link to="/projetos">Todos os projetos</Link>
           <Link to="/orcamento">Orçamento</Link>
           <Link to="/privacidade">Privacidade</Link>
@@ -55,7 +56,7 @@ export default function Footer() {
           )}
         </div>
       </div>
-      <p className="rodape__copy">© {new Date().getFullYear()} Alex Sousa Tech. Projetos e conteúdo gerenciados pelo Business OS.</p>
+      <p className="rodape__copy" suppressHydrationWarning>© {new Date().getFullYear()} Alex Sousa Tech. Projetos e conteúdo gerenciados pelo Business OS.</p>
     </footer>
   );
 }

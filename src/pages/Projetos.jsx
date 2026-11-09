@@ -5,14 +5,18 @@ import { mensagemDeErro, site } from '../api.js';
 import { useSite } from '../context/SiteContext.jsx';
 import { useSeo } from '../hooks/useSeo.js';
 import ProjectCard from '../components/ProjectCard.jsx';
+import { dadoInicial } from '../seo/dadosIniciais.js';
 
 export default function Projetos() {
   const { dados } = useSite();
   const [params, setParams] = useSearchParams();
-  const categoria = params.get('categoria') || '';
-  const [lista, setLista] = useState(null);
+  const [montado, setMontado] = useState(false);
+  useEffect(() => setMontado(true), []);
+  // O HTML gerado no build traz todos os projetos; o filtro da URL só vale depois de assumir a página.
+  const categoria = montado ? params.get('categoria') || '' : '';
+  const [lista, setLista] = useState(() => dadoInicial('projetos'));
   const [erro, setErro] = useState('');
-  useSeo({ titulo: 'Projetos', descricao: 'Sites, sistemas web, SaaS, aplicativos e projetos de IA desenvolvidos pela Alex Sousa Tech.', caminho: '/projetos' });
+  useSeo({ titulo: 'Projetos de sites e sistemas', descricao: 'Sites, sistemas web, SaaS, aplicativos e projetos de IA desenvolvidos por Alex Sousa, fundador da Alex Sousa Tech.', caminho: '/projetos' });
   const carregar = () => {
     setErro('');
     site
@@ -34,7 +38,7 @@ export default function Projetos() {
         <ArrowLeft size={16} aria-hidden="true" /> Início
       </Link>
       <header className="pagina__topo">
-        <h1 className="pagina__titulo">Projetos</h1>
+        <h1 className="pagina__titulo">Projetos da Alex Sousa Tech</h1>
         <p className="secao__desc">Cada projeto é cadastrado e publicado pelo Business OS — o que está aqui é real e está no ar.</p>
       </header>
       {categorias.length > 1 && (

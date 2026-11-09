@@ -5,6 +5,7 @@ import { useSite } from '../context/SiteContext.jsx';
 import { useSeo } from '../hooks/useSeo.js';
 import QuoteForm from '../components/QuoteForm.jsx';
 import QuoteStatus from '../components/QuoteStatus.jsx';
+import ClientOnly from '../components/ClientOnly.jsx';
 
 export default function Orcamento() {
   const { dados, erro, recarregar } = useSite();
@@ -26,7 +27,9 @@ export default function Orcamento() {
             <li>Registrando no sistema, você recebe um protocolo na hora.</li>
             <li>A equipe analisa e define valor e prazo com você.</li>
           </ol>
-          <QuoteStatus versao={versao} />
+          <ClientOnly>
+            <QuoteStatus versao={versao} />
+          </ClientOnly>
         </header>
         <div className="orc-layout__form">
           {erro && !dados ? (
@@ -39,7 +42,9 @@ export default function Orcamento() {
           ) : !dados ? (
             <div className="orc-form orc-form--esqueleto" aria-busy="true" aria-label="Carregando formulário" />
           ) : (
-            <QuoteForm key={tipo} tipoInicial={tipo} onRegistrado={() => setVersao((n) => n + 1)} />
+            <ClientOnly fallback={<div className="orc-form orc-form--esqueleto" aria-busy="true" aria-label="Carregando formulário" />}>
+              <QuoteForm key={tipo} tipoInicial={tipo} onRegistrado={() => setVersao((n) => n + 1)} />
+            </ClientOnly>
           )}
         </div>
       </div>

@@ -1,0 +1,111 @@
+/* Página /sobre-alex-sousa: reaproveita os tokens e componentes do site. */
+.sobre-alex__topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+.sobre-alex__intro {
+  display: grid;
+  gap: 0.8rem;
+}
+.sobre-alex__marca {
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--eletrico-2);
+}
+.sobre-alex__cargo {
+  font-size: var(--t-lg);
+  color: var(--neon);
+  font-family: var(--fonte-titulo);
+  font-weight: 500;
+}
+.sobre-alex__lema {
+  font-size: var(--t-sm);
+  letter-spacing: 0.08em;
+  color: var(--tinta-3);
+  margin-bottom: 0.6rem;
+}
+.sobre-alex__redes {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.4rem 0 0;
+  padding: 0;
+}
+.sobre-alex__redes a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.sobre-alex__bloco {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+.sobre-alex__bloco > .secao__titulo {
+  margin-bottom: 1.25rem;
+}
+.sobre-alex__bloco .secao__topo {
+  margin-bottom: 1.25rem;
+}
+.sobre-alex__texto {
+  display: grid;
+  gap: 1rem;
+  max-width: 46rem;
+  color: var(--tinta-2);
+  font-size: var(--t-lg);
+}
+.sobre-alex__identidade {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+}
+.sobre-alex__identidade img {
+  width: 100%;
+  height: auto;
+}
+.sobre-alex__identidade h3 {
+  font-size: var(--t-lg);
+  margin-bottom: 0.7rem;
+}
+.sobre-alex__identidade p {
+  color: var(--tinta-2);
+}
+.sobre-alex__paleta {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+.sobre-alex__paleta li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--t-sm);
+}
+.sobre-alex__paleta span {
+  width: 1.3rem;
+  height: 1.3rem;
+  box-shadow: inset 0 0 0 1px var(--borda-forte);
+}
+.sobre-alex__paleta code {
+  color: var(--tinta-3);
+}
+@media (max-width: 760px) {
+  .sobre-alex__topo,
+  .sobre-alex__identidade {
+    grid-template-columns: 1fr;
+  }
+  .sobre-alex__foto {
+    width: 100%;
+    max-width: 16rem;
+    justify-self: center;
+    order: -1;
+  }
+}

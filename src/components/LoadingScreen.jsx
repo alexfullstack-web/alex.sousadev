@@ -1,6 +1,7 @@
 // Tela de carregamento com a logo AS — só na primeira visita da sessão e por pouco tempo.
 import { useEffect, useState } from 'react';
 import { useSite } from '../context/SiteContext.jsx';
+import { foiPreRenderizado } from '../seo/dadosIniciais.js';
 
 const CHAVE = 'ast.carregou';
 function jaViu() {
@@ -13,7 +14,7 @@ function jaViu() {
 
 export default function LoadingScreen() {
   const { carregando } = useSite();
-  const [fase, setFase] = useState(() => (jaViu() ? 'fim' : 'entrando'));
+  const [fase, setFase] = useState(() => (foiPreRenderizado() || jaViu() ? 'fim' : 'entrando')) // com HTML pronto, não cobre o conteúdo;
   const [minimo, setMinimo] = useState(false);
   useEffect(() => {
     if (fase === 'fim') return undefined;

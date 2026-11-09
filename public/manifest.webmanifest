@@ -6,7 +6,17 @@
   "background_color": "#020611",
   "theme_color": "#020611",
   "icons": [
-    { "src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
+    {
+      "src": "/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "pt-BR",
+  "description": "Alex Sousa Tech: desenvolvimento de sites, sistemas web e aplicações."
 }

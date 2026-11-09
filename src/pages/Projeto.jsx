@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, CalendarCheck, ChevronLeft, ChevronRight, Github, RefreshCw, Send, X } from 'lucide-react';
 import { mensagemDeErro, site } from '../api.js';
 import { useSeo } from '../hooks/useSeo.js';
 import ProjectCard from '../components/ProjectCard.jsx';
+import { projetoInicial } from '../seo/dadosIniciais.js';
+import { entidadesProjeto } from '../seo/schema.js';
 
 const mesAno = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 const TIPO_POR_CATEGORIA = { SITE: 'SITE_INSTITUCIONAL', SISTEMA_WEB: 'SISTEMA_GESTAO', SAAS: 'SAAS', APLICATIVO: 'APLICATIVO', IA: 'IA' };
@@ -25,7 +27,7 @@ function Visualizador({ imagens, i, onFechar, onMudar }) {
   }, [i, imagens.length, onFechar, onMudar]);
   return (
     <div className="visualizador" role="dialog" aria-modal="true" aria-label={`Imagem ${i + 1} de ${imagens.length}`} onClick={onFechar}>
-      <img src={imagens[i]} alt={`Imagem ${i + 1} de ${imagens.length}`} onClick={(e) => e.stopPropagation()} />
+      <img src={imagens[i]} alt={`Tela ${i + 1} de ${imagens.length} do projeto`} onClick={(e) => e.stopPropagation()} />
       <button type="button" className="visualizador__fechar" onClick={onFechar} aria-label="Fechar" autoFocus>
         <X size={22} aria-hidden="true" />
       </button>
@@ -45,13 +47,15 @@ function Visualizador({ imagens, i, onFechar, onMudar }) {
 
 export default function Projeto() {
   const { slug } = useParams();
-  const [p, setP] = useState(null);
+  const [p, setP] = useState(() => projetoInicial(slug));
+  const slugCarregado = useRef(p ? slug : null);
   const [erro, setErro] = useState('');
   const [naoExiste, setNaoExiste] = useState(false);
   const [aberta, setAberta] = useState(null);
   const carregar = useCallback(() => {
     setErro('');
-    setP(null);
+    if (slugCarregado.current !== slug) setP(null); // veio pronto do build: atualiza sem piscar
+    slugCarregado.current = slug;
     setNaoExiste(false);
     site
       .projeto(slug)
@@ -62,7 +66,16 @@ export default function Projeto() {
     carregar();
     window.scrollTo(0, 0);
   }, [carregar]);
-  useSeo({ titulo: p?.nome || (naoExiste ? 'Projeto não encontrado' : 'Projeto'), descricao: p?.resumo, caminho: `/projetos/${slug}`, imagem: p?.capaUrl || undefined, noindex: naoExiste });
+  const mostrar = naoExiste ? null : p;
+  useSeo({
+    titulo: mostrar ? [mostrar.nome, mostrar.categoriaRotulo].filter(Boolean).join(' — ') : naoExiste ? 'Projeto não encontrado' : 'Projeto',
+    descricao: mostrar?.resumo || (mostrar ? `Projeto ${mostrar.nome}, desenvolvido por Alex Sousa, da Alex Sousa Tech.` : undefined),
+    caminho: `/projetos/${slug}`,
+    imagem: mostrar?.capaUrl || undefined,
+    imagemAlt: mostrar ? `Tela do projeto ${mostrar.nome}` : undefined,
+    noindex: naoExiste,
+    entidades: mostrar ? entidadesProjeto(mostrar, slug) : [],
+  });
   const fechar = useCallback(() => setAberta(null), []);
 
   if (naoExiste) {
@@ -122,7 +135,7 @@ export default function Projeto() {
           </div>
         </div>
         <button type="button" className="projeto-detalhe__capa" onClick={() => imagens.length && setAberta(0)} disabled={!imagens.length} aria-label={imagens.length ? 'Ampliar imagem do projeto' : undefined}>
-          {p.capaUrl ? <img src={p.capaUrl} alt={`Tela do projeto ${p.nome}`} /> : <span className="projeto__sem-capa" />}
+          {p.capaUrl ? <img src={p.capaUrl} alt={`Tela do projeto ${p.nome}`} fetchPriority="high" decoding="async" /> : <span className="projeto__sem-capa" />}
         </button>
       </div>
 
@@ -139,7 +152,7 @@ export default function Projeto() {
                 {imagens.map((src, i) => (
                   <li key={src}>
                     <button type="button" onClick={() => setAberta(i)} aria-label={`Ampliar imagem ${i + 1}`}>
-                      <img src={src} alt={`Imagem ${i + 1} do projeto ${p.nome}`} loading="lazy" />
+                      <img src={src} alt={`Tela ${i + 1} do projeto ${p.nome}`} loading="lazy" decoding="async" />
                     </button>
                   </li>
                 ))}

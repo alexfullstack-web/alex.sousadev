@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /app-shell
 
-Sitemap: https://alex-sousadev.vercel.app/sitemap.xml
+Sitemap: https://portfolio.alexsousatech.com.br/sitemap.xml

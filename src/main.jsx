@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
+import { foiPreRenderizado } from './seo/dadosIniciais.js';
 // Fontes servidas pelo próprio site (sem chamar terceiros: mais rápido e sem enviar dados a outros domínios).
 import '@fontsource/chakra-petch/latin-500.css';
 import '@fontsource/chakra-petch/latin-600.css';
@@ -12,9 +14,17 @@ import '@fontsource/manrope/latin-700.css';
 import './styles/base.css';
 import './styles/site.css';
 import './styles/widgets.css';
+import './styles/sobre.css';
 
-createRoot(document.getElementById('root')).render(
+const raiz = document.getElementById('root');
+const app = (
   <StrictMode>
-    <App />
-  </StrictMode>,
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
 );
+
+// Páginas geradas no build já têm o conteúdo: o React só assume. A casca de projetos novos monta do zero.
+if (foiPreRenderizado()) hydrateRoot(raiz, app);
+else createRoot(raiz).render(app);

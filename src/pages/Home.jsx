@@ -4,6 +4,8 @@ import { ArrowRight, Bot, ChevronDown, ClipboardCheck, FolderOpen, Headset, Mess
 import { mensagemDeErro, site } from '../api.js';
 import { CONTEUDO_MINIMO, useSite } from '../context/SiteContext.jsx';
 import { useSeo } from '../hooks/useSeo.js';
+import { dadoInicial } from '../seo/dadosIniciais.js';
+import ClientOnly from '../components/ClientOnly.jsx';
 import Icone from '../components/Icone.jsx';
 import ProjectCard from '../components/ProjectCard.jsx';
 import Reveal from '../components/Reveal.jsx';
@@ -16,18 +18,16 @@ function Hero({ conteudo, servicos }) {
   return (
     <section id="inicio" className="hero" aria-labelledby="hero-titulo">
       <div className="hero__texto">
-        <p className="hero__marca">
+        <div className="hero__marca">
           <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
-          <span>
-            <span className="hero__marca-nome">
-              Alex <em>Sousa</em>
-            </span>
-            <span className="hero__marca-slogan">Desenvolvimento • Tecnologia • Inovação</span>
-          </span>
-        </p>
-        <h1 id="hero-titulo" className="hero__titulo">
-          {h.titulo}
-        </h1>
+          <div>
+            <h1 id="hero-titulo" className="hero__marca-nome">
+              Alex <em>Sousa Tech</em>
+            </h1>
+            <p className="hero__marca-slogan">Desenvolvimento • Tecnologia • Inovação</p>
+          </div>
+        </div>
+        <p className="hero__titulo">{h.titulo}</p>
         <p className="hero__sub">{h.subtitulo}</p>
         <div className="hero__acoes">
           <Link to="/#projetos" className="botao botao--primario">
@@ -57,7 +57,9 @@ function Hero({ conteudo, servicos }) {
           <img className="hero__foto" src="/img/site/alex.webp" alt="Alex Sousa, desenvolvedor full stack da Alex Sousa Tech" width="760" height="1128" fetchPriority="high" />
         </picture>
         <p className="hero__cartao">
-          <strong>Alex Sousa</strong>
+          <strong>
+            <Link to="/sobre-alex-sousa">Alex Sousa</Link>
+          </strong>
           <span>Desenvolvedor Full Stack</span>
         </p>
       </div>
@@ -93,7 +95,7 @@ function Secao({ id, titulo, descricao, children, acao, className = '' }) {
 }
 
 function Projetos() {
-  const [lista, setLista] = useState(null);
+  const [lista, setLista] = useState(() => dadoInicial('projetosInicio'));
   const [erro, setErro] = useState('');
   const carregar = () => {
     setErro('');
@@ -161,7 +163,7 @@ function Faq({ itens }) {
 export default function Home() {
   const { dados, erro, recarregar, abrirChat } = useSite();
   const c = dados?.conteudo;
-  useSeo({ descricao: c?.hero?.subtitulo || CONTEUDO_MINIMO.hero.subtitulo, caminho: '/' });
+  useSeo({ caminho: '/' });
   const zap = dados?.whatsapp;
 
   return (
@@ -180,7 +182,7 @@ export default function Home() {
         <Secao id="sobre" titulo="Sobre mim" className="sobre">
           <Reveal className="sobre__grade">
             <div className="sobre__foto">
-              <img src="/img/site/alex-sm.webp" alt={`${c.sobre.nome}`} width="440" height="653" loading="lazy" />
+              <img src="/img/site/alex-sm.webp" alt={`${c.sobre.nome}, fundador da Alex Sousa Tech`} width="440" height="653" loading="lazy" />
             </div>
             <div className="sobre__texto">
               <h3>{c.sobre.nome}</h3>
@@ -196,6 +198,11 @@ export default function Home() {
                   ))}
                 </ul>
               )}
+              <p>
+                <Link to="/sobre-alex-sousa" className="botao botao--contorno botao--p">
+                  Conheça Alex Sousa e a Alex Sousa Tech <ArrowRight size={15} aria-hidden="true" />
+                </Link>
+              </p>
             </div>
           </Reveal>
         </Secao>
@@ -267,7 +274,9 @@ export default function Home() {
                 <Send size={18} aria-hidden="true" /> Solicitar orçamento
               </Link>
             </div>
-            <QuoteStatus />
+            <ClientOnly>
+              <QuoteStatus />
+            </ClientOnly>
           </Reveal>
         </Secao>
       )}
