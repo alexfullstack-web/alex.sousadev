@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   res.setHeader('X-Robots-Tag', 'noindex');
   try {
     const xml = montarSitemap(await projetosPublicados());
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
     return res.status(200).send(xml);
   } catch {
     res.setHeader('Cache-Control', 'public, s-maxage=300');

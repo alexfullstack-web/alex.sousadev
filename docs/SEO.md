@@ -10,6 +10,10 @@ Sitemap: `https://portfolio.alexsousatech.com.br/sitemap.xml`
 - Depois de carregar, o React assume a página e busca os dados atuais na API.
 - Projeto publicado depois do último build: abre normalmente por `app-shell.html` e já entra no sitemap, mas só tem HTML completo no próximo deploy.
 
+## Datas do sitemap
+
+O `lastmod` dos projetos vem de `atualizadoEm` no Business OS. O das páginas fixas fica em `PAGINAS_FIXAS` (`api/_sitemap.js`): ao mudar o conteúdo de uma página, atualize a data dela.
+
 ## Depois de publicar ou editar projeto
 
 Crie um Deploy Hook na Vercel (Settings → Git → Deploy Hooks) e chame a URL após publicar um projeto, ou faça um novo deploy. Sem isso, títulos e textos do HTML inicial ficam como no último build.

@@ -121,5 +121,7 @@ for (const { slug } of publicados) {
 }
 
 escrever('sitemap-fallback.xml', montarSitemap(publicados));
+// Um sitemap.xml estático teria prioridade sobre o dinâmico na Vercel: nunca pode ir para o deploy.
+rmSync(resolve(dist, 'sitemap.xml'), { force: true });
 rmSync(ssr, { recursive: true, force: true });
 console.log(`[prerender] 6 páginas fixas e ${gerados} projeto(s) gerados.${site ? '' : ' ATENÇÃO: sem dados da API neste build.'}`);
