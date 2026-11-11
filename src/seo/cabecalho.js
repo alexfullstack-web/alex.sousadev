@@ -3,7 +3,7 @@ import { SITE_URL } from '../config.js';
 import { DESCRICAO_PADRAO, IMAGEM_SOCIAL, MARCA, TITULO_PADRAO, resumirDescricao, urlAbsoluta } from './marca.js';
 import { entidadesGlobais } from './schema.js';
 
-export function calcularSeo({ titulo, tituloCompleto, descricao, caminho, imagem, imagemAlt, noindex = false, entidades = [] }, dados) {
+export function calcularSeo({ titulo, tituloCompleto, descricao, caminho, imagem, imagemAlt, noindex = false, entidades = [] }) {
   return {
     titulo: tituloCompleto || (titulo ? `${titulo} | ${MARCA}` : TITULO_PADRAO),
     descricao: resumirDescricao(descricao || DESCRICAO_PADRAO),
@@ -11,7 +11,7 @@ export function calcularSeo({ titulo, tituloCompleto, descricao, caminho, imagem
     imagem: imagem ? urlAbsoluta(imagem) : IMAGEM_SOCIAL,
     imagemAlt: imagemAlt || `Logotipo e apresentação da ${MARCA}`,
     robots: noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large',
-    jsonLd: { '@context': 'https://schema.org', '@graph': [...entidadesGlobais(dados), ...entidades] },
+    jsonLd: { '@context': 'https://schema.org', '@graph': [...entidadesGlobais(), ...entidades] },
   };
 }
 

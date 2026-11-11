@@ -1,71 +1,85 @@
-# Alex Sousa Tech — Portfólio V4
+# Alex Sousa Tech — site oficial
 
-Site institucional e portfólio de Alex Sousa, **controlado pelo Business OS**: projetos, serviços,
-textos, WhatsApp, orçamentos e atendimento vêm da API do sistema. Nenhum projeto fica fixo no código.
+Site institucional da **Alex Sousa Tech**: empresa, serviços, projetos, processo de trabalho e pedido de orçamento.
+Endereço: `https://portfolio.alexsousatech.com.br`.
 
-React + Vite + React Router + Axios + Lucide. JavaScript puro (sem TypeScript). Sem backend próprio:
-usa a API do Business OS.
+React 19 + Vite + React Router 7 + CSS próprio + Lucide. JavaScript puro, sem TypeScript.
+O conteúdo dos **projetos** e o recebimento dos **pedidos de orçamento** ficam no **Alex Sousa Tech Gestão**.
 
-## Executar
+## Rodar localmente
 
 ```bash
-cp .env.example .env      # preencha VITE_API_URL e VITE_EMPRESA
 npm install
-npm run dev               # http://localhost:5173
-npm run build             # gera dist/ com um HTML completo por página pública (scripts/prerender.mjs)
-npm run preview
+cp .env.example .env.local   # preencha os valores (veja a tabela abaixo)
+npm run dev                  # http://localhost:5173
+npm run build                # gera dist/ com as páginas pré-renderizadas
+npm run preview              # serve dist/ como na Vercel, inclusive /api/portfolio
 ```
 
-| Variável | O que é |
-|---|---|
-| `VITE_API_URL` | API do Business OS, terminando em `/api` |
-| `VITE_EMPRESA` | slug da empresa no Business OS (aparece em Projetos e ideias → Site público) |
-| `VITE_TURNSTILE_SITE_KEY` | opcional — chave **pública** do Turnstile, se o backend usar `TURNSTILE_SECRET_KEY` |
+Sem o Gestão configurado, o site abre normalmente, mas a lista de projetos fica vazia e o formulário mostra um erro ao enviar.
 
-Tudo que começa com `VITE_` vai para o navegador: **nunca** coloque chaves de IA ou segredos aqui.
-A chave da IA fica só no backend (`OPENROUTER_API_KEY`).
+## Variáveis de ambiente
+
+| Variável | Onde é usada | Pública? |
+|----------|--------------|----------|
+| `GESTAO_API_URL` | Funções `api/` da Vercel e build (`https://<API do Gestão>/api/v1`) | não |
+| `GESTAO_SITE_KEY` | Chave do site gerada no Gestão (Portfólio → Integração com o site) | **não. Nunca use o prefixo `VITE_`** |
+| `VITE_GESTAO_API_URL` | Formulário de orçamento, no navegador (`https://<API do Gestão>/api/v1`) | sim |
+| `VITE_TURNSTILE_SITE_KEY` | Opcional: Cloudflare Turnstile no formulário | sim |
+
+Variáveis com prefixo `VITE_` vão para o JavaScript que o visitante baixa. Por isso a chave do site **não** pode ter esse prefixo. O `.env` e os `.env.*` estão no `.gitignore`; só o `.env.example`, sem valores reais, vai para o repositório.
 
 ## Publicar na Vercel
 
-1. Preset **Vite**; configure as variáveis acima no projeto da Vercel.
-2. `vercel.json` já define URLs limpas, 404 real, sitemap dinâmico, redirecionamentos, cache e cabeçalhos de segurança.
-3. No backend, inclua o domínio do site em `CORS_ORIGINS`.
-4. No Business OS → Projetos e ideias → **Site público**, ligue o site. Enquanto estiver desligado,
-   o site mostra "em manutenção".
+1. *Settings → Environment Variables*, ambiente **Production**: as quatro variáveis acima.
+2. No Gestão (API no Render): `PUBLIC_FORM_ORIGINS=https://portfolio.alexsousatech.com.br`, para aceitar o formulário, e `PUBLIC_BASE_URL` com o endereço público da API, para os links das imagens.
+3. Faça o deploy. O `vercel.json` já tem os redirecionamentos, cabeçalhos de segurança e o sitemap dinâmico.
+
+Passo a passo completo do lado do Gestão: `docs/INTEGRACAO-SITE.md` no repositório do Gestão.
+
+## Como os projetos chegam ao site
+
+- O site lê só os projetos **publicados** no Gestão, pelo servidor da Vercel (`api/portfolio`), usando a chave do site. O navegador nunca vê a chave.
+- No `build`, cada projeto vira uma página HTML completa, com título, descrição, imagem e dados estruturados. Isso é bom para o Google e para o compartilhamento.
+- Depois do deploy, a Vercel busca de novo a cada 5 minutos, no máximo. **Publicar, despublicar, editar e reordenar no Gestão aparece no site sem novo deploy.**
+- Projeto publicado depois do deploy abre pela página base (`app-shell`) e entra no sitemap na hora. Ele ganha HTML completo no próximo deploy. Projeto despublicado vira "página não encontrada".
+- Se o Gestão estiver fora do ar ou a chave for trocada, o site continua mostrando os projetos do último deploy.
+
+## Formulário de orçamento
+
+O formulário (`src/components/QuoteForm.jsx`) envia direto para `POST /public/service-requests` do Gestão. O pedido aparece em **Atendimento**, com empresa, faixa de investimento, prazo, forma de contato preferida e a data do aceite da política de privacidade.
+
+- A confirmação só aparece depois que o Gestão grava o pedido. Depois dela, o visitante pode adiantar a conversa pelo WhatsApp com um resumo pronto.
+- Erros de cada campo vindos da API aparecem ao lado do campo.
+- Proteção contra robôs: campo-armadilha, tempo mínimo de preenchimento e Turnstile opcional.
 
 ## Estrutura
 
-```text
+```
+api/                       funções da Vercel (rodam no servidor)
+├── _gestao.js             leitura do portfólio no Gestão (usado também pelo build)
+├── _sitemap.js            páginas fixas e montagem do sitemap
+├── portfolio/index.js     GET /api/portfolio
+├── portfolio/[slug].js    GET /api/portfolio/:slug
+└── sitemap.js             GET /sitemap.xml
+scripts/prerender.mjs      gera o HTML de cada página depois do build
 src/
-├── App.jsx                 rotas, fundo, navegação, rodapé, WhatsApp e João Pedro IA
-├── api.js / config.js      cliente da API pública (só rotas públicas)
-├── context/SiteContext.jsx dados do site vindos do Business OS
-├── components/
-│   ├── TechBackground.jsx  fundo animado (partículas, trilhas de circuito com pulsos, parallax) em um canvas
-│   ├── LoadingScreen.jsx   tela de carregamento com a logo AS (1ª visita da sessão)
-│   ├── JoaoPedro.jsx       assistente (Central de Atendimento do Business OS, origem PORTFOLIO)
-│   ├── QuoteForm.jsx       orçamento: registrar, pedir contato ou continuar pelo WhatsApp
-│   └── QuoteStatus.jsx     andamento dos pedidos feitos neste navegador
-├── pages/                  Início, Sobre (/sobre-alex-sousa), Projetos, Projeto (/projetos/:slug), Orçamento, Privacidade, 404
-└── styles/                 base (tokens, botões chanfrados), seções, widgets
-scripts/prerender.mjs       HTML completo de cada página pública no build
-api/sitemap.js              /sitemap.xml dinâmico (função da Vercel)
-src/seo/                    identidade da marca, metatags e dados estruturados
+├── App.jsx                rotas
+├── config.js              endereços públicos (site, API do formulário)
+├── data/empresa.js        textos da empresa, serviços, processo, diferenciais, contatos e "Sobre"
+├── lib/gestao.js          chamadas do navegador (projetos via /api, envio do orçamento)
+├── hooks/                 useProjetos, useSeo
+├── seo/                   títulos, descrições e dados estruturados (Schema.org)
+├── components/            Header, Footer, QuoteForm, ProjectCard, Processo, HeroVisual...
+├── pages/                 Home, Empresa, SobreAlexSousa, Servicos, Projetos, Projeto,
+│                          Orcamento, Contato, Privacidade, NaoEncontrado
+└── styles/                base.css (cores, fontes, base) e site.css (componentes)
 ```
 
-## Comportamentos importantes
+## Conteúdo
 
-- **Projetos**: só os publicados no Business OS. Retirar do site lá tira daqui na hora.
-- **Orçamento**: a confirmação só aparece depois que a API registra o pedido (protocolo
-  `ORC-...`). Falha de rede mostra o erro; tentar de novo não duplica. "Continuar pelo
-  WhatsApp" só abre o WhatsApp com o resumo e **não** registra o pedido.
-- **João Pedro IA**: sem IA configurada no servidor, avisa que está indisponível e oferece
-  formulário, WhatsApp e falar com a equipe (sem respostas inventadas). Nunca informa preços ou prazos.
-- **Desempenho e acessibilidade**: um único canvas leve (pausa em aba oculta, ~30 fps no celular),
-  fontes servidas pelo próprio site, imagens WebP com carregamento sob demanda, foco visível, e
-  `prefers-reduced-motion` desliga as animações.
-- **LGPD**: consentimento para registrar pedidos, página `/privacidade`, só os dados necessários.
+- **Textos da empresa, serviços, contatos e "Sobre"**: `src/data/empresa.js`. Ao mudar o conteúdo de uma página, atualize a data dela em `PAGINAS_FIXAS` (`api/_sitemap.js`).
+- **Projetos**: só pelo painel do Gestão.
+- **Fotos do Alex**: `public/img/site/`. A imagem de compartilhamento do site é `public/img/og-empresa.jpg` (1200×630).
 
-## SEO
-
-Veja [docs/SEO.md](docs/SEO.md): pré-renderização, sitemap, Cloudflare e Google Search Console.
+SEO, Search Console e Cloudflare: `docs/SEO.md`.

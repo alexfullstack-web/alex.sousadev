@@ -6,35 +6,40 @@ Sitemap: `https://portfolio.alexsousatech.com.br/sitemap.xml`
 ## Como funciona
 
 - `npm run build` gera um HTML completo por página pública, com conteúdo, título, canonical e JSON-LD.
-- Os dados vêm das rotas públicas da API. Se a API não responder, o build continua sem os dados dela (aparece um aviso no log).
-- Depois de carregar, o React assume a página e busca os dados atuais na API.
-- Projeto publicado depois do último build: abre normalmente por `app-shell.html` e já entra no sitemap, mas só tem HTML completo no próximo deploy.
+- Os projetos vêm do Alex Sousa Tech Gestão, lidos com a chave do site (`api/_gestao.js`). Se o Gestão não responder, o build tenta de novo e, se continuar fora, gera as páginas fixas e avisa no log.
+- Depois de carregar, o React assume a página e busca os projetos atuais em `/api/portfolio`, que guarda cache por 5 minutos na Vercel.
+- Projeto publicado depois do último build abre normalmente por `app-shell.html` e já entra no sitemap, mas só tem HTML completo no próximo deploy.
 
 ## Datas do sitemap
 
-O `lastmod` dos projetos vem de `atualizadoEm` no Business OS. O das páginas fixas fica em `PAGINAS_FIXAS` (`api/_sitemap.js`): ao mudar o conteúdo de uma página, atualize a data dela.
+O `lastmod` dos projetos vem da data da última alteração no Gestão. O das páginas fixas fica em `PAGINAS_FIXAS` (`api/_sitemap.js`): ao mudar o conteúdo de uma página, atualize a data dela.
 
 ## Depois de publicar ou editar projeto
 
-Crie um Deploy Hook na Vercel (Settings → Git → Deploy Hooks) e chame a URL após publicar um projeto, ou faça um novo deploy. Sem isso, títulos e textos do HTML inicial ficam como no último build.
+A página que o visitante vê se atualiza sozinha em até 5 minutos. O **HTML inicial**, que é o que o Google e as redes sociais leem primeiro, só muda no próximo deploy. Depois de publicar algo importante, faça um *Redeploy* na Vercel, ou crie um Deploy Hook (Settings → Git → Deploy Hooks) e chame a URL dele.
 
 ## Variáveis na Vercel
 
-| Variável | Valor |
-|---|---|
-| `VITE_API_URL` | API do Business OS, terminando em `/api` |
-| `VITE_EMPRESA` | slug da empresa (padrão `alex-sousa-tech`) |
+Veja a tabela no `README.md`: `GESTAO_API_URL`, `GESTAO_SITE_KEY` (só no servidor), `VITE_GESTAO_API_URL` e, se usar, `VITE_TURNSTILE_SITE_KEY`.
 
-`VITE_SITE_URL` não é mais usada e pode ser apagada.
+Variáveis antigas que podem ser apagadas: `VITE_API_URL`, `VITE_EMPRESA`, `VITE_SITE_URL`.
 
-## Backend
+## Gestão (API)
 
-Inclua `https://portfolio.alexsousatech.com.br` em `CORS_ORIGINS`, ou o site não carregará os dados nesse domínio.
+Inclua `https://portfolio.alexsousatech.com.br` em `PUBLIC_FORM_ORIGINS`, ou o formulário de orçamento será recusado nesse domínio.
 
 ## Redes sociais
 
-Os links do JSON-LD (`sameAs`), do rodapé e da página Sobre vêm do Business OS. Só entram endereços `https://`.
-Confira GitHub, LinkedIn, Instagram e YouTube em Configurações do site antes de publicar.
+Os perfis oficiais (Instagram e GitHub) ficam em `src/data/empresa.js` (`CONTATO`) e em `src/seo/marca.js` (`REDES_OFICIAIS`, usados no `sameAs` do JSON-LD). Ao criar outro perfil oficial, por exemplo LinkedIn, inclua-o nos dois lugares.
+
+## Dados estruturados por página
+
+| Página | Schema.org |
+|--------|------------|
+| Todas | `Organization` (Alex Sousa Tech) e `WebSite` |
+| `/sobre-alex-sousa` | `ProfilePage` + `Person` (Alex Sousa, fundador) |
+| `/servicos` | `ItemList` com os 9 `Service` |
+| `/projetos/:slug` | `CreativeWork` do projeto, criado pela `Organization`, + `BreadcrumbList` |
 
 ## Cloudflare
 

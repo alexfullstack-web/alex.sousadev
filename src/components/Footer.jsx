@@ -1,62 +1,74 @@
 import { Link } from 'react-router-dom';
-import { Github, Instagram, Linkedin, Mail, MessageCircle, Youtube } from 'lucide-react';
-import Logo from './Logo.jsx';
-import { SECOES } from './Navbar.jsx';
-import { useSite } from '../context/SiteContext.jsx';
+import { Github, Instagram, Mail, MessageCircle } from 'lucide-react';
+import { CONTATO, EMPRESA, NAV, SERVICOS, linkWhatsapp } from '../data/empresa.js';
 
 export default function Footer() {
-  const { dados } = useSite();
-  const c = dados?.conteudo?.contato || {};
-  const zap = dados?.whatsapp;
-  const redes = [
-    c.github && { href: c.github, rotulo: 'GitHub', Icone: Github },
-    c.linkedin && { href: c.linkedin, rotulo: 'LinkedIn', Icone: Linkedin },
-    c.instagram && { href: c.instagram, rotulo: 'Instagram', Icone: Instagram },
-    c.youtube && { href: c.youtube, rotulo: 'YouTube', Icone: Youtube },
-  ].filter(Boolean);
+  const ano = new Date().getFullYear();
   return (
     <footer className="rodape">
-      <div className="rodape__dentro">
+      <div className="rodape__grade">
         <div className="rodape__marca">
-          <Logo />
-          <p>Desenvolvimento • Tecnologia • Inovação</p>
+          <img src="/img/site/logo-full.webp" alt="Logotipo da Alex Sousa Tech" width="778" height="646" loading="lazy" />
+          <p>{EMPRESA.posicionamento}</p>
         </div>
-        <nav className="rodape__nav" aria-label="Rodapé">
-          {SECOES.map((s) => (
-            <Link key={s.id} to={s.id === 'inicio' ? '/' : `/#${s.id}`}>
-              {s.rotulo}
-            </Link>
-          ))}
-          <Link to="/sobre-alex-sousa">Sobre Alex Sousa</Link>
-          <Link to="/projetos">Todos os projetos</Link>
-          <Link to="/orcamento">Orçamento</Link>
-          <Link to="/privacidade">Privacidade</Link>
+        <nav className="rodape__col" aria-label="Serviços">
+          <h2>Serviços</h2>
+          <ul>
+            {SERVICOS.slice(0, 6).map((s) => (
+              <li key={s.id}>
+                <Link to={`/servicos#${s.id}`}>{s.nome}</Link>
+              </li>
+            ))}
+            <li>
+              <Link to="/servicos">Todos os serviços</Link>
+            </li>
+          </ul>
         </nav>
-        <div className="rodape__contato">
-          {c.email && (
-            <a href={`mailto:${c.email}`}>
-              <Mail size={16} aria-hidden="true" /> {c.email}
-            </a>
-          )}
-          {zap?.ativo && (
-            <a href={zap.link} target="_blank" rel="noopener noreferrer">
-              <MessageCircle size={16} aria-hidden="true" /> WhatsApp{zap.horario ? ` · ${zap.horario}` : ''}
-            </a>
-          )}
-          {redes.length > 0 && (
-            <ul className="rodape__redes" aria-label="Redes sociais">
-              {redes.map(({ href, rotulo, Icone }) => (
-                <li key={rotulo}>
-                  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={rotulo} title={rotulo}>
-                    <Icone size={18} aria-hidden="true" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
+        <nav className="rodape__col" aria-label="Navegação do rodapé">
+          <h2>Navegação</h2>
+          <ul>
+            {NAV.map((item) => (
+              <li key={item.to}>
+                <Link to={item.to}>{item.rotulo}</Link>
+              </li>
+            ))}
+            <li>
+              <Link to="/orcamento">Solicitar orçamento</Link>
+            </li>
+          </ul>
+        </nav>
+        <div className="rodape__col">
+          <h2>Contato</h2>
+          <ul className="rodape__contato">
+            <li>
+              <a href={linkWhatsapp()} target="_blank" rel="noopener noreferrer">
+                <MessageCircle size={17} aria-hidden="true" /> {CONTATO.whatsappRotulo}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${CONTATO.email}`}>
+                <Mail size={17} aria-hidden="true" /> {CONTATO.email}
+              </a>
+            </li>
+            <li>
+              <a href={CONTATO.instagram} target="_blank" rel="noopener noreferrer">
+                <Instagram size={17} aria-hidden="true" /> {CONTATO.instagramUsuario}
+              </a>
+            </li>
+            <li>
+              <a href={CONTATO.github} target="_blank" rel="noopener noreferrer">
+                <Github size={17} aria-hidden="true" /> GitHub
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
-      <p className="rodape__copy" suppressHydrationWarning>© {new Date().getFullYear()} Alex Sousa Tech. Projetos e conteúdo gerenciados pelo Business OS.</p>
+      <div className="rodape__base">
+        <p>
+          © <span suppressHydrationWarning>{ano}</span> {EMPRESA.nome}. {EMPRESA.slogan}
+        </p>
+        <Link to="/privacidade">Política de privacidade</Link>
+      </div>
     </footer>
   );
 }

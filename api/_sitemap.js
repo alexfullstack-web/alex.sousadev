@@ -5,11 +5,14 @@ export const SITE = 'https://portfolio.alexsousatech.com.br';
 // Todas as páginas públicas fixas (mesmas rotas de src/App.jsx).
 // atualizadoEm = dia da última alteração real da página. Ao mudar o conteúdo de uma delas, atualize a data aqui.
 export const PAGINAS_FIXAS = [
-  { caminho: '/', atualizadoEm: '2026-11-09' },
-  { caminho: '/sobre-alex-sousa', atualizadoEm: '2026-11-09' },
-  { caminho: '/projetos', atualizadoEm: '2026-11-09' },
-  { caminho: '/orcamento', atualizadoEm: '2026-11-09' },
-  { caminho: '/privacidade', atualizadoEm: '2026-11-09' },
+  { caminho: '/', atualizadoEm: '2026-11-10' },
+  { caminho: '/empresa', atualizadoEm: '2026-11-10' },
+  { caminho: '/sobre-alex-sousa', atualizadoEm: '2026-11-10' },
+  { caminho: '/servicos', atualizadoEm: '2026-11-10' },
+  { caminho: '/projetos', atualizadoEm: '2026-11-10' },
+  { caminho: '/orcamento', atualizadoEm: '2026-11-10' },
+  { caminho: '/contato', atualizadoEm: '2026-11-10' },
+  { caminho: '/privacidade', atualizadoEm: '2026-11-10' },
 ];
 
 const SLUG_VALIDO = /^[a-z0-9][a-z0-9-]*$/i;

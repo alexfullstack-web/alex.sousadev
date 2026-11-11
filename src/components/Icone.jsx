@@ -1,9 +1,54 @@
-// Ícones do conteúdo editável (as mesmas chaves que o Business OS aceita).
-import { AudioLines, BrainCircuit, Cloud, Code2, Cpu, Database, Globe, Headset, Layers, MonitorCog, Palette, Rocket, ShieldCheck, ShoppingCart, Smartphone, Star, TabletSmartphone, Workflow } from 'lucide-react';
+import {
+  AppWindow,
+  AudioLines,
+  Code2,
+  Cpu,
+  Database,
+  Globe,
+  Layers,
+  LayoutDashboard,
+  LifeBuoy,
+  Monitor,
+  MousePointerClick,
+  PenTool,
+  Puzzle,
+  Rocket,
+  Server,
+  ShoppingBag,
+  Smartphone,
+  Sparkles,
+  Target,
+  UtensilsCrossed,
+  Workflow,
+  Wrench,
+} from 'lucide-react';
 
-const MAPA = { site: Globe, loja: ShoppingCart, sistema: MonitorCog, app: Smartphone, nuvem: Cloud, ia: BrainCircuit, codigo: Code2, suporte: Headset, automacao: Workflow, dados: Database, seguranca: ShieldCheck, design: Palette, som: AudioLines, eletronica: Cpu, celular: TabletSmartphone, fullstack: Layers, foguete: Rocket, estrela: Star };
+const ICONES = {
+  'app-window': AppWindow,
+  audio: AudioLines,
+  code: Code2,
+  cpu: Cpu,
+  database: Database,
+  globe: Globe,
+  layers: Layers,
+  'layout-dashboard': LayoutDashboard,
+  'life-buoy': LifeBuoy,
+  monitor: Monitor,
+  'mouse-pointer': MousePointerClick,
+  'pen-tool': PenTool,
+  puzzle: Puzzle,
+  rocket: Rocket,
+  server: Server,
+  'shopping-bag': ShoppingBag,
+  smartphone: Smartphone,
+  sparkles: Sparkles,
+  target: Target,
+  utensils: UtensilsCrossed,
+  workflow: Workflow,
+  wrench: Wrench,
+};
 
-export default function Icone({ nome, ...props }) {
-  const C = MAPA[nome] || Code2;
-  return <C aria-hidden="true" {...props} />;
+export default function Icone({ nome, size = 22, ...props }) {
+  const I = ICONES[nome] ?? Sparkles;
+  return <I size={size} strokeWidth={1.75} aria-hidden="true" {...props} />;
 }
