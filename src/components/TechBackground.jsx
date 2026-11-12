@@ -191,8 +191,6 @@ export default function TechBackground() {
   }, []);
   return (
     <div className="fundo" aria-hidden="true">
-      <div className="fundo__brilho fundo__brilho--a" />
-      <div className="fundo__brilho fundo__brilho--b" />
       <canvas ref={ref} className="fundo__canvas" />
       <div className="fundo__vinheta" />
     </div>

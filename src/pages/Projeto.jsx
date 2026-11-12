@@ -1,199 +1,181 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowUpRight, CalendarCheck, ChevronLeft, ChevronRight, Github, RefreshCw, Send, X } from 'lucide-react';
-import { mensagemDeErro, site } from '../api.js';
-import { useSeo } from '../hooks/useSeo.js';
-import ProjectCard from '../components/ProjectCard.jsx';
-import { projetoInicial } from '../seo/dadosIniciais.js';
-import { entidadesProjeto } from '../seo/schema.js';
+import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, ExternalLink, RefreshCw } from "lucide-react";
+import CtaFinal from "../components/CtaFinal.jsx";
+import Reveal from "../components/Reveal.jsx";
+import { useProjeto } from "../hooks/useProjetos.js";
+import { useSeo } from "../hooks/useSeo.js";
+import { entidadesProjeto } from "../seo/schema.js";
+import NaoEncontrado from "./NaoEncontrado.jsx";
 
-const mesAno = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-const TIPO_POR_CATEGORIA = { SITE: 'SITE_INSTITUCIONAL', SISTEMA_WEB: 'SISTEMA_GESTAO', SAAS: 'SAAS', APLICATIVO: 'APLICATIVO', IA: 'IA' };
+const dataLonga = (iso) => {
+  const [a, m] = iso.split("-").map(Number);
+  return new Date(Date.UTC(a, m - 1, 15)).toLocaleDateString("pt-BR", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+};
 
-function Visualizador({ imagens, i, onFechar, onMudar }) {
-  useEffect(() => {
-    const k = (e) => {
-      if (e.key === 'Escape') onFechar();
-      if (e.key === 'ArrowRight') onMudar((i + 1) % imagens.length);
-      if (e.key === 'ArrowLeft') onMudar((i - 1 + imagens.length) % imagens.length);
-    };
-    document.addEventListener('keydown', k);
-    const antes = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', k);
-      document.body.style.overflow = antes;
-    };
-  }, [i, imagens.length, onFechar, onMudar]);
+function Conteudo({ p }) {
+  const temTexto = Boolean(p.descricao || p.desafio || p.solucao);
+  const temFicha = p.tecnologias.length > 0 || Boolean(p.conclusao);
+  useSeo({
+    titulo: p.nome,
+    descricao: p.resumo,
+    caminho: `/projetos/${p.slug}`,
+    imagem: p.capa?.url,
+    imagemAlt: p.capa?.alt,
+    entidades: entidadesProjeto(p),
+  });
   return (
-    <div className="visualizador" role="dialog" aria-modal="true" aria-label={`Imagem ${i + 1} de ${imagens.length}`} onClick={onFechar}>
-      <img src={imagens[i]} alt={`Tela ${i + 1} de ${imagens.length} do projeto`} onClick={(e) => e.stopPropagation()} />
-      <button type="button" className="visualizador__fechar" onClick={onFechar} aria-label="Fechar" autoFocus>
-        <X size={22} aria-hidden="true" />
-      </button>
-      {imagens.length > 1 && (
-        <>
-          <button type="button" className="visualizador__nav visualizador__nav--ant" onClick={(e) => (e.stopPropagation(), onMudar((i - 1 + imagens.length) % imagens.length))} aria-label="Imagem anterior">
-            <ChevronLeft size={26} aria-hidden="true" />
-          </button>
-          <button type="button" className="visualizador__nav visualizador__nav--prox" onClick={(e) => (e.stopPropagation(), onMudar((i + 1) % imagens.length))} aria-label="Próxima imagem">
-            <ChevronRight size={26} aria-hidden="true" />
-          </button>
-        </>
+    <>
+      <header className="caso-topo">
+        <Reveal className="caso-topo__texto">
+          <Link to="/projetos" className="voltar">
+            <ArrowLeft size={16} aria-hidden="true" /> Todos os projetos
+          </Link>
+          {p.segmento && <p className="caso-topo__segmento">{p.segmento}</p>}
+          <h1>{p.nome}</h1>
+          <p className="caso-topo__resumo">{p.resumo}</p>
+          {p.demo && (
+            <a
+              href={p.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="botao botao--primario"
+            >
+              Ver demonstração <ExternalLink size={17} aria-hidden="true" />
+            </a>
+          )}
+        </Reveal>
+        {p.capa && (
+          <Reveal className="caso-topo__capa" style={{ "--atraso": "100ms" }}>
+            <img
+              src={p.capa.url}
+              alt={p.capa.alt}
+              width={p.capa.largura || 1200}
+              height={p.capa.altura || 750}
+              fetchPriority="high"
+            />
+          </Reveal>
+        )}
+      </header>
+
+      {(temTexto || temFicha) && (
+        <section
+          className={`secao caso${temTexto ? "" : " caso--so-ficha"}`}
+          aria-label="Detalhes do projeto"
+        >
+          {temTexto && (
+            <div className="caso__texto">
+              {p.descricao && (
+                <Reveal>
+                  <h2>Sobre o projeto</h2>
+                  <p className="quebra">{p.descricao}</p>
+                </Reveal>
+              )}
+              {p.desafio && (
+                <Reveal>
+                  <h2>Necessidade atendida</h2>
+                  <p className="quebra">{p.desafio}</p>
+                </Reveal>
+              )}
+              {p.solucao && (
+                <Reveal>
+                  <h2>Solução desenvolvida</h2>
+                  <p className="quebra">{p.solucao}</p>
+                </Reveal>
+              )}
+            </div>
+          )}
+          {temFicha && (
+            <Reveal
+              as="aside"
+              className="caso__ficha"
+              aria-label="Ficha do projeto"
+            >
+              <dl>
+                {p.conclusao && (
+                  <div>
+                    <dt>Conclusão</dt>
+                    <dd>{dataLonga(p.conclusao)}</dd>
+                  </div>
+                )}
+                {p.tecnologias.length > 0 && (
+                  <div>
+                    <dt>Tecnologias</dt>
+                    <dd>
+                      <ul className="etiquetas">
+                        {p.tecnologias.map((t) => (
+                          <li key={t}>{t}</li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </Reveal>
+          )}
+        </section>
       )}
-    </div>
+
+      {p.galeria.length > 0 && (
+        <section className="secao" aria-labelledby="galeria-titulo">
+          <h2 id="galeria-titulo" className="visualmente-oculto">
+            Imagens do projeto
+          </h2>
+          <ul className="galeria">
+            {p.galeria.map((g) => (
+              <Reveal as="li" key={g.url}>
+                <img
+                  src={g.url}
+                  alt={g.alt}
+                  width={g.largura || 1200}
+                  height={g.altura || 750}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <CtaFinal titulo="Quer algo assim para o seu negócio?" />
+    </>
+  );
+}
+
+function Pagina({ slug }) {
+  const { projeto, estado, erro, recarregar } = useProjeto(slug);
+  if (estado === "nao-encontrado") return <NaoEncontrado />;
+  if (projeto) return <Conteudo p={projeto} />;
+  if (estado === "erro") {
+    return (
+      <div className="pagina-topo">
+        <div className="aviso" role="alert">
+          <p>{erro}</p>
+          <button
+            type="button"
+            className="botao botao--contorno botao--p"
+            onClick={recarregar}
+          >
+            <RefreshCw size={16} aria-hidden="true" /> Tentar de novo
+          </button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div
+      className="pagina-topo"
+      aria-busy="true"
+      aria-label="Carregando projeto"
+    />
   );
 }
 
 export default function Projeto() {
   const { slug } = useParams();
-  const [p, setP] = useState(() => projetoInicial(slug));
-  const slugCarregado = useRef(p ? slug : null);
-  const [erro, setErro] = useState('');
-  const [naoExiste, setNaoExiste] = useState(false);
-  const [aberta, setAberta] = useState(null);
-  const carregar = useCallback(() => {
-    setErro('');
-    if (slugCarregado.current !== slug) setP(null); // veio pronto do build: atualiza sem piscar
-    slugCarregado.current = slug;
-    setNaoExiste(false);
-    site
-      .projeto(slug)
-      .then(setP)
-      .catch((e) => (e?.response?.status === 404 ? setNaoExiste(true) : setErro(mensagemDeErro(e, 'Não foi possível abrir o projeto.'))));
-  }, [slug]);
-  useEffect(() => {
-    carregar();
-    window.scrollTo(0, 0);
-  }, [carregar]);
-  const mostrar = naoExiste ? null : p;
-  useSeo({
-    titulo: mostrar ? [mostrar.nome, mostrar.categoriaRotulo].filter(Boolean).join(' — ') : naoExiste ? 'Projeto não encontrado' : 'Projeto',
-    descricao: mostrar?.resumo || (mostrar ? `Projeto ${mostrar.nome}, desenvolvido por Alex Sousa, da Alex Sousa Tech.` : undefined),
-    caminho: `/projetos/${slug}`,
-    imagem: mostrar?.capaUrl || undefined,
-    imagemAlt: mostrar ? `Tela do projeto ${mostrar.nome}` : undefined,
-    noindex: naoExiste,
-    entidades: mostrar ? entidadesProjeto(mostrar, slug) : [],
-  });
-  const fechar = useCallback(() => setAberta(null), []);
-
-  if (naoExiste) {
-    return (
-      <div className="pagina pagina--estreita">
-        <h1 className="pagina__titulo">Projeto não encontrado</h1>
-        <p className="secao__desc">Ele pode ter sido retirado do portfólio ou o endereço mudou.</p>
-        <Link to="/projetos" className="botao botao--primario">
-          Ver todos os projetos
-        </Link>
-      </div>
-    );
-  }
-  if (erro) {
-    return (
-      <div className="pagina pagina--estreita">
-        <div className="aviso-erro" role="alert">
-          <p>{erro}</p>
-          <button type="button" className="botao botao--contorno botao--p" onClick={carregar}>
-            <RefreshCw size={15} aria-hidden="true" /> Tentar de novo
-          </button>
-        </div>
-      </div>
-    );
-  }
-  if (!p) return <div className="pagina"><div className="projeto-detalhe projeto-detalhe--esqueleto" aria-busy="true" aria-label="Carregando projeto" /></div>;
-
-  const imagens = [p.capaUrl, ...p.galeria.filter((g) => g !== p.capaUrl)].filter(Boolean);
-  return (
-    <article className="pagina" aria-labelledby="projeto-nome">
-      <Link to="/projetos" className="voltar">
-        <ArrowLeft size={16} aria-hidden="true" /> Todos os projetos
-      </Link>
-      <div className="projeto-detalhe">
-        <div className="projeto-detalhe__info">
-          <p className="projeto-detalhe__cat">{[p.categoriaRotulo, p.etiqueta].filter(Boolean).join(' · ')}</p>
-          <h1 id="projeto-nome" className="pagina__titulo">
-            {p.nome}
-          </h1>
-          <p className="projeto-detalhe__resumo">{p.resumo}</p>
-          {p.dataConclusao && (
-            <p className="projeto-detalhe__data">
-              <CalendarCheck size={16} aria-hidden="true" /> Concluído em {mesAno(p.dataConclusao)}
-            </p>
-          )}
-          <div className="projeto-detalhe__acoes">
-            {p.urlDemo && (
-              <a href={p.urlDemo} target="_blank" rel="noopener noreferrer" className="botao botao--primario">
-                Ver demonstração <ArrowUpRight size={17} aria-hidden="true" />
-              </a>
-            )}
-            {p.urlGithub && (
-              <a href={p.urlGithub} target="_blank" rel="noopener noreferrer" className="botao botao--contorno">
-                <Github size={17} aria-hidden="true" /> Código no GitHub
-              </a>
-            )}
-          </div>
-        </div>
-        <button type="button" className="projeto-detalhe__capa" onClick={() => imagens.length && setAberta(0)} disabled={!imagens.length} aria-label={imagens.length ? 'Ampliar imagem do projeto' : undefined}>
-          {p.capaUrl ? <img src={p.capaUrl} alt={`Tela do projeto ${p.nome}`} fetchPriority="high" decoding="async" /> : <span className="projeto__sem-capa" />}
-        </button>
-      </div>
-
-      <div className="projeto-detalhe__grade">
-        <section aria-labelledby="sobre-projeto">
-          <h2 id="sobre-projeto" className="subtitulo">
-            Sobre o projeto
-          </h2>
-          <p className="texto-longo">{p.descricao || p.resumo}</p>
-          {imagens.length > 1 && (
-            <>
-              <h2 className="subtitulo">Galeria</h2>
-              <ul className="galeria">
-                {imagens.map((src, i) => (
-                  <li key={src}>
-                    <button type="button" onClick={() => setAberta(i)} aria-label={`Ampliar imagem ${i + 1}`}>
-                      <img src={src} alt={`Tela ${i + 1} do projeto ${p.nome}`} loading="lazy" decoding="async" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </section>
-        <aside className="projeto-detalhe__lado">
-          {p.tecnologias.length > 0 && (
-            <>
-              <h2 className="subtitulo">Tecnologias</h2>
-              <ul className="projeto__tecs projeto__tecs--grandes">
-                {p.tecnologias.map((t) => (
-                  <li key={t}>{t}</li>
-                ))}
-              </ul>
-            </>
-          )}
-          <div className="quero-igual">
-            <h2 className="subtitulo">Quer algo parecido?</h2>
-            <p>Conte a sua ideia: a equipe avalia e define valor e prazo com você.</p>
-            <Link to={`/orcamento?tipo=${TIPO_POR_CATEGORIA[p.categoria] || 'OUTRO'}`} className="botao botao--primario botao--p">
-              <Send size={15} aria-hidden="true" /> Solicitar orçamento
-            </Link>
-          </div>
-        </aside>
-      </div>
-
-      {p.outros?.length > 0 && (
-        <section className="secao secao--colada" aria-labelledby="outros">
-          <h2 id="outros" className="secao__titulo">
-            Outros projetos
-          </h2>
-          <div className="projetos-grade projetos-grade--pagina">
-            {p.outros.map((o) => (
-              <ProjectCard key={o.slug} p={o} />
-            ))}
-          </div>
-        </section>
-      )}
-      {aberta !== null && <Visualizador imagens={imagens} i={aberta} onFechar={fechar} onMudar={setAberta} />}
-    </article>
-  );
+  return <Pagina key={slug} slug={slug} />;
 }

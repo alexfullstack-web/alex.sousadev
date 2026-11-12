@@ -3,8 +3,8 @@
   "short_name": "Alex Sousa Tech",
   "start_url": "/",
   "display": "browser",
-  "background_color": "#020611",
-  "theme_color": "#020611",
+  "background_color": "#04080f",
+  "theme_color": "#04080f",
   "icons": [
     {
       "src": "/img/icon-192.png",
@@ -18,5 +18,5 @@
     }
   ],
   "lang": "pt-BR",
-  "description": "Alex Sousa Tech: desenvolvimento de sites, sistemas web e aplicações."
+  "description": "Alex Sousa Tech: sites, sistemas web, lojas virtuais e soluções digitais personalizadas."
 }

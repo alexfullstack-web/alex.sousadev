@@ -1,8 +1,8 @@
 {
-  "name": "alex-sousa-portfolio",
+  "name": "alex-sousa-tech-site",
   "private": true,
-  "version": "4.0.0",
-  "description": "Alex Sousa Tech — Portfólio V4 (React + Vite, sem TypeScript), controlado pelo Business OS",
+  "version": "5.0.0",
+  "description": "Site institucional da Alex Sousa Tech (React + Vite, sem TypeScript), integrado ao Alex Sousa Tech Gestão",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,9 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource/chakra-petch": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
-    "axios": "^1.7.7",
+    "@fontsource/sora": "^5.3.0",
     "lucide-react": "^0.446.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

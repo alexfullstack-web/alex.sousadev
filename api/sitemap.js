@@ -1,23 +1,17 @@
-// /sitemap.xml dinâmico: lê os projetos publicados no Business OS a cada atualização do cache.
-// Só usa a rota pública da API. Se ela estiver dormindo ou fora, entrega a lista gerada no último build.
+// /sitemap.xml dinâmico: lê os projetos publicados no Gestão (API autenticada) a cada atualização do cache.
+// Se o Gestão estiver dormindo ou fora, entrega a lista gerada no último build.
 import { SITE, montarSitemap } from './_sitemap.js';
-
-async function projetosPublicados() {
-  const api = (process.env.VITE_API_URL || '').replace(/\/+$/, '');
-  if (!api) throw new Error('VITE_API_URL ausente');
-  const empresa = encodeURIComponent(process.env.VITE_EMPRESA || 'alex-sousa-tech');
-  const r = await fetch(`${api}/site/publico/${empresa}/sitemap`, { signal: AbortSignal.timeout(8000) });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return (await r.json()).projetos || [];
-}
+import { buscarPortfolio, lerConfig } from './_gestao.js';
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/xml; charset=utf-8');
   res.setHeader('X-Robots-Tag', 'noindex');
   try {
-    const xml = montarSitemap(await projetosPublicados());
+    const config = lerConfig();
+    if (!config.configurado) throw new Error('integração não configurada');
+    const { itens } = await buscarPortfolio(config, { tempo: 8000 });
     res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=3600');
-    return res.status(200).send(xml);
+    return res.status(200).send(montarSitemap(itens));
   } catch {
     res.setHeader('Cache-Control', 'public, s-maxage=300');
     try {

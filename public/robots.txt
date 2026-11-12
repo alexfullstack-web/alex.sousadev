@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /app-shell
 
-Sitemap: https://portfolio.alexsousatech.com.br/sitemap.xml
+Sitemap: https://site.alexsousatech.com.br/sitemap.xml
