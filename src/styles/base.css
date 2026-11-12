@@ -64,7 +64,8 @@ html {
 
 body {
   min-height: 100vh;
-  background: var(--abismo);
+  /* Sem cor própria: a cor fica no <html>, e o céu de estrelas (fixo, atrás do conteúdo) aparece. */
+  background: transparent;
   color: var(--texto);
   font-family: var(--fonte-texto);
   font-size: var(--t-base);

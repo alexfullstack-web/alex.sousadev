@@ -3,10 +3,40 @@
 // pré-renderização no build e servidor de desenvolvimento. A chave nunca vai para o navegador.
 // (Arquivos com "_" na pasta api não viram rota.)
 
+// Aceita o endereço com ou sem "/api/v1", com aspas ou barra no fim (erros comuns ao colar na Vercel).
+export function normalizarApi(valor) {
+  let api = String(valor || '').trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '');
+  if (!api) return '';
+  if (!/^https?:\/\//i.test(api)) api = `https://${api}`;
+  if (/\/api$/i.test(api)) api += '/v1';
+  else if (!/\/api\/v1$/i.test(api)) api += '/api/v1';
+  return api;
+}
+
+// Aceita a chave colada com aspas, espaços, "Bearer " ou "GESTAO_SITE_KEY=" na frente.
+export function limparChave(valor) {
+  return String(valor || '')
+    .trim()
+    .replace(/^GESTAO_SITE_KEY\s*=\s*/i, '')
+    .replace(/^["']|["']$/g, '')
+    .replace(/^Bearer\s+/i, '')
+    .trim();
+}
+
+export const FORMATO_CHAVE = /^ast_site_[A-Za-z0-9_-]{30,80}$/;
+
 export function lerConfig(env = process.env) {
-  const api = String(env.GESTAO_API_URL || env.VITE_GESTAO_API_URL || '').replace(/\/+$/, '');
-  const chave = String(env.GESTAO_SITE_KEY || '').trim();
-  return { api, chave, configurado: Boolean(api && chave) };
+  const api = normalizarApi(env.GESTAO_API_URL || env.VITE_GESTAO_API_URL);
+  const chave = limparChave(env.GESTAO_SITE_KEY);
+  const avisos = [];
+  if (!chave && env.VITE_GESTAO_SITE_KEY) {
+    avisos.push('A chave está em VITE_GESTAO_SITE_KEY: renomeie para GESTAO_SITE_KEY (sem VITE_, que é público).');
+  }
+  if (chave && !FORMATO_CHAVE.test(chave)) {
+    avisos.push('GESTAO_SITE_KEY não tem o formato de uma chave do Gestão (começa com ast_site_).');
+  }
+  if (!api) avisos.push('GESTAO_API_URL não definida.');
+  return { api, chave, configurado: Boolean(api && chave), avisos };
 }
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;

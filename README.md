@@ -35,6 +35,17 @@ Variáveis com prefixo `VITE_` vão para o JavaScript que o visitante baixa. Por
 2. No Gestão (API no Render): `PUBLIC_FORM_ORIGINS=https://site.alexsousatech.com.br`, para aceitar o formulário, e `PUBLIC_BASE_URL` com o endereço público da API, para os links das imagens.
 3. Faça o deploy. O `vercel.json` já tem os redirecionamentos, cabeçalhos de segurança e o sitemap dinâmico.
 
+### Conferir a ligação com o Gestão
+
+Abra **`/api/status`** no site publicado, por exemplo `https://site.alexsousatech.com.br/api/status`. A página mostra, sem expor a chave:
+- o endereço da API que o site está usando;
+- se a chave está configurada e no formato certo;
+- se a API respondeu;
+- quantos projetos vieram do Gestão;
+- se o Gestão aceita o formulário de orçamento deste domínio.
+
+Quando algo falha, o campo `ajuda` diz o que corrigir. `GESTAO_API_URL` funciona com ou sem `/api/v1`, e a chave pode ser colada com aspas ou espaços: o site limpa os dois.
+
 Passo a passo completo do lado do Gestão: `docs/INTEGRACAO-SITE.md` no repositório do Gestão.
 
 ## Como os projetos chegam ao site

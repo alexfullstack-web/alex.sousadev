@@ -2,27 +2,40 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import { buscarPortfolio, buscarProjeto, lerConfig } from './api/_gestao.js';
+import portfolioLista from './api/portfolio/index.js';
+import portfolioProjeto from './api/portfolio/[slug].js';
+import status from './api/status.js';
 
-// Em desenvolvimento (npm run dev) e no preview local, /api/portfolio funciona como na Vercel:
-// a chave do Gestão (GESTAO_SITE_KEY, sem prefixo VITE_) fica no servidor do Vite.
+// Em desenvolvimento (npm run dev) e no preview local, as funções da pasta api/ rodam como na
+// Vercel (mesmo código): /api/portfolio, /api/portfolio/:slug e /api/status.
+// A chave do Gestão (GESTAO_SITE_KEY, sem prefixo VITE_) fica só no servidor do Vite.
 function apiPortfolio(env) {
-  const config = lerConfig(env);
-  const responder = (res, status, corpo) => {
-    res.statusCode = status;
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.end(JSON.stringify(corpo));
+  for (const k of ['GESTAO_API_URL', 'GESTAO_SITE_KEY', 'VITE_GESTAO_API_URL', 'VITE_GESTAO_SITE_KEY']) {
+    if (env[k] !== undefined && process.env[k] === undefined) process.env[k] = env[k];
+  }
+  // Adapta a resposta do Node ao formato das funções da Vercel (status().json()).
+  const adaptar = (res) => {
+    res.status = (c) => {
+      res.statusCode = c;
+      return res;
+    };
+    res.json = (corpo) => {
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.end(JSON.stringify(corpo));
+    };
+    return res;
   };
   const middleware = async (req, res, next) => {
-    const m = req.url.split('?')[0].match(/^\/api\/portfolio(?:\/([^/]+))?\/?$/);
-    if (!m) return next();
-    if (!config.configurado) return responder(res, 503, { erro: 'Integração com o Gestão não configurada (GESTAO_API_URL e GESTAO_SITE_KEY no .env).' });
+    const caminho = req.url.split('?')[0];
+    const m = caminho.match(/^\/api\/portfolio(?:\/([^/]+))?\/?$/);
     try {
-      if (!m[1]) return responder(res, 200, await buscarPortfolio(config));
-      const projeto = await buscarProjeto(decodeURIComponent(m[1]), config);
-      return projeto ? responder(res, 200, { projeto }) : responder(res, 404, { erro: 'Projeto não encontrado.' });
-    } catch {
-      return responder(res, 502, { erro: 'Não foi possível carregar os projetos agora.' });
+      if (caminho === '/api/status') return await status(req, adaptar(res));
+      if (!m) return next();
+      if (!m[1]) return await portfolioLista(req, adaptar(res));
+      req.query = { slug: decodeURIComponent(m[1]) };
+      return await portfolioProjeto(req, adaptar(res));
+    } catch (e) {
+      return next(e);
     }
   };
   return {

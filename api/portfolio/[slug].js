@@ -7,8 +7,8 @@ export default async function handler(req, res) {
   res.setHeader('X-Robots-Tag', 'noindex');
   if (!config.configurado) {
     res.setHeader('Cache-Control', 'no-store');
-    console.error('[gestao] NAO_CONFIGURADO — defina GESTAO_API_URL e GESTAO_SITE_KEY na Vercel e faça um novo deploy.');
-    return res.status(503).json({ erro: 'Integração com o Gestão não configurada.', motivo: 'NAO_CONFIGURADO' });
+    console.error(`[gestao] NAO_CONFIGURADO — ${config.avisos.join(' ') || 'defina GESTAO_API_URL e GESTAO_SITE_KEY na Vercel'} Depois, faça um novo deploy.`);
+    return res.status(503).json({ erro: 'Integração com o Gestão não configurada.', motivo: 'NAO_CONFIGURADO', ajuda: config.avisos.join(' ') || 'Defina GESTAO_API_URL e GESTAO_SITE_KEY na Vercel e faça um novo deploy.' });
   }
   try {
     const projeto = await buscarProjeto(String(req.query.slug || ''), config, { tentativas: 2, tempo: 25000 });
