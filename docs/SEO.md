@@ -26,7 +26,11 @@ Variáveis antigas que podem ser apagadas: `VITE_API_URL`, `VITE_EMPRESA`, `VITE
 
 ## Gestão (API)
 
+<<<<<<< HEAD
 Inclua `https://site.alexsousatech.com.br` em `PUBLIC_FORM_ORIGINS`, ou o formulário de orçamento será recusado nesse domínio.
+=======
+Inclua `https://portfolio.alexsousatech.com.br` em `PUBLIC_FORM_ORIGINS`, ou o formulário de orçamento será recusado nesse domínio.
+>>>>>>> 38af9dfaef26d34258c85a4b6cc54b504c2bca58
 
 ## Redes sociais
 

@@ -119,5 +119,9 @@
 1. Configurar as variáveis na Vercel e no Render e gerar a chave no Gestão (passo a passo no `README.md`).
 2. Confirmar se os 6 sites de clientes do portfólio (Maison Élan, Clínica Odontológica, Valença Moraes, Doce Neve, Brasa Burger e Serralheria) são trabalhos para clientes reais. Se forem modelos de demonstração, ajuste os textos no Gestão ou despublique antes de ir ao ar.
 3. **Acompanhamento de pedido por protocolo** foi retirado junto com o Business OS. O Gestão ainda não tem essa função; se quiser, ela pode entrar numa fase futura.
+<<<<<<< HEAD
 4. Endereço oficial: `site.alexsousatech.com.br` (atualizado em 12/11/2026). O antigo `portfolio.` redireciona para ele, se ainda estiver ligado ao projeto na Vercel.
+=======
+4. O endereço continua `portfolio.alexsousatech.com.br`. Para mudar para o domínio principal (ex.: `alexsousatech.com.br`), é preciso trocar em `src/config.js` e `api/_sitemap.js` e ajustar o DNS.
+>>>>>>> 38af9dfaef26d34258c85a4b6cc54b504c2bca58
 5. O backend do Business OS não é mais usado pelo site. Pode ser desligado quando você quiser.

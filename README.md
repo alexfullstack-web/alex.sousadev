@@ -1,7 +1,11 @@
 # Alex Sousa Tech — site oficial
 
 Site institucional da **Alex Sousa Tech**: empresa, serviços, projetos, processo de trabalho e pedido de orçamento.
+<<<<<<< HEAD
 Endereço: `https://site.alexsousatech.com.br`.
+=======
+Endereço: `https://portfolio.alexsousatech.com.br`.
+>>>>>>> 38af9dfaef26d34258c85a4b6cc54b504c2bca58
 
 React 19 + Vite + React Router 7 + CSS próprio + Lucide. JavaScript puro, sem TypeScript.
 O conteúdo dos **projetos** e o recebimento dos **pedidos de orçamento** ficam no **Alex Sousa Tech Gestão**.
@@ -32,7 +36,11 @@ Variáveis com prefixo `VITE_` vão para o JavaScript que o visitante baixa. Por
 ## Publicar na Vercel
 
 1. *Settings → Environment Variables*, ambiente **Production**: as quatro variáveis acima.
+<<<<<<< HEAD
 2. No Gestão (API no Render): `PUBLIC_FORM_ORIGINS=https://site.alexsousatech.com.br`, para aceitar o formulário, e `PUBLIC_BASE_URL` com o endereço público da API, para os links das imagens.
+=======
+2. No Gestão (API no Render): `PUBLIC_FORM_ORIGINS=https://portfolio.alexsousatech.com.br`, para aceitar o formulário, e `PUBLIC_BASE_URL` com o endereço público da API, para os links das imagens.
+>>>>>>> 38af9dfaef26d34258c85a4b6cc54b504c2bca58
 3. Faça o deploy. O `vercel.json` já tem os redirecionamentos, cabeçalhos de segurança e o sitemap dinâmico.
 
 Passo a passo completo do lado do Gestão: `docs/INTEGRACAO-SITE.md` no repositório do Gestão.

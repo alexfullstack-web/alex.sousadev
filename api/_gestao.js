@@ -48,6 +48,7 @@ export function normalizar(item) {
   };
 }
 
+<<<<<<< HEAD
 // Motivos de falha, para o log da Vercel e para a resposta (nunca inclui a chave).
 export const MOTIVOS = {
   CHAVE_RECUSADA: 'O Gestão recusou a chave. Confira GESTAO_SITE_KEY (gerada no painel de PRODUÇÃO) e faça um novo deploy.',
@@ -74,6 +75,8 @@ function classificar(e) {
   return falha('SEM_CONEXAO', codigo || e.message);
 }
 
+=======
+>>>>>>> 38af9dfaef26d34258c85a4b6cc54b504c2bca58
 async function pedir(caminho, { api, chave }, { tentativas = 1, tempo = 15000 } = {}) {
   let ultimoErro;
   for (let i = 1; i <= tentativas; i++) {
@@ -83,6 +86,7 @@ async function pedir(caminho, { api, chave }, { tentativas = 1, tempo = 15000 } 
         signal: AbortSignal.timeout(tempo),
       });
       if (r.status === 404) return { naoEncontrado: true };
+<<<<<<< HEAD
       if (r.status === 401) throw falha('CHAVE_RECUSADA', 'HTTP 401');
       if (!r.ok) throw falha('ERRO_NO_GESTAO', `HTTP ${r.status}`);
       try {
@@ -96,12 +100,27 @@ async function pedir(caminho, { api, chave }, { tentativas = 1, tempo = 15000 } 
       if (['CHAVE_RECUSADA', 'ENDERECO_INVALIDO'].includes(ultimoErro.motivo) || i === tentativas) break;
       // O plano gratuito do Render "dorme": a primeira chamada pode levar perto de 1 minuto.
       await new Promise((ok) => setTimeout(ok, 3000));
+=======
+      if (!r.ok) {
+        const e = new Error(r.status === 401 ? 'Chave do site recusada pelo Gestão (GESTAO_SITE_KEY).' : `Gestão respondeu HTTP ${r.status}`);
+        e.status = r.status;
+        throw e;
+      }
+      return { dados: await r.json() };
+    } catch (e) {
+      ultimoErro = e;
+      // Chave errada não melhora com nova tentativa.
+      if (e.status === 401 || i === tentativas) break;
+      // O plano gratuito do Render "dorme": a primeira chamada pode levar perto de 1 minuto.
+      await new Promise((ok) => setTimeout(ok, 5000));
+>>>>>>> 38af9dfaef26d34258c85a4b6cc54b504c2bca58
     }
   }
   throw ultimoErro;
 }
 
 export async function buscarPortfolio(config, opcoes) {
+<<<<<<< HEAD
   const r = await pedir('/portfolio', config, opcoes);
   // A lista sempre existe no Gestão: 404 aqui é endereço errado (ex.: sem /api/v1).
   if (r.naoEncontrado) throw falha('ENDERECO_INVALIDO', 'HTTP 404 em /integrations/site/portfolio');
@@ -116,6 +135,11 @@ export function responderFalha(res, e, mensagem) {
   console.error(`[gestao] ${motivo} — ${MOTIVOS[motivo] ?? ''} (${e?.message ?? e})`);
   res.setHeader('Cache-Control', 'no-store');
   return res.status(motivo === 'TEMPO_ESGOTADO' ? 504 : 502).json({ erro: mensagem, motivo, ajuda: MOTIVOS[motivo] });
+=======
+  const { dados } = await pedir('/portfolio', config, opcoes);
+  const itens = (dados?.items || []).map(normalizar).filter(Boolean);
+  return { itens, atualizadoEm: dados?.updatedAt || null };
+>>>>>>> 38af9dfaef26d34258c85a4b6cc54b504c2bca58
 }
 
 export async function buscarProjeto(slug, config, opcoes) {
