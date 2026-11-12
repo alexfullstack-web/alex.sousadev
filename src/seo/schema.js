@@ -1,14 +1,13 @@
-// Dados estruturados (JSON-LD): quem é a marca, quem é o fundador e como as páginas se ligam a eles.
+// Dados estruturados (JSON-LD): a empresa é a entidade principal; o fundador aparece ligado a ela.
 import { SITE_URL } from '../config.js';
-import { CAMINHO_SOBRE, DESCRICAO_PADRAO, FOTO_FUNDADOR, FUNDADOR, LOGO, MARCA, PROFISSAO, SLOGAN, redesOficiais, urlAbsoluta } from './marca.js';
+import { CONTATO, SERVICOS } from '../data/empresa.js';
+import { CAMINHO_SOBRE, DESCRICAO_PADRAO, FOTO_FUNDADOR, FUNDADOR, LOGO, MARCA, PROFISSAO, REDES_OFICIAIS, SLOGAN, urlAbsoluta } from './marca.js';
 
 export const ID_ORGANIZACAO = `${SITE_URL}/#organizacao`;
 export const ID_PESSOA = `${SITE_URL}/#alex-sousa`;
 export const ID_WEBSITE = `${SITE_URL}/#website`;
 
-export function entidadesGlobais(dados) {
-  const sameAs = redesOficiais(dados);
-  const redes = sameAs.length ? { sameAs } : {};
+export function entidadesGlobais() {
   return [
     {
       '@type': 'Organization',
@@ -19,19 +18,13 @@ export function entidadesGlobais(dados) {
       description: DESCRICAO_PADRAO,
       logo: { '@type': 'ImageObject', url: LOGO.url, width: LOGO.largura, height: LOGO.altura },
       image: LOGO.url,
+      email: CONTATO.email,
+      contactPoint: [
+        { '@type': 'ContactPoint', contactType: 'sales', email: CONTATO.email, telephone: `+${CONTATO.whatsapp}`, availableLanguage: 'Portuguese' },
+      ],
       founder: { '@id': ID_PESSOA },
       areaServed: { '@type': 'Country', name: 'Brasil' },
-      ...redes,
-    },
-    {
-      '@type': 'Person',
-      '@id': ID_PESSOA,
-      name: FUNDADOR,
-      url: `${SITE_URL}${CAMINHO_SOBRE}`,
-      jobTitle: PROFISSAO,
-      image: FOTO_FUNDADOR,
-      worksFor: { '@id': ID_ORGANIZACAO },
-      ...redes,
+      sameAs: REDES_OFICIAIS,
     },
     {
       '@type': 'WebSite',
@@ -44,9 +37,21 @@ export function entidadesGlobais(dados) {
   ];
 }
 
+const pessoa = () => ({
+  '@type': 'Person',
+  '@id': ID_PESSOA,
+  name: FUNDADOR,
+  url: `${SITE_URL}${CAMINHO_SOBRE}`,
+  jobTitle: PROFISSAO,
+  image: FOTO_FUNDADOR,
+  worksFor: { '@id': ID_ORGANIZACAO },
+  sameAs: REDES_OFICIAIS,
+});
+
 export function entidadesSobre() {
   const url = `${SITE_URL}${CAMINHO_SOBRE}`;
   return [
+    pessoa(),
     {
       '@type': 'ProfilePage',
       '@id': `${url}#pagina`,
@@ -59,10 +64,32 @@ export function entidadesSobre() {
   ];
 }
 
-// Só usa o que está cadastrado no projeto: sem clientes, notas ou resultados inventados.
-export function entidadesProjeto(p, slug) {
-  const url = `${SITE_URL}/projetos/${slug}`;
-  const imagens = [p.capaUrl, ...(p.galeria || [])].filter(Boolean).map(urlAbsoluta);
+export function entidadesServicos() {
+  return [
+    {
+      '@type': 'ItemList',
+      '@id': `${SITE_URL}/servicos#lista`,
+      name: `Serviços da ${MARCA}`,
+      itemListElement: SERVICOS.map((s, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: { '@type': 'Service', name: s.nome, description: s.descricao, provider: { '@id': ID_ORGANIZACAO }, url: `${SITE_URL}/servicos#${s.id}` },
+      })),
+    },
+  ];
+}
+
+const trilha = (itens) => ({
+  '@type': 'BreadcrumbList',
+  itemListElement: itens.map(([nome, caminho], i) => ({ '@type': 'ListItem', position: i + 1, name: nome, item: `${SITE_URL}${caminho}` })),
+});
+
+export const entidadesTrilha = (nome, caminho) => [trilha([['Início', '/'], [nome, caminho]])];
+
+// Só usa o que está cadastrado no Gestão: sem clientes, notas ou resultados inventados.
+export function entidadesProjeto(p) {
+  const url = `${SITE_URL}/projetos/${p.slug}`;
+  const imagens = [p.capa?.url, ...(p.galeria || []).map((g) => g.url)].filter(Boolean).map(urlAbsoluta);
   const obra = {
     '@type': 'CreativeWork',
     '@id': `${url}#projeto`,
@@ -70,23 +97,12 @@ export function entidadesProjeto(p, slug) {
     description: p.resumo,
     url,
     inLanguage: 'pt-BR',
-    creator: { '@id': ID_PESSOA },
-    publisher: { '@id': ID_ORGANIZACAO },
+    creator: { '@id': ID_ORGANIZACAO },
     isPartOf: { '@id': ID_WEBSITE },
   };
   if (imagens.length) obra.image = [...new Set(imagens)];
-  if (p.categoriaRotulo) obra.genre = p.categoriaRotulo;
+  if (p.segmento) obra.genre = p.segmento;
   if (p.tecnologias?.length) obra.keywords = p.tecnologias.join(', ');
-  if (p.dataConclusao) obra.dateCreated = String(p.dataConclusao).slice(0, 10);
-  return [
-    obra,
-    {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Início', item: `${SITE_URL}/` },
-        { '@type': 'ListItem', position: 2, name: 'Projetos', item: `${SITE_URL}/projetos` },
-        { '@type': 'ListItem', position: 3, name: p.nome, item: url },
-      ],
-    },
-  ];
+  if (p.conclusao) obra.dateCreated = p.conclusao;
+  return [obra, trilha([['Início', '/'], ['Projetos', '/projetos'], [p.nome, `/projetos/${p.slug}`]])];
 }

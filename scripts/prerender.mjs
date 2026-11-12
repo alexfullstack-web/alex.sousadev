@@ -1,10 +1,13 @@
 // Pré-renderização: grava em dist/ um HTML completo por página pública, para que o conteúdo, os
 // títulos e os dados estruturados já venham na primeira resposta. Roda depois do "vite build".
-// Só lê rotas públicas da API. Se ela não responder, o build continua, sem os dados dela.
+// Os projetos vêm do Alex Sousa Tech Gestão pela API autenticada (GESTAO_API_URL + GESTAO_SITE_KEY).
+// Se o Gestão não responder, o build continua: as páginas saem sem a lista, e o navegador busca
+// os projetos em /api/portfolio ao abrir a página.
 import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { montarSitemap } from '../api/_sitemap.js';
+import { buscarPortfolio, buscarProjeto, lerConfig } from '../api/_gestao.js';
 
 const raiz = process.cwd();
 const dist = resolve(raiz, 'dist');
@@ -16,41 +19,14 @@ function lerEnv() {
     const p = resolve(raiz, arquivo);
     if (!existsSync(p)) continue;
     for (const linha of readFileSync(p, 'utf8').split(/\r?\n/)) {
-      const m = linha.match(/^\s*(VITE_[A-Z_]+)\s*=\s*(.*)\s*$/);
+      const m = linha.match(/^\s*((?:VITE|GESTAO)_[A-Z_]+)\s*=\s*(.*)\s*$/);
       if (m && env[m[1]] === undefined) env[m[1]] = m[2].replace(/^["']|["']$/g, '');
     }
   }
   return env;
 }
 
-const env = lerEnv();
-const API = (env.VITE_API_URL || '').replace(/\/+$/, '');
-const BASE = `${API}/site/publico/${encodeURIComponent(env.VITE_EMPRESA || 'alex-sousa-tech')}`;
-const espera = (ms) => new Promise((r) => setTimeout(r, ms));
-let apiFora = !API;
-
-// A API pode estar "dormindo" (plano gratuito leva cerca de 1 minuto para acordar): insiste só na primeira chamada.
-let acordada = false;
-async function obter(caminho) {
-  if (apiFora) return null;
-  const tentativas = acordada ? 1 : 4;
-  for (let i = 1; i <= tentativas; i++) {
-    try {
-      const r = await fetch(`${BASE}${caminho}`, { signal: AbortSignal.timeout(30000) });
-      acordada = true;
-      if (!r.ok) {
-        console.warn(`[prerender] ${caminho || '/'}: HTTP ${r.status}`);
-        return null;
-      }
-      return await r.json();
-    } catch (e) {
-      console.warn(`[prerender] ${caminho || '/'}: tentativa ${i}/${tentativas} falhou (${e.message})`);
-      if (i < tentativas) await espera(5000);
-    }
-  }
-  if (!acordada) apiFora = true;
-  return null;
-}
+const config = lerConfig(lerEnv());
 
 function escrever(arquivo, conteudo) {
   const destino = resolve(dist, arquivo);
@@ -67,15 +43,10 @@ const trocarBloco = (html, nome, novo) => {
   return html.replace(re, () => novo);
 };
 
-// Pré-carrega só as duas fontes do que aparece primeiro, para reduzir a troca de fonte (CLS).
+// Pré-carrega só as fontes do que aparece primeiro, para reduzir a troca de fonte (CLS).
 const fontes = readdirSync(resolve(dist, 'assets'))
-  .filter((f) => /^(manrope-latin-400|chakra-petch-latin-700)-normal-.*\.woff2$/.test(f))
+  .filter((f) => /^(manrope-latin-400|sora-latin-700)-normal-.*\.woff2$/.test(f))
   .map((f) => `<link rel="preload" as="font" type="font/woff2" href="/assets/${f}" crossorigin />`);
-
-const PRELOAD_HOME = [
-  '<link rel="preload" as="image" href="/img/site/alex.webp" type="image/webp" media="(min-width: 700px)" fetchpriority="high" />',
-  '<link rel="preload" as="image" href="/img/site/alex-sm.webp" type="image/webp" media="(max-width: 699px)" fetchpriority="high" />',
-];
 
 async function gerar(rota, arquivo, dados) {
   const { html, seo } = await renderizar(rota, dados);
@@ -85,43 +56,57 @@ async function gerar(rota, arquivo, dados) {
     links.push(...m.match(/<link[^>]*\/>/g));
     return '';
   });
-  const extras = [...fontes, ...(rota === '/' ? PRELOAD_HOME : links)];
-  let pagina = trocarBloco(modelo, 'seo', `${cabecalhoHtml(seo)}\n    ${extras.join('\n    ')}`);
+  let pagina = trocarBloco(modelo, 'seo', `${cabecalhoHtml(seo)}\n    ${[...fontes, ...links].join('\n    ')}`);
   pagina = trocarBloco(pagina, 'app', corpo);
   pagina = pagina.replace('</head>', () => `  <script>window.__DADOS_INICIAIS__=${jsonSeguro(dados)}</script>\n  </head>`);
   escrever(arquivo, pagina);
   return seo;
 }
 
-const site = await obter('');
-const [todos, inicio, listaSitemap] = await Promise.all([obter('/projetos'), obter('/projetos?limite=7'), obter('/sitemap')]);
-const projetos = todos?.itens || [];
-
-// Da rota de sitemap vem a data de atualização; se faltar, usa a listagem.
-const publicados = (listaSitemap?.projetos || projetos).filter((p) => /^[a-z0-9][a-z0-9-]*$/i.test(p?.slug || ''));
+let projetos = null;
+if (!config.configurado) {
+  console.warn('[prerender] GESTAO_API_URL/GESTAO_SITE_KEY ausentes: páginas geradas sem a lista de projetos.');
+} else {
+  try {
+    // O Render gratuito pode estar dormindo: até 4 tentativas na primeira chamada.
+    ({ itens: projetos } = await buscarPortfolio(config, { tentativas: 4, tempo: 30000 }));
+  } catch (e) {
+    console.warn(`[prerender] Gestão indisponível (${e.message}). Páginas geradas sem a lista de projetos.`);
+  }
+}
 
 // Casca sem conteúdo: atende projetos publicados depois do último build.
-const casca = trocarBloco(modelo, 'seo', `${cabecalhoHtml(calcularSeo({ caminho: null }, site))}\n    ${fontes.join('\n    ')}`);
+const casca = trocarBloco(modelo, 'seo', `${cabecalhoHtml(calcularSeo({ caminho: null }))}\n    ${fontes.join('\n    ')}`);
 escrever('app-shell.html', casca);
 
-const comuns = { site };
-await gerar('/', 'index.html', { ...comuns, projetosInicio: inicio?.itens ?? null });
-await gerar('/sobre-alex-sousa', 'sobre-alex-sousa.html', { ...comuns, projetosInicio: inicio?.itens ?? null });
-await gerar('/projetos', 'projetos.html', { ...comuns, projetos: todos?.itens ?? null });
-await gerar('/orcamento', 'orcamento.html', comuns);
-await gerar('/privacidade', 'privacidade.html', comuns);
-await gerar('/404', '404.html', comuns);
+const paginas = [
+  ['/', 'index.html', { projetos }],
+  ['/empresa', 'empresa.html', {}],
+  ['/sobre-alex-sousa', 'sobre-alex-sousa.html', {}],
+  ['/servicos', 'servicos.html', {}],
+  ['/projetos', 'projetos.html', { projetos }],
+  ['/orcamento', 'orcamento.html', {}],
+  ['/contato', 'contato.html', {}],
+  ['/privacidade', 'privacidade.html', {}],
+  ['/404', '404.html', {}],
+];
+for (const [rota, arquivo, dados] of paginas) await gerar(rota, arquivo, dados);
 
 let gerados = 0;
-for (const { slug } of publicados) {
-  const projeto = await obter(`/projetos/${encodeURIComponent(slug)}`);
+for (const { slug } of projetos || []) {
+  let projeto = null;
+  try {
+    projeto = await buscarProjeto(slug, config);
+  } catch (e) {
+    console.warn(`[prerender] /projetos/${slug}: ${e.message}`);
+  }
   if (!projeto) continue;
-  await gerar(`/projetos/${slug}`, `projetos/${slug}.html`, { ...comuns, projeto, projetoSlug: slug });
+  await gerar(`/projetos/${slug}`, `projetos/${slug}.html`, { projeto, projetoSlug: slug });
   gerados++;
 }
 
-escrever('sitemap-fallback.xml', montarSitemap(publicados));
+escrever('sitemap-fallback.xml', montarSitemap(projetos || []));
 // Um sitemap.xml estático teria prioridade sobre o dinâmico na Vercel: nunca pode ir para o deploy.
 rmSync(resolve(dist, 'sitemap.xml'), { force: true });
 rmSync(ssr, { recursive: true, force: true });
-console.log(`[prerender] 6 páginas fixas e ${gerados} projeto(s) gerados.${site ? '' : ' ATENÇÃO: sem dados da API neste build.'}`);
+console.log(`[prerender] ${paginas.length} páginas fixas e ${gerados} projeto(s) gerados.${projetos ? '' : ' ATENÇÃO: sem dados do Gestão neste build.'}`);

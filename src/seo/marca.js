@@ -1,17 +1,18 @@
 // Identidade oficial usada em títulos, metatags e dados estruturados.
-// Só entram aqui fatos confirmados pelo dono da marca: nada de endereço, telefone ou resultados.
+// Só entram aqui fatos confirmados pelo dono da marca: nada de endereço ou resultados.
 import { SITE_URL } from '../config.js';
+import { CONTATO } from '../data/empresa.js';
 
 export const MARCA = 'Alex Sousa Tech';
 export const FUNDADOR = 'Alex Sousa';
 export const PROFISSAO = 'Desenvolvedor Full Stack';
 export const SLOGAN = 'Desenvolvimento • Tecnologia • Inovação';
 
-export const TITULO_PADRAO = 'Alex Sousa Tech | Desenvolvedor Full Stack, Sites e Sistemas';
+export const TITULO_PADRAO = 'Alex Sousa Tech | Sites, sistemas e soluções digitais';
 export const DESCRICAO_PADRAO =
-  'Alex Sousa Tech é a marca do desenvolvedor Full Stack Alex Sousa: criação de sites, desenvolvimento de sistemas web, SaaS, aplicativos e automação com IA.';
+  'A Alex Sousa Tech desenvolve sites, sistemas web personalizados, lojas virtuais e soluções tecnológicas para empresas e empreendedores crescerem no digital.';
 
-export const IMAGEM_SOCIAL = `${SITE_URL}/img/og-image.jpg`;
+export const IMAGEM_SOCIAL = `${SITE_URL}/img/og-empresa.jpg`;
 export const LOGO = { url: `${SITE_URL}/img/logo.png`, largura: 1000, altura: 1000 };
 export const FOTO_FUNDADOR = `${SITE_URL}/img/site/alex.webp`;
 
@@ -32,8 +33,5 @@ export function urlAbsoluta(caminho) {
   return `${SITE_URL}/${String(caminho).replace(/^\/+/, '')}`;
 }
 
-// Redes sociais = somente as cadastradas no Business OS (Configurações do site). Nada fixo no código.
-export function redesOficiais(dados) {
-  const c = dados?.conteudo?.contato || {};
-  return [c.github, c.linkedin, c.instagram, c.youtube].filter((u) => typeof u === 'string' && /^https:\/\//i.test(u));
-}
+// Redes oficiais: as mesmas do rodapé (data/empresa.js).
+export const REDES_OFICIAIS = [CONTATO.instagram, CONTATO.github];

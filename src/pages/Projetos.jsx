@@ -1,80 +1,50 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
-import { mensagemDeErro, site } from '../api.js';
-import { useSite } from '../context/SiteContext.jsx';
-import { useSeo } from '../hooks/useSeo.js';
+import { RefreshCw } from 'lucide-react';
+import CtaFinal from '../components/CtaFinal.jsx';
+import PaginaTopo from '../components/PaginaTopo.jsx';
 import ProjectCard from '../components/ProjectCard.jsx';
-import { dadoInicial } from '../seo/dadosIniciais.js';
+import Reveal from '../components/Reveal.jsx';
+import { useProjetos } from '../hooks/useProjetos.js';
+import { useSeo } from '../hooks/useSeo.js';
+import { entidadesTrilha } from '../seo/schema.js';
 
 export default function Projetos() {
-  const { dados } = useSite();
-  const [params, setParams] = useSearchParams();
-  const [montado, setMontado] = useState(false);
-  useEffect(() => setMontado(true), []);
-  // O HTML gerado no build traz todos os projetos; o filtro da URL só vale depois de assumir a página.
-  const categoria = montado ? params.get('categoria') || '' : '';
-  const [lista, setLista] = useState(() => dadoInicial('projetos'));
-  const [erro, setErro] = useState('');
-  useSeo({ titulo: 'Projetos de sites e sistemas', descricao: 'Sites, sistemas web, SaaS, aplicativos e projetos de IA desenvolvidos por Alex Sousa, fundador da Alex Sousa Tech.', caminho: '/projetos' });
-  const carregar = () => {
-    setErro('');
-    site
-      .projetos()
-      .then((r) => setLista(r.itens))
-      .catch((e) => setErro(mensagemDeErro(e, 'Não foi possível carregar os projetos.')));
-  };
-  useEffect(carregar, []);
-  const categorias = useMemo(() => {
-    const usadas = new Set((lista || []).map((p) => p.categoria));
-    return (dados?.categoriasDeProjeto || []).filter((c) => usadas.has(c.valor));
-  }, [lista, dados]);
-  const visiveis = (lista || []).filter((p) => !categoria || p.categoria === categoria);
-  const escolher = (c) => setParams(c ? { categoria: c } : {}, { replace: true });
-
+  const { itens, erro, recarregar } = useProjetos();
+  useSeo({
+    titulo: 'Projetos e soluções',
+    descricao: 'Projetos desenvolvidos pela Alex Sousa Tech: sites, sistemas, cardápios digitais e soluções web para diferentes segmentos.',
+    caminho: '/projetos',
+    entidades: entidadesTrilha('Projetos', '/projetos'),
+  });
   return (
-    <div className="pagina">
-      <Link to="/" className="voltar">
-        <ArrowLeft size={16} aria-hidden="true" /> Início
-      </Link>
-      <header className="pagina__topo">
-        <h1 className="pagina__titulo">Projetos da Alex Sousa Tech</h1>
-        <p className="secao__desc">Cada projeto é cadastrado e publicado pelo Business OS — o que está aqui é real e está no ar.</p>
-      </header>
-      {categorias.length > 1 && (
-        <div className="filtros" role="group" aria-label="Filtrar por categoria">
-          <button type="button" className={!categoria ? 'ativo' : ''} aria-pressed={!categoria} onClick={() => escolher('')}>
-            Todos
-          </button>
-          {categorias.map((c) => (
-            <button type="button" key={c.valor} className={categoria === c.valor ? 'ativo' : ''} aria-pressed={categoria === c.valor} onClick={() => escolher(c.valor)}>
-              {c.rotulo}
+    <>
+      <PaginaTopo titulo="Projetos e soluções desenvolvidas" texto="Cada projeto parte de uma necessidade real. Veja o que já construímos e abra a demonstração quando ela estiver disponível." />
+      <section className="secao secao--colada" aria-label="Lista de projetos">
+        {erro && !itens ? (
+          <div className="aviso" role="alert">
+            <p>{erro}</p>
+            <button type="button" className="botao botao--contorno botao--p" onClick={recarregar}>
+              <RefreshCw size={16} aria-hidden="true" /> Tentar de novo
             </button>
-          ))}
-        </div>
-      )}
-      {erro ? (
-        <div className="aviso-erro" role="alert">
-          <p>{erro}</p>
-          <button type="button" className="botao botao--contorno botao--p" onClick={carregar}>
-            <RefreshCw size={15} aria-hidden="true" /> Tentar de novo
-          </button>
-        </div>
-      ) : !lista ? (
-        <div className="projetos-grade projetos-grade--pagina" aria-busy="true">
-          {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="projeto projeto--esqueleto" />
-          ))}
-        </div>
-      ) : visiveis.length === 0 ? (
-        <p className="vazio">Nenhum projeto publicado {categoria ? 'nesta categoria' : 'ainda'}.</p>
-      ) : (
-        <div className="projetos-grade projetos-grade--pagina">
-          {visiveis.map((p) => (
-            <ProjectCard key={p.slug} p={p} />
-          ))}
-        </div>
-      )}
-    </div>
+          </div>
+        ) : !itens ? (
+          <div className="projetos-grade" aria-busy="true" aria-label="Carregando projetos">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="projeto projeto--esqueleto" />
+            ))}
+          </div>
+        ) : !itens.length ? (
+          <p className="vazio">Os projetos estão sendo preparados para publicação. Enquanto isso, conte o que você precisa em um pedido de orçamento.</p>
+        ) : (
+          <div className="projetos-grade">
+            {itens.map((p, i) => (
+              <Reveal key={p.slug} style={{ '--atraso': `${(i % 3) * 80}ms` }}>
+                <ProjectCard p={p} prioridade={i < 3} />
+              </Reveal>
+            ))}
+          </div>
+        )}
+      </section>
+      <CtaFinal titulo="O próximo projeto pode ser o seu" />
+    </>
   );
 }

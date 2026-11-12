@@ -1,6 +1,5 @@
 // SEO por página. No navegador atualiza o <head>; no build entrega os valores ao HTML inicial.
 import { useEffect } from 'react';
-import { useSite } from '../context/SiteContext.jsx';
 import { calcularSeo } from '../seo/cabecalho.js';
 
 let coleta = null;
@@ -57,8 +56,7 @@ function aplicar(seo) {
 }
 
 export function useSeo(opcoes) {
-  const { dados } = useSite();
-  const seo = calcularSeo(opcoes, dados);
+  const seo = calcularSeo(opcoes);
   if (typeof document === 'undefined') coleta = seo;
   const serializado = JSON.stringify(seo);
   useEffect(() => aplicar(JSON.parse(serializado)), [serializado]);

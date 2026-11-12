@@ -1,6 +1,9 @@
 node_modules
 dist
-.env
-.env.local
 dist-ssr
 .vercel
+
+# Variáveis de ambiente: nunca vão para o repositório (só o exemplo)
+.env
+.env.*
+!.env.example

@@ -4,11 +4,13 @@ import { useSeo } from '../hooks/useSeo.js';
 export default function NaoEncontrado() {
   useSeo({ titulo: 'Página não encontrada', caminho: '/404', noindex: true });
   return (
-    <div className="pagina pagina--estreita nao-encontrado">
-      <p className="nao-encontrado__codigo" aria-hidden="true">404</p>
-      <h1 className="pagina__titulo">Esta página não existe</h1>
-      <p className="secao__desc">O endereço pode ter mudado. Veja os projetos ou volte ao início.</p>
-      <div className="hero__acoes">
+    <section className="nao-encontrado" aria-labelledby="nao-encontrado-titulo">
+      <p className="nao-encontrado__codigo num" aria-hidden="true">
+        404
+      </p>
+      <h1 id="nao-encontrado-titulo">Esta página não existe</h1>
+      <p>O endereço pode ter mudado. Volte ao início ou veja os projetos.</p>
+      <div className="nao-encontrado__acoes">
         <Link to="/" className="botao botao--primario">
           Ir para o início
         </Link>
@@ -16,6 +18,6 @@ export default function NaoEncontrado() {
           Ver projetos
         </Link>
       </div>
-    </div>
+    </section>
   );
 }
