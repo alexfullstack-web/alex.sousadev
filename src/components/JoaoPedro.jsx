@@ -70,7 +70,7 @@ function FormEquipe({ onEnviar, enviando, erro, onCancelar }) {
           {aviso || erro}
         </p>
       )}
-      <p className="jp-lgpd">Seus dados são usados só para responder a este atendimento. <Link to="/privacidade">Privacidade</Link></p>
+      <p className="jp-lgpd">Seus dados são usados só para responder a este atendimento. <Link to="/politica-de-privacidade">Privacidade</Link></p>
       <div className="jp-equipe__acoes">
         {onCancelar && (
           <button type="button" className="botao botao--fantasma botao--p" onClick={onCancelar} disabled={enviando}>

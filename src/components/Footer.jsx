@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Github, Instagram, Mail, MessageCircle } from 'lucide-react';
 import { CONTATO, EMPRESA, NAV, SERVICOS, linkWhatsapp } from '../data/empresa.js';
+import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from '../data/legal.js';
 
 export default function Footer() {
   const ano = new Date().getFullYear();
@@ -67,7 +68,10 @@ export default function Footer() {
         <p>
           © <span suppressHydrationWarning>{ano}</span> {EMPRESA.nome}. {EMPRESA.slogan}
         </p>
-        <Link to="/privacidade">Política de privacidade</Link>
+        <nav className="rodape__legal" aria-label="Informações legais">
+          <Link to={CAMINHO_PRIVACIDADE}>Política de Privacidade</Link>
+          <Link to={CAMINHO_TERMOS}>Termos de Uso</Link>
+        </nav>
       </div>
     </footer>
   );

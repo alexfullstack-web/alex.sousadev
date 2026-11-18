@@ -83,9 +83,16 @@ src/
 ├── seo/                   títulos, descrições e dados estruturados (Schema.org)
 ├── components/            Header, Footer, QuoteForm, ProjectCard, Processo, HeroVisual...
 ├── pages/                 Home, Empresa, SobreAlexSousa, Servicos, Projetos, Projeto,
-│                          Orcamento, Contato, Privacidade, NaoEncontrado
+│                          Orcamento, Contato, PoliticaPrivacidade, TermosUso, NaoEncontrado
 └── styles/                base.css (cores, fontes, base) e site.css (componentes)
 ```
+
+## Páginas legais
+
+- `/politica-de-privacidade` (`src/pages/PoliticaPrivacidade.jsx`) e `/termos-de-uso` (`src/pages/TermosUso.jsx`), com links no rodapé. Os endereços ficam em `src/data/legal.js`.
+- O endereço antigo `/privacidade` redireciona (308) para `/politica-de-privacidade`.
+- A política descreve só o que está implementado no site e no Gestão, inclusive o uso da API do Gmail (escopo `gmail.send`). Se o tratamento de dados mudar (novo campo, fornecedor ou finalidade), atualize o texto, a data no topo da página e a data em `api/_sitemap.js`.
+- No domínio `alexsousatech.com.br` (painel do Gestão), os mesmos caminhos redirecionam para cá: veja o `vercel.json` do painel.
 
 ## Conteúdo
 

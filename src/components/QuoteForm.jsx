@@ -217,7 +217,7 @@ export default function QuoteForm({ tipoInicial = '' }) {
         <label className={`orc-check${erros.consentimento ? ' orc-check--erro' : ''}`}>
           <input id="orc-consentimento" type="checkbox" checked={v.consentimento} onChange={(e) => set('consentimento', e.target.checked)} aria-describedby={erros.consentimento ? 'orc-consentimento-erro' : undefined} />
           <span>
-            Autorizo a Alex Sousa Tech a usar estes dados só para responder a este pedido. <Link to="/privacidade">Política de privacidade</Link>
+            Autorizo a Alex Sousa Tech a usar estes dados só para responder a este pedido. <Link to="/politica-de-privacidade">Política de privacidade</Link>
           </span>
         </label>
         {erros.consentimento && (

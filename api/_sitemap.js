@@ -12,7 +12,8 @@ export const PAGINAS_FIXAS = [
   { caminho: '/projetos', atualizadoEm: '2026-11-10' },
   { caminho: '/orcamento', atualizadoEm: '2026-11-10' },
   { caminho: '/contato', atualizadoEm: '2026-11-10' },
-  { caminho: '/privacidade', atualizadoEm: '2026-11-10' },
+  { caminho: '/politica-de-privacidade', atualizadoEm: '2026-11-18' },
+  { caminho: '/termos-de-uso', atualizadoEm: '2026-11-18' },
 ];
 
 const SLUG_VALIDO = /^[a-z0-9][a-z0-9-]*$/i;

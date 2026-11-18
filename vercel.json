@@ -24,6 +24,11 @@
       ],
       "destination": "https://site.alexsousatech.com.br/:path*",
       "permanent": true
+    },
+    {
+      "source": "/privacidade",
+      "destination": "/politica-de-privacidade",
+      "permanent": true
     }
   ],
   "rewrites": [

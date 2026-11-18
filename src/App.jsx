@@ -1,10 +1,11 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Footer from './components/Footer.jsx';
 import Header from './components/Header.jsx';
 import StarBackground from './components/StarBackground.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
 import Home from './pages/Home.jsx';
+import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from './data/legal.js';
 
 const Empresa = lazy(() => import('./pages/Empresa.jsx'));
 const SobreAlexSousa = lazy(() => import('./pages/SobreAlexSousa.jsx'));
@@ -13,7 +14,8 @@ const Projetos = lazy(() => import('./pages/Projetos.jsx'));
 const Projeto = lazy(() => import('./pages/Projeto.jsx'));
 const Orcamento = lazy(() => import('./pages/Orcamento.jsx'));
 const Contato = lazy(() => import('./pages/Contato.jsx'));
-const Privacidade = lazy(() => import('./pages/Privacidade.jsx'));
+const PoliticaPrivacidade = lazy(() => import('./pages/PoliticaPrivacidade.jsx'));
+const TermosUso = lazy(() => import('./pages/TermosUso.jsx'));
 const NaoEncontrado = lazy(() => import('./pages/NaoEncontrado.jsx'));
 
 // Links "/pagina#secao": rola até a seção (esperando a página montar); troca de página volta ao topo.
@@ -61,7 +63,10 @@ export default function App() {
               <Route path="/projetos/:slug" element={<Projeto />} />
               <Route path="/orcamento" element={<Orcamento />} />
               <Route path="/contato" element={<Contato />} />
-              <Route path="/privacidade" element={<Privacidade />} />
+              <Route path={CAMINHO_PRIVACIDADE} element={<PoliticaPrivacidade />} />
+              <Route path={CAMINHO_TERMOS} element={<TermosUso />} />
+              {/* Endereço antigo: a Vercel redireciona (308); aqui cobre a navegação interna. */}
+              <Route path="/privacidade" element={<Navigate to={CAMINHO_PRIVACIDADE} replace />} />
               <Route path="*" element={<NaoEncontrado />} />
             </Routes>
           </Suspense>

@@ -1664,6 +1664,69 @@ main:focus {
   color: var(--texto-2);
 }
 
+/* ---------- Páginas legais (privacidade e termos) ---------- */
+.texto-longo ul {
+  list-style: disc;
+}
+
+.texto-longo ol {
+  list-style: decimal;
+}
+
+.texto-longo ul,
+.texto-longo ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.25em;
+  color: var(--texto-2);
+}
+
+.texto-longo li::marker {
+  color: var(--eletrico);
+}
+
+.texto-longo h3 {
+  margin-top: 8px;
+  font-size: var(--t-lg);
+}
+
+.texto-longo strong {
+  color: var(--texto);
+}
+
+.texto-longo code {
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+}
+
+.texto-legal__data {
+  font-size: var(--t-sm);
+}
+
+.texto-legal__sumario {
+  padding: 18px 22px;
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+}
+
+.texto-legal__sumario h2 {
+  margin: 0 0 10px;
+  font-size: var(--t-base);
+}
+
+.texto-legal__secao {
+  display: grid;
+  gap: 14px;
+  scroll-margin-top: calc(var(--header) + 16px);
+}
+
+.rodape__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
 /* ---------- 404 ---------- */
 .nao-encontrado {
   display: grid;

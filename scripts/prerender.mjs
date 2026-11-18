@@ -87,7 +87,8 @@ const paginas = [
   ['/projetos', 'projetos.html', { projetos }],
   ['/orcamento', 'orcamento.html', {}],
   ['/contato', 'contato.html', {}],
-  ['/privacidade', 'privacidade.html', {}],
+  ['/politica-de-privacidade', 'politica-de-privacidade.html', {}],
+  ['/termos-de-uso', 'termos-de-uso.html', {}],
   ['/404', '404.html', {}],
 ];
 for (const [rota, arquivo, dados] of paginas) await gerar(rota, arquivo, dados);
