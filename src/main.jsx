@@ -23,6 +23,6 @@ const app = (
   </StrictMode>
 );
 
-// Páginas geradas no build já têm o conteúdo: o React só assume. A casca de projetos novos monta do zero.
+// Páginas geradas no build já têm o conteúdo: o React só assume. A casca (área do cliente) monta do zero.
 if (foiPreRenderizado()) hydrateRoot(raiz, app);
 else createRoot(raiz).render(app);

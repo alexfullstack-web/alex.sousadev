@@ -1,5 +1,5 @@
 // Ligação do navegador com o Alex Sousa Tech Gestão.
-//  - Projetos: lidos de /api/portfolio, neste mesmo site (a função do servidor usa a chave do Gestão).
+//  - Planos e plataformas: catálogo público da área do cliente (/customer/catalog), cadastrado no painel.
 //  - Orçamento: enviado direto à rota pública /public/service-requests do Gestão (sem login, com anti-spam).
 import { GESTAO_API_URL } from '../config.js';
 
@@ -30,7 +30,7 @@ async function pedir(url, opcoes = {}, tempo = 15000) {
   }
 }
 
-export const listarProjetos = () => pedir('/api/portfolio', {}, 20000);
-export const obterProjeto = (slug) => pedir(`/api/portfolio/${encodeURIComponent(slug)}`, {}, 20000).then((r) => r.projeto);
+// Só planos ativos e públicos, com plataformas ativas (o Gestão filtra). Tempo maior: o Render pode estar "acordando".
+export const listarPlanos = () => pedir(`${GESTAO_API_URL}/customer/catalog`, {}, 60000);
 // O Render gratuito pode estar "acordando": o envio tem tempo maior.
 export const enviarPedido = (dados) => pedir(`${GESTAO_API_URL}/public/service-requests`, { method: 'POST', body: JSON.stringify(dados) }, 60000);

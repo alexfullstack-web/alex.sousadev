@@ -12,7 +12,7 @@ import { useSite } from '../context/SiteContext.jsx';
 import Turnstile, { precisaTurnstile } from './Turnstile.jsx';
 
 const CHAVE = 'ast.joaopedro';
-const SAUDACAO = 'Olá! Sou o João Pedro IA, assistente da Alex Sousa Tech. Posso ajudar você a conhecer nossos projetos, escolher um serviço ou solicitar um orçamento. Como posso ajudar?';
+const SAUDACAO = 'Olá! Sou o João Pedro IA, assistente da Alex Sousa Tech. Posso ajudar você a conhecer nossos serviços e planos, escolher um serviço ou solicitar um orçamento. Como posso ajudar?';
 const SUGESTOES = ['Que tipos de projeto vocês fazem?', 'Quero um site para minha empresa', 'Como funciona o orçamento?'];
 const STATUS = { NOVO: 'Na fila da equipe', EM_ATENDIMENTO: 'Em atendimento', AGUARDANDO_CLIENTE: 'Aguardando sua resposta', RESOLVIDO: 'Encerrado', ARQUIVADO: 'Encerrado' };
 const hora = (d) => new Date(d).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -322,7 +322,7 @@ export default function JoaoPedro() {
                   rows={1}
                   value={texto}
                   maxLength={2000}
-                  placeholder={protocolo ? 'Escreva para a equipe…' : 'Pergunte sobre serviços ou projetos…'}
+                  placeholder={protocolo ? 'Escreva para a equipe…' : 'Pergunte sobre serviços ou planos…'}
                   onChange={(e) => setTexto(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {

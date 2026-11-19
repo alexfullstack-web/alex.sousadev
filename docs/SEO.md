@@ -6,27 +6,22 @@ Sitemap: `https://site.alexsousatech.com.br/sitemap.xml`
 ## Como funciona
 
 - `npm run build` gera um HTML completo por página pública, com conteúdo, título, canonical e JSON-LD.
-- Os projetos vêm do Alex Sousa Tech Gestão, lidos com a chave do site (`api/_gestao.js`). Se o Gestão não responder, o build tenta de novo e, se continuar fora, gera as páginas fixas e avisa no log.
-- Depois de carregar, o React assume a página e busca os projetos atuais em `/api/portfolio`, que guarda cache por 5 minutos na Vercel.
-- Projeto publicado depois do último build abre normalmente por `app-shell.html` e já entra no sitemap, mas só tem HTML completo no próximo deploy.
+- O build não depende do Gestão. Os planos (página inicial e `/planos`) são buscados pelo navegador depois que a página abre, então o HTML inicial traz o texto fixo da página e os planos aparecem em seguida.
+- A vitrine pública de projetos foi removida: `/projetos` e `/projetos/:slug` redirecionam (308) para `/servicos`, preservando o que o Google já tinha indexado.
 
 ## Datas do sitemap
 
-O `lastmod` dos projetos vem da data da última alteração no Gestão. O das páginas fixas fica em `PAGINAS_FIXAS` (`api/_sitemap.js`): ao mudar o conteúdo de uma página, atualize a data dela.
-
-## Depois de publicar ou editar projeto
-
-A página que o visitante vê se atualiza sozinha em até 5 minutos. O **HTML inicial**, que é o que o Google e as redes sociais leem primeiro, só muda no próximo deploy. Depois de publicar algo importante, faça um *Redeploy* na Vercel, ou crie um Deploy Hook (Settings → Git → Deploy Hooks) e chame a URL dele.
+O `lastmod` das páginas fica em `PAGINAS_FIXAS` (`api/_sitemap.js`): ao mudar o conteúdo de uma página, atualize a data dela. A área do cliente (`/conta`) não entra no sitemap.
 
 ## Variáveis na Vercel
 
-Veja a tabela no `README.md`: `GESTAO_API_URL`, `GESTAO_SITE_KEY` (só no servidor), `VITE_GESTAO_API_URL` e, se usar, `VITE_TURNSTILE_SITE_KEY`.
+Veja a tabela no `README.md`: `GESTAO_API_URL` (só no servidor), `VITE_GESTAO_API_URL` e, se usar, `VITE_TURNSTILE_SITE_KEY`.
 
-Variáveis antigas que podem ser apagadas: `VITE_API_URL`, `VITE_EMPRESA`, `VITE_SITE_URL`.
+Variáveis antigas que podem ser apagadas: `GESTAO_SITE_KEY`, `VITE_API_URL`, `VITE_EMPRESA`, `VITE_SITE_URL`.
 
 ## Gestão (API)
 
-Inclua `https://site.alexsousatech.com.br` em `PUBLIC_FORM_ORIGINS`, ou o formulário de orçamento será recusado nesse domínio.
+Inclua `https://site.alexsousatech.com.br` em `PUBLIC_FORM_ORIGINS` (orçamento) e em `CUSTOMER_ORIGINS` (planos e área do cliente), ou o domínio será recusado.
 
 ## Redes sociais
 
@@ -39,7 +34,6 @@ Os perfis oficiais (Instagram e GitHub) ficam em `src/data/empresa.js` (`CONTATO
 | Todas | `Organization` (Alex Sousa Tech) e `WebSite` |
 | `/sobre-alex-sousa` | `ProfilePage` + `Person` (Alex Sousa, fundador) |
 | `/servicos` | `ItemList` com os 9 `Service` |
-| `/projetos/:slug` | `CreativeWork` do projeto, criado pela `Organization`, + `BreadcrumbList` |
 
 ## Cloudflare
 

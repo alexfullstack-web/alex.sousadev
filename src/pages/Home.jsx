@@ -4,10 +4,9 @@ import CtaFinal from '../components/CtaFinal.jsx';
 import HeroVisual from '../components/HeroVisual.jsx';
 import Icone from '../components/Icone.jsx';
 import Processo from '../components/Processo.jsx';
-import ProjectCard from '../components/ProjectCard.jsx';
 import Reveal from '../components/Reveal.jsx';
 import { DIFERENCIAIS, EMPRESA, SERVICOS, SOBRE_EMPRESA } from '../data/empresa.js';
-import { useProjetos } from '../hooks/useProjetos.js';
+import { plataformasDoPlano, precoPlano, usePlanos } from '../hooks/usePlanos.js';
 import { useSeo } from '../hooks/useSeo.js';
 
 function Secao({ id, titulo, texto, acao, children, className = '' }) {
@@ -25,9 +24,10 @@ function Secao({ id, titulo, texto, acao, children, className = '' }) {
   );
 }
 
-function ProjetosDestaque() {
-  const { itens, erro, recarregar } = useProjetos();
-  if (erro && !itens) {
+// Planos reais do Gestão, nos mesmos cartões da seção Serviços.
+function PlanosDestaque() {
+  const { planos, erro, recarregar } = usePlanos();
+  if (erro && !planos) {
     return (
       <div className="aviso" role="alert">
         <p>{erro}</p>
@@ -37,24 +37,32 @@ function ProjetosDestaque() {
       </div>
     );
   }
-  if (!itens) {
+  if (!planos) {
     return (
-      <div className="projetos-grade" aria-busy="true" aria-label="Carregando projetos">
+      <div className="projetos-grade" aria-busy="true" aria-label="Carregando planos">
         {[0, 1, 2].map((i) => (
           <div key={i} className="projeto projeto--esqueleto" />
         ))}
       </div>
     );
   }
-  if (!itens.length) return <p className="vazio">Os projetos estão sendo preparados para publicação.</p>;
+  if (!planos.length) return <p className="vazio">Os planos estão sendo preparados para publicação.</p>;
   return (
-    <div className="projetos-grade">
-      {itens.slice(0, 6).map((p, i) => (
-        <Reveal key={p.slug} style={{ '--atraso': `${(i % 3) * 80}ms` }}>
-          <ProjectCard p={p} />
+    <ul className="servicos-grade">
+      {planos.slice(0, 6).map((p, i) => (
+        <Reveal as="li" key={p.id} className="servico" style={{ '--atraso': `${(i % 3) * 70}ms` }}>
+          <Link to="/planos" className="servico__link" aria-label={`Plano ${p.name}: ver planos`}>
+            <span className="servico__icone">
+              <Icone nome="layers" />
+            </span>
+            <h3>{p.name}</h3>
+            <p>
+              {precoPlano(p)}. Inclui {plataformasDoPlano(p)}.
+            </p>
+          </Link>
         </Reveal>
       ))}
-    </div>
+    </ul>
   );
 }
 
@@ -125,16 +133,16 @@ export default function Home() {
       </Secao>
 
       <Secao
-        id="projetos"
-        titulo="Projetos e soluções desenvolvidas"
-        texto="Sites, sistemas e ferramentas que já saíram do papel."
+        id="plataformas"
+        titulo="Plataformas por assinatura"
+        texto="Sistemas prontos da Alex Sousa Tech para usar no dia a dia, com planos e acesso pela área do cliente."
         acao={
-          <Link to="/projetos" className="link-seta">
-            Ver todos os projetos <ArrowRight size={16} aria-hidden="true" />
+          <Link to="/planos" className="link-seta">
+            Ver planos <ArrowRight size={16} aria-hidden="true" />
           </Link>
         }
       >
-        <ProjetosDestaque />
+        <PlanosDestaque />
       </Secao>
 
       <Secao id="como-funciona" titulo="Como funciona nosso trabalho" texto="Um caminho claro, com você acompanhando cada etapa.">

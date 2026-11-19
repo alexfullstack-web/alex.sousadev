@@ -414,10 +414,21 @@ const ABAS = [
 
 const fmtData = (iso) => (iso ? new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '—');
 
+// Aba pedida por link (ex.: "Contratar" em /planos → /conta?aba=assinaturas). Fica guardada enquanto a
+// pessoa entra ou cria a conta, e é usada uma vez ao abrir a área do cliente.
+let abaPedida = null;
+
 export function MinhaConta() {
   useSeo({ titulo: 'Minha conta', caminho: '/conta', noindex: true, descricao: 'Área do cliente da Alex Sousa Tech.' });
   const { estado, cliente, sair, novaConta } = useConta();
-  const [aba, setAba] = useState('perfil');
+  const pedida = new URLSearchParams(useLocation().search).get('aba');
+  if (pedida && ABAS.some((a) => a.id === pedida)) abaPedida = pedida;
+  const [aba, setAba] = useState(() => abaPedida || 'perfil');
+  useEffect(() => {
+    if (estado !== 'logado' || !abaPedida) return;
+    setAba(abaPedida);
+    abaPedida = null;
+  }, [estado]);
   if (estado === 'carregando') return <Carregando />;
   if (estado !== 'logado') return <Navigate to="/conta/entrar" replace />;
 

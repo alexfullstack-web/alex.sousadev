@@ -10,8 +10,7 @@ import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from './data/legal.js';
 const Empresa = lazy(() => import('./pages/Empresa.jsx'));
 const SobreAlexSousa = lazy(() => import('./pages/SobreAlexSousa.jsx'));
 const Servicos = lazy(() => import('./pages/Servicos.jsx'));
-const Projetos = lazy(() => import('./pages/Projetos.jsx'));
-const Projeto = lazy(() => import('./pages/Projeto.jsx'));
+const Planos = lazy(() => import('./pages/Planos.jsx'));
 const Orcamento = lazy(() => import('./pages/Orcamento.jsx'));
 const Contato = lazy(() => import('./pages/Contato.jsx'));
 const PoliticaPrivacidade = lazy(() => import('./pages/PoliticaPrivacidade.jsx'));
@@ -67,8 +66,9 @@ export default function App() {
               <Route path="/empresa" element={<Empresa />} />
               <Route path="/sobre-alex-sousa" element={<SobreAlexSousa />} />
               <Route path="/servicos" element={<Servicos />} />
-              <Route path="/projetos" element={<Projetos />} />
-              <Route path="/projetos/:slug" element={<Projeto />} />
+              <Route path="/planos" element={<Planos />} />
+              {/* Vitrine pública de projetos removida: a Vercel redireciona (308); aqui cobre a navegação interna. */}
+              <Route path="/projetos/*" element={<Navigate to="/servicos" replace />} />
               <Route path="/orcamento" element={<Orcamento />} />
               <Route path="/contato" element={<Contato />} />
               <Route path={CAMINHO_PRIVACIDADE} element={<PoliticaPrivacidade />} />

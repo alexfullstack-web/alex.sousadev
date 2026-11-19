@@ -1,13 +1,14 @@
 // GET /api/status — diagnóstico da ligação do site com o Gestão. Não mostra a chave.
 // Abra no navegador: https://site.alexsousatech.com.br/api/status
-import { buscarPortfolio, FORMATO_CHAVE, lerConfig, MOTIVOS } from './_gestao.js';
+import { classificar, lerConfig, MOTIVOS } from './_gestao.js';
 
 async function tempoDe(fn) {
   const t = Date.now();
   try {
     return { ...(await fn()), ms: Date.now() - t };
-  } catch (e) {
-    return { ok: false, motivo: e.motivo || 'SEM_CONEXAO', ajuda: MOTIVOS[e.motivo] ?? e.message, ms: Date.now() - t };
+  } catch (erro) {
+    const e = classificar(erro);
+    return { ok: false, motivo: e.motivo, ajuda: MOTIVOS[e.motivo] ?? e.message, ms: Date.now() - t };
   }
 }
 
@@ -22,7 +23,6 @@ export default async function handler(req, res) {
   const resultado = {
     gestao: {
       endereco: config.api || null,
-      chave: !config.chave ? 'ausente' : FORMATO_CHAVE.test(config.chave) ? 'configurada (formato ok)' : 'formato inválido',
       avisos: config.avisos,
     },
   };
@@ -33,10 +33,14 @@ export default async function handler(req, res) {
       const r = await fetch(`${config.api}/health`, { signal: AbortSignal.timeout(50000) });
       return { ok: r.ok, http: r.status };
     });
-    // 2) Projetos do portfólio com a chave
-    resultado.portfolio = config.chave
-      ? await tempoDe(async () => ({ ok: true, projetos: (await buscarPortfolio(config, { tempo: 25000 })).itens.length }))
-      : { ok: false, motivo: 'NAO_CONFIGURADO', ajuda: 'Defina GESTAO_SITE_KEY na Vercel e faça um novo deploy.' };
+    // 2) Planos da área do cliente: o Gestão aceita este domínio? (CUSTOMER_ORIGINS no Render)
+    resultado.planos = await tempoDe(async () => {
+      const r = await fetch(`${config.api}/customer/catalog`, { headers: { Origin: origem, Accept: 'application/json' }, signal: AbortSignal.timeout(25000) });
+      const aceita = r.headers.get('access-control-allow-origin') === origem;
+      if (!r.ok || !aceita) return { ok: false, origem, http: r.status, ajuda: `No Render (API), inclua ${origem} em CUSTOMER_ORIGINS e reinicie a API.` };
+      const corpo = await r.json();
+      return { ok: true, planos: Array.isArray(corpo?.data) ? corpo.data.length : 0 };
+    });
     // 3) Formulário de orçamento: o Gestão aceita este domínio? (PUBLIC_FORM_ORIGINS no Render)
     resultado.formulario = await tempoDe(async () => {
       const r = await fetch(`${config.api}/public/service-requests`, {
@@ -51,6 +55,6 @@ export default async function handler(req, res) {
     });
   }
 
-  const tudoOk = Boolean(resultado.api?.ok && resultado.portfolio?.ok && resultado.formulario?.ok);
+  const tudoOk = Boolean(resultado.api?.ok && resultado.planos?.ok && resultado.formulario?.ok);
   return res.status(tudoOk ? 200 : 503).json({ ok: tudoOk, ...resultado });
 }

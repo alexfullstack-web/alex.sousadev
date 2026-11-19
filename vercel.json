@@ -29,6 +29,16 @@
       "source": "/privacidade",
       "destination": "/politica-de-privacidade",
       "permanent": true
+    },
+    {
+      "source": "/projetos",
+      "destination": "/servicos",
+      "permanent": true
+    },
+    {
+      "source": "/projetos/:slug*",
+      "destination": "/servicos",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -43,10 +53,6 @@
     {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
-    },
-    {
-      "source": "/projetos/:slug",
-      "destination": "/app-shell"
     }
   ],
   "headers": [

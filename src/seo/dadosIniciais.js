@@ -10,7 +10,6 @@ const atuais = () => (typeof window === 'undefined' ? noServidor : window.__DADO
 
 export const dadoInicial = (chave) => atuais()[chave] ?? null;
 
-// true no build e nas páginas pré-renderizadas; false na casca usada por projetos novos.
+// true no build e nas páginas pré-renderizadas; false na casca (app-shell, usada pela área do cliente).
 export const foiPreRenderizado = () => typeof window === 'undefined' || Boolean(window.__DADOS_INICIAIS__);
 
-export const projetoInicial = (slug) => (dadoInicial('projetoSlug') === slug ? dadoInicial('projeto') : null);

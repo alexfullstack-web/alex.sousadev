@@ -87,22 +87,3 @@ const trilha = (itens) => ({
 export const entidadesTrilha = (nome, caminho) => [trilha([['Início', '/'], [nome, caminho]])];
 
 // Só usa o que está cadastrado no Gestão: sem clientes, notas ou resultados inventados.
-export function entidadesProjeto(p) {
-  const url = `${SITE_URL}/projetos/${p.slug}`;
-  const imagens = [p.capa?.url, ...(p.galeria || []).map((g) => g.url)].filter(Boolean).map(urlAbsoluta);
-  const obra = {
-    '@type': 'CreativeWork',
-    '@id': `${url}#projeto`,
-    name: p.nome,
-    description: p.resumo,
-    url,
-    inLanguage: 'pt-BR',
-    creator: { '@id': ID_ORGANIZACAO },
-    isPartOf: { '@id': ID_WEBSITE },
-  };
-  if (imagens.length) obra.image = [...new Set(imagens)];
-  if (p.segmento) obra.genre = p.segmento;
-  if (p.tecnologias?.length) obra.keywords = p.tecnologias.join(', ');
-  if (p.conclusao) obra.dateCreated = p.conclusao;
-  return [obra, trilha([['Início', '/'], ['Projetos', '/projetos'], [p.nome, `/projetos/${p.slug}`]])];
-}

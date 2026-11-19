@@ -1,10 +1,10 @@
 # Alex Sousa Tech — site oficial
 
-Site institucional da **Alex Sousa Tech**: empresa, serviços, projetos, processo de trabalho e pedido de orçamento.
+Site comercial da **Alex Sousa Tech**: empresa, serviços, pedido de orçamento, planos por assinatura e área do cliente.
 Endereço: `https://site.alexsousatech.com.br`.
 
 React 19 + Vite + React Router 7 + CSS próprio + Lucide. JavaScript puro, sem TypeScript.
-O conteúdo dos **projetos** e o recebimento dos **pedidos de orçamento** ficam no **Alex Sousa Tech Gestão**.
+Os **planos e plataformas**, as **contas de clientes**, as **assinaturas** e o recebimento dos **pedidos de orçamento** ficam no **Alex Sousa Tech Gestão**.
 
 ## Rodar localmente
 
@@ -13,21 +13,20 @@ npm install
 cp .env.example .env.local   # preencha os valores (veja a tabela abaixo)
 npm run dev                  # http://localhost:5173
 npm run build                # gera dist/ com as páginas pré-renderizadas
-npm run preview              # serve dist/ como na Vercel, inclusive /api/portfolio
+npm run preview              # serve dist/ como na Vercel, inclusive /api/status
 ```
 
-Sem o Gestão configurado, o site abre normalmente, mas a lista de projetos fica vazia e o formulário mostra um erro ao enviar.
+Sem o Gestão configurado, o site abre normalmente, mas os planos mostram um aviso de indisponibilidade e o formulário mostra um erro ao enviar.
 
 ## Variáveis de ambiente
 
 | Variável | Onde é usada | Pública? |
 |----------|--------------|----------|
-| `GESTAO_API_URL` | Funções `api/` da Vercel e build (`https://<API do Gestão>/api/v1`) | não |
-| `GESTAO_SITE_KEY` | Chave do site gerada no Gestão (Portfólio → Integração com o site) | **não. Nunca use o prefixo `VITE_`** |
-| `VITE_GESTAO_API_URL` | Formulário de orçamento, no navegador (`https://<API do Gestão>/api/v1`) | sim |
+| `GESTAO_API_URL` | Diagnóstico `/api/status` (`https://<API do Gestão>/api/v1`; se vazio, usa `VITE_GESTAO_API_URL`) | não |
+| `VITE_GESTAO_API_URL` | No navegador: orçamento, planos e área do cliente (`https://<API do Gestão>/api/v1`) | sim |
 | `VITE_TURNSTILE_SITE_KEY` | Opcional: Cloudflare Turnstile no formulário | sim |
 
-Variáveis com prefixo `VITE_` vão para o JavaScript que o visitante baixa. Por isso a chave do site **não** pode ter esse prefixo. O `.env` e os `.env.*` estão no `.gitignore`; só o `.env.example`, sem valores reais, vai para o repositório.
+Variáveis com prefixo `VITE_` vão para o JavaScript que o visitante baixa: nada secreto nelas. O site não usa mais a chave `GESTAO_SITE_KEY` (servia só para a vitrine de projetos, removida); ela pode ser apagada na Vercel. O `.env` e os `.env.*` estão no `.gitignore`; só o `.env.example`, sem valores reais, vai para o repositório.
 
 ## Publicar na Vercel
 
@@ -41,20 +40,12 @@ Abra **`/api/status`** no site publicado, por exemplo `https://site.alexsousatec
 - o endereço da API que o site está usando;
 - se a chave está configurada e no formato certo;
 - se a API respondeu;
-- quantos projetos vieram do Gestão;
+- quantos planos o Gestão está oferecendo ao site (e se aceita este domínio em `CUSTOMER_ORIGINS`);
 - se o Gestão aceita o formulário de orçamento deste domínio.
 
-Quando algo falha, o campo `ajuda` diz o que corrigir. `GESTAO_API_URL` funciona com ou sem `/api/v1`, e a chave pode ser colada com aspas ou espaços: o site limpa os dois.
+Quando algo falha, o campo `ajuda` diz o que corrigir. `GESTAO_API_URL` funciona com ou sem `/api/v1`, com aspas ou barra no fim: o site corrige.
 
 Passo a passo completo do lado do Gestão: `docs/INTEGRACAO-SITE.md` no repositório do Gestão.
-
-## Como os projetos chegam ao site
-
-- O site lê só os projetos **publicados** no Gestão, pelo servidor da Vercel (`api/portfolio`), usando a chave do site. O navegador nunca vê a chave.
-- No `build`, cada projeto vira uma página HTML completa, com título, descrição, imagem e dados estruturados. Isso é bom para o Google e para o compartilhamento.
-- Depois do deploy, a Vercel busca de novo a cada 5 minutos, no máximo. **Publicar, despublicar, editar e reordenar no Gestão aparece no site sem novo deploy.**
-- Projeto publicado depois do deploy abre pela página base (`app-shell`) e entra no sitemap na hora. Ele ganha HTML completo no próximo deploy. Projeto despublicado vira "página não encontrada".
-- Se o Gestão estiver fora do ar ou a chave for trocada, o site continua mostrando os projetos do último deploy.
 
 ## Formulário de orçamento
 
@@ -68,24 +59,29 @@ O formulário (`src/components/QuoteForm.jsx`) envia direto para `POST /public/s
 
 ```
 api/                       funções da Vercel (rodam no servidor)
-├── _gestao.js             leitura do portfólio no Gestão (usado também pelo build)
+├── _gestao.js             endereço da API do Gestão (diagnóstico)
 ├── _sitemap.js            páginas fixas e montagem do sitemap
-├── portfolio/index.js     GET /api/portfolio
-├── portfolio/[slug].js    GET /api/portfolio/:slug
+├── status.js              GET /api/status (API, planos e formulário aceitam este domínio?)
 └── sitemap.js             GET /sitemap.xml
 scripts/prerender.mjs      gera o HTML de cada página depois do build
 src/
 ├── App.jsx                rotas
 ├── config.js              endereços públicos (site, API do formulário)
 ├── data/empresa.js        textos da empresa, serviços, processo, diferenciais, contatos e "Sobre"
-├── lib/gestao.js          chamadas do navegador (projetos via /api, envio do orçamento)
-├── hooks/                 useProjetos, useSeo
+├── lib/gestao.js          chamadas do navegador (planos do Gestão, envio do orçamento)
+├── hooks/                 usePlanos, useSeo
 ├── seo/                   títulos, descrições e dados estruturados (Schema.org)
-├── components/            Header, Footer, QuoteForm, ProjectCard, Processo, HeroVisual...
-├── pages/                 Home, Empresa, SobreAlexSousa, Servicos, Projetos, Projeto,
+├── components/            Header, Footer, QuoteForm, Processo, HeroVisual...
+├── pages/                 Home, Empresa, SobreAlexSousa, Servicos, Planos,
 │                          Orcamento, Contato, PoliticaPrivacidade, TermosUso, NaoEncontrado
 └── styles/                base.css (cores, fontes, base) e site.css (componentes)
 ```
+
+## Planos (`/planos`) e vitrine de projetos
+
+- `/planos` e a seção "Plataformas por assinatura" da página inicial mostram os planos e plataformas cadastrados no painel do Gestão (`/customer/catalog`: só planos ativos e públicos). São buscados pelo navegador, então mudanças no painel aparecem sem novo deploy. Usam só componentes e classes já existentes (lista de Serviços e cartões `servico`).
+- "Contratar" leva a `/conta?aba=assinaturas`; sem login, a aba pedida é aberta depois do cadastro ou login.
+- A vitrine pública de projetos foi removida do site: `/projetos` e `/projetos/:slug` redirecionam (308) para `/servicos`. O módulo Portfólio do Gestão e os projetos no banco continuam intactos.
 
 ## Área do cliente (`/conta`)
 

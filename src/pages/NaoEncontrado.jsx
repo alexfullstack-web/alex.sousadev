@@ -9,13 +9,13 @@ export default function NaoEncontrado() {
         404
       </p>
       <h1 id="nao-encontrado-titulo">Esta página não existe</h1>
-      <p>O endereço pode ter mudado. Volte ao início ou veja os projetos.</p>
+      <p>O endereço pode ter mudado. Volte ao início ou veja os serviços.</p>
       <div className="nao-encontrado__acoes">
         <Link to="/" className="botao botao--primario">
           Ir para o início
         </Link>
-        <Link to="/projetos" className="botao botao--contorno">
-          Ver projetos
+        <Link to="/servicos" className="botao botao--contorno">
+          Ver serviços
         </Link>
       </div>
     </section>

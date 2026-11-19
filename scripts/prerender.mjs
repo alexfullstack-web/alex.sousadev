@@ -1,32 +1,15 @@
 // Pré-renderização: grava em dist/ um HTML completo por página pública, para que o conteúdo, os
 // títulos e os dados estruturados já venham na primeira resposta. Roda depois do "vite build".
-// Os projetos vêm do Alex Sousa Tech Gestão pela API autenticada (GESTAO_API_URL + GESTAO_SITE_KEY).
-// Se o Gestão não responder, o build continua: as páginas saem sem a lista, e o navegador busca
-// os projetos em /api/portfolio ao abrir a página.
-import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+// Não depende do Gestão: os planos (página inicial e /planos) são buscados pelo navegador ao abrir a página.
+import { readFileSync, readdirSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { montarSitemap } from '../api/_sitemap.js';
-import { buscarPortfolio, buscarProjeto, lerConfig } from '../api/_gestao.js';
 
 const raiz = process.cwd();
 const dist = resolve(raiz, 'dist');
 const ssr = resolve(raiz, 'dist-ssr');
 
-function lerEnv() {
-  const env = { ...process.env };
-  for (const arquivo of ['.env', '.env.production', '.env.local', '.env.production.local']) {
-    const p = resolve(raiz, arquivo);
-    if (!existsSync(p)) continue;
-    for (const linha of readFileSync(p, 'utf8').split(/\r?\n/)) {
-      const m = linha.match(/^\s*((?:VITE|GESTAO)_[A-Z_]+)\s*=\s*(.*)\s*$/);
-      if (m && env[m[1]] === undefined) env[m[1]] = m[2].replace(/^["']|["']$/g, '');
-    }
-  }
-  return env;
-}
-
-const config = lerConfig(lerEnv());
 
 function escrever(arquivo, conteudo) {
   const destino = resolve(dist, arquivo);
@@ -63,28 +46,16 @@ async function gerar(rota, arquivo, dados) {
   return seo;
 }
 
-let projetos = null;
-if (!config.configurado) {
-  console.warn('[prerender] GESTAO_API_URL/GESTAO_SITE_KEY ausentes: páginas geradas sem a lista de projetos.');
-} else {
-  try {
-    // O Render gratuito pode estar dormindo: até 4 tentativas na primeira chamada.
-    ({ itens: projetos } = await buscarPortfolio(config, { tentativas: 4, tempo: 30000 }));
-  } catch (e) {
-    console.warn(`[prerender] Gestão indisponível (${e.message}). Páginas geradas sem a lista de projetos.`);
-  }
-}
-
-// Casca sem conteúdo: atende projetos publicados depois do último build.
+// Casca sem conteúdo: atende a área do cliente (/conta), que não é pré-renderizada.
 const casca = trocarBloco(modelo, 'seo', `${cabecalhoHtml(calcularSeo({ caminho: null }))}\n    ${fontes.join('\n    ')}`);
 escrever('app-shell.html', casca);
 
 const paginas = [
-  ['/', 'index.html', { projetos }],
+  ['/', 'index.html', {}],
   ['/empresa', 'empresa.html', {}],
   ['/sobre-alex-sousa', 'sobre-alex-sousa.html', {}],
   ['/servicos', 'servicos.html', {}],
-  ['/projetos', 'projetos.html', { projetos }],
+  ['/planos', 'planos.html', {}],
   ['/orcamento', 'orcamento.html', {}],
   ['/contato', 'contato.html', {}],
   ['/politica-de-privacidade', 'politica-de-privacidade.html', {}],
@@ -93,21 +64,8 @@ const paginas = [
 ];
 for (const [rota, arquivo, dados] of paginas) await gerar(rota, arquivo, dados);
 
-let gerados = 0;
-for (const { slug } of projetos || []) {
-  let projeto = null;
-  try {
-    projeto = await buscarProjeto(slug, config);
-  } catch (e) {
-    console.warn(`[prerender] /projetos/${slug}: ${e.message}`);
-  }
-  if (!projeto) continue;
-  await gerar(`/projetos/${slug}`, `projetos/${slug}.html`, { projeto, projetoSlug: slug });
-  gerados++;
-}
-
-escrever('sitemap-fallback.xml', montarSitemap(projetos || []));
+escrever('sitemap-fallback.xml', montarSitemap());
 // Um sitemap.xml estático teria prioridade sobre o dinâmico na Vercel: nunca pode ir para o deploy.
 rmSync(resolve(dist, 'sitemap.xml'), { force: true });
 rmSync(ssr, { recursive: true, force: true });
-console.log(`[prerender] ${paginas.length} páginas fixas e ${gerados} projeto(s) gerados.${projetos ? '' : ' ATENÇÃO: sem dados do Gestão neste build.'}`);
+console.log(`[prerender] ${paginas.length} páginas geradas.`);

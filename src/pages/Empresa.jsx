@@ -22,8 +22,8 @@ export default function Empresa() {
         <Link to="/orcamento" className="botao botao--primario">
           Solicitar orçamento
         </Link>
-        <Link to="/projetos" className="botao botao--contorno">
-          Ver projetos
+        <Link to="/planos" className="botao botao--contorno">
+          Ver planos
         </Link>
       </PaginaTopo>
 

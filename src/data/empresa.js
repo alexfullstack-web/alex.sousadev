@@ -27,7 +27,7 @@ export const NAV = [
   { to: '/empresa', rotulo: 'Empresa' },
   { to: '/sobre-alex-sousa', rotulo: 'Sobre' },
   { to: '/servicos', rotulo: 'Serviços' },
-  { to: '/projetos', rotulo: 'Projetos' },
+  { to: '/planos', rotulo: 'Planos' },
   { to: '/contato', rotulo: 'Contato' },
 ];
 
