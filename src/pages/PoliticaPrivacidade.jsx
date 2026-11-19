@@ -5,7 +5,7 @@ import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from '../data/legal.js';
 import { useSeo } from '../hooks/useSeo.js';
 import { entidadesTrilha } from '../seo/schema.js';
 
-const ATUALIZADO = { iso: '2026-11-18', rotulo: '18 de novembro de 2026' };
+const ATUALIZADO = { iso: '2026-11-19', rotulo: '19 de novembro de 2026' };
 
 // Regra deste texto: descrever só o que está implementado no site e no Alex Sousa Tech Gestão.
 // Ao mudar o tratamento de dados (novo campo, novo fornecedor, nova finalidade), atualize aqui e a data.
@@ -72,46 +72,27 @@ const SECOES = [
     ),
   },
   {
-    id: 'gmail',
-    titulo: 'Uso da API do Gmail (Google)',
+    id: 'emails',
+    titulo: 'Envio de e-mails',
     conteudo: (
       <>
         <p>
-          O Alex Sousa Tech Gestão envia e-mails por meio da API do Gmail, do Google, usando uma conta Gmail da própria Alex Sousa Tech. Essa conta foi autorizada pela Alex
-          Sousa Tech com uma única permissão: <strong>enviar e-mails</strong> (escopo <code>gmail.send</code>).
+          O Alex Sousa Tech Gestão envia e-mails pelo <strong>Resend</strong>, um serviço de envio de e-mails transacionais contratado pela Alex Sousa Tech. Os e-mails saem de
+          um endereço do domínio da Alex Sousa Tech.
         </p>
-        <p>Esses envios servem exclusivamente para:</p>
+        <p>Esses envios servem para:</p>
         <ul>
           <li>códigos de verificação no login em duas etapas, na troca de e-mail e na aceitação de convites;</li>
           <li>convites de acesso ao Gestão;</li>
           <li>avisos de segurança da conta, como bloqueio por tentativas erradas, conta bloqueada, e-mail alterado e convite aceito.</li>
         </ul>
-        <p>O que isso significa na prática:</p>
         <ul>
-          <li>
-            O sistema <strong>não lê, não lista, não apaga e não guarda</strong> mensagens, contatos ou qualquer outro conteúdo da caixa do Gmail. Essas permissões não são
-            solicitadas.
-          </li>
-          <li>
-            Você não precisa conectar a sua conta Google: ninguém que usa o site ou o Gestão autoriza acesso ao próprio Gmail. A API usa apenas a conta da Alex Sousa Tech.
-          </li>
-          <li>Para cada envio, o Google recebe o endereço do destinatário, o assunto e o texto da mensagem, necessários para entregá-la.</li>
-          <li>
-            As credenciais de acesso à API ficam somente nas configurações protegidas do servidor. Elas não ficam no navegador, no banco de dados nem no código-fonte.
-          </li>
-          <li>
-            Os dados envolvidos nesses envios não são vendidos, não são usados para publicidade e não são usados para treinar modelos de inteligência artificial. Também não
-            são repassados a terceiros, a não ser quando a lei exigir.
-          </li>
+          <li>Para cada envio, o Resend recebe o endereço do destinatário, o assunto e o texto da mensagem, necessários para entregá-la.</li>
+          <li>A chave de acesso ao Resend fica somente nas configurações protegidas do servidor. Ela não fica no navegador, no banco de dados nem no código-fonte.</li>
+          <li>Os registros do servidor anotam se o envio deu certo, sem guardar o destinatário nem o conteúdo da mensagem.</li>
+          <li>Esses dados não são vendidos nem usados para publicidade.</li>
         </ul>
-        <p>
-          O uso e a transferência de informações recebidas das APIs do Google seguem a{' '}
-          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">
-            Política de Dados do Usuário dos Serviços de API do Google
-          </a>
-          , incluindo os requisitos de Uso Limitado.
-        </p>
-        <p>Conforme a configuração do servidor, o mesmo envio pode ser feito pelo servidor SMTP do Gmail, com as mesmas finalidades e limites.</p>
+        <p>O sistema não usa a API do Gmail nem acessa caixas de e-mail de ninguém.</p>
       </>
     ),
   },
@@ -132,7 +113,7 @@ const SECOES = [
           legal: legítimo interesse na segurança do sistema e prevenção a fraudes.
         </li>
         <li>
-          <strong>Enviar convites, códigos e avisos de segurança</strong> por e-mail, como descrito na seção sobre a API do Gmail.
+          <strong>Enviar convites, códigos e avisos de segurança</strong> por e-mail, como descrito na seção sobre envio de e-mails.
         </li>
       </ul>
     ),
@@ -191,7 +172,7 @@ const SECOES = [
           funcionamento:
         </p>
         <ul>
-          <li>Google, para o envio dos e-mails (API do Gmail);</li>
+          <li>Resend, para o envio dos e-mails;</li>
           <li>Supabase, Render e Vercel, para hospedagem e banco de dados;</li>
           <li>Cloudflare, quando a verificação anti-robô Turnstile estiver ativada no formulário (ela pode processar dados técnicos do navegador);</li>
           <li>ipinfo.io, apenas se a localização aproximada dos acessos ao Gestão for ativada (desativada por padrão). Nesse caso, o IP de cada acesso é consultado nesse serviço.</li>
@@ -257,7 +238,7 @@ const SECOES = [
 export default function PoliticaPrivacidade() {
   useSeo({
     titulo: 'Política de Privacidade',
-    descricao: 'Como a Alex Sousa Tech trata dados pessoais no site e no Gestão, incluindo o uso da API do Gmail para códigos de verificação e convites (LGPD).',
+    descricao: 'Como a Alex Sousa Tech trata dados pessoais no site e no Gestão: dados tratados, envio de e-mails, armazenamento, segurança e direitos (LGPD).',
     caminho: CAMINHO_PRIVACIDADE,
     entidades: entidadesTrilha('Política de Privacidade', CAMINHO_PRIVACIDADE),
   });

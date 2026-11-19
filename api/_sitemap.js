@@ -12,7 +12,7 @@ export const PAGINAS_FIXAS = [
   { caminho: '/projetos', atualizadoEm: '2026-11-10' },
   { caminho: '/orcamento', atualizadoEm: '2026-11-10' },
   { caminho: '/contato', atualizadoEm: '2026-11-10' },
-  { caminho: '/politica-de-privacidade', atualizadoEm: '2026-11-18' },
+  { caminho: '/politica-de-privacidade', atualizadoEm: '2026-11-19' },
   { caminho: '/termos-de-uso', atualizadoEm: '2026-11-18' },
 ];
 

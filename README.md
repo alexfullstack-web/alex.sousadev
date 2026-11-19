@@ -91,7 +91,7 @@ src/
 
 - `/politica-de-privacidade` (`src/pages/PoliticaPrivacidade.jsx`) e `/termos-de-uso` (`src/pages/TermosUso.jsx`), com links no rodapé. Os endereços ficam em `src/data/legal.js`.
 - O endereço antigo `/privacidade` redireciona (308) para `/politica-de-privacidade`.
-- A política descreve só o que está implementado no site e no Gestão, inclusive o uso da API do Gmail (escopo `gmail.send`). Se o tratamento de dados mudar (novo campo, fornecedor ou finalidade), atualize o texto, a data no topo da página e a data em `api/_sitemap.js`.
+- A política descreve só o que está implementado no site e no Gestão, inclusive o envio de e-mails pelo Resend. Se o tratamento de dados mudar (novo campo, fornecedor ou finalidade), atualize o texto, a data no topo da página e a data em `api/_sitemap.js`.
 - No domínio `alexsousatech.com.br` (painel do Gestão), os mesmos caminhos redirecionam para cá: veja o `vercel.json` do painel.
 
 ## Conteúdo
