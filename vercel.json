@@ -33,6 +33,14 @@
   ],
   "rewrites": [
     {
+      "source": "/conta",
+      "destination": "/app-shell"
+    },
+    {
+      "source": "/conta/:path*",
+      "destination": "/app-shell"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
     },

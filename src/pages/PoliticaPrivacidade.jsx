@@ -42,8 +42,22 @@ const SECOES = [
           </li>
           <li>
             <strong>Navegação:</strong> o site não usa cookies de publicidade nem ferramentas de análise de audiência. Ele guarda no seu navegador apenas uma marcação temporária
-            (que some ao fechar a aba) para não repetir a animação de abertura.
+            (que some ao fechar a aba) para não repetir a animação de abertura. Na área do cliente, um cookie de sessão essencial (inacessível a scripts) mantém você
+            conectado; ele é apagado quando você sai da conta.
           </li>
+        </ul>
+        <h3>Na área do cliente (site.alexsousatech.com.br/conta)</h3>
+        <ul>
+          <li>
+            <strong>Conta:</strong> nome, e-mail, telefone, CPF (opcional no cadastro; necessário para cobranças), senha (guardada apenas como hash, nunca em texto) e a
+            data e a versão em que você aceitou os Termos de Uso e esta Política.
+          </li>
+          <li>
+            <strong>Segurança da conta:</strong> data e hora dos acessos, endereço IP, navegador, tentativas com senha errada, sessões abertas e pedidos de redefinição de
+            senha (o link é de uso único, vale 30 minutos e só o hash dele é guardado).
+          </li>
+          <li>Cada cliente vê apenas os próprios dados. A equipe da Alex Sousa Tech vê as contas no sistema Gestão, com acesso restrito.</li>
+          <li>Se o CPF da conta for o mesmo de um cliente já atendido, a conta é ligada a esse cadastro interno.</li>
         </ul>
         <h3>No Alex Sousa Tech Gestão (acesso restrito)</h3>
         <p>O Gestão não tem cadastro aberto: só entra quem foi convidado pela Alex Sousa Tech.</p>
@@ -77,13 +91,14 @@ const SECOES = [
     conteudo: (
       <>
         <p>
-          O Alex Sousa Tech Gestão envia e-mails pelo <strong>Resend</strong>, um serviço de envio de e-mails transacionais contratado pela Alex Sousa Tech. Os e-mails saem de
+          O site e o Alex Sousa Tech Gestão enviam e-mails pelo <strong>Resend</strong>, um serviço de envio de e-mails transacionais contratado pela Alex Sousa Tech. Os e-mails saem de
           um endereço do domínio da Alex Sousa Tech.
         </p>
         <p>Esses envios servem para:</p>
         <ul>
           <li>códigos de verificação no login em duas etapas, na troca de e-mail e na aceitação de convites;</li>
           <li>convites de acesso ao Gestão;</li>
+          <li>na área do cliente: confirmação de cadastro, link de redefinição de senha e avisos sobre a conta (senha alterada, conta bloqueada);</li>
           <li>avisos de segurança da conta, como bloqueio por tentativas erradas, conta bloqueada, e-mail alterado e convite aceito.</li>
         </ul>
         <ul>
@@ -104,6 +119,10 @@ const SECOES = [
         <li>
           <strong>Responder pedidos de orçamento</strong> e conversar sobre o projeto. Base legal: procedimentos preliminares a um contrato, a seu pedido, e a sua autorização
           registrada no formulário.
+        </li>
+        <li>
+          <strong>Manter a sua conta na área do cliente</strong>, permitir o acesso aos seus dados e proteger a conta contra acessos indevidos. Base legal: execução de
+          contrato e procedimentos preliminares a pedido do titular, e legítimo interesse na segurança.
         </li>
         <li>
           <strong>Prestar os serviços contratados</strong> e administrar clientes, projetos e pagamentos. Base legal: execução de contrato e cumprimento de obrigações legais.

@@ -288,6 +288,22 @@ main:focus {
   flex-shrink: 0;
 }
 
+.topo__conta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 4px;
+  color: var(--texto-2);
+  font-size: var(--t-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.topo__conta:hover {
+  color: var(--texto);
+}
+
 .topo__menu {
   display: none;
   place-items: center;
@@ -1664,6 +1680,217 @@ main:focus {
   color: var(--texto-2);
 }
 
+/* ---------- Área do cliente (/conta) ---------- */
+.conta {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: calc(var(--header) + 56px) var(--margem) var(--secao);
+}
+
+.conta--painel {
+  justify-items: stretch;
+  max-width: calc(var(--largura) + 2 * var(--margem));
+  margin: 0 auto;
+}
+
+.conta__cartao {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  max-width: 560px;
+  padding: clamp(24px, 4vw, 40px);
+  border: 1px solid var(--linha);
+  border-radius: 20px;
+  background: rgba(8, 18, 36, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+.conta__cartao--largo {
+  max-width: none;
+  align-content: start;
+}
+
+.conta__cartao--carregando {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--texto-2);
+}
+
+.conta h1 {
+  font-size: var(--t-2xl);
+}
+
+.conta h2 {
+  font-size: var(--t-xl);
+}
+
+.conta__texto {
+  color: var(--texto-2);
+}
+
+.conta__form,
+.conta__form fieldset {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.conta__enviar {
+  justify-self: stretch;
+}
+
+.conta__link {
+  justify-self: center;
+  font-size: var(--t-sm);
+}
+
+.conta__rodape {
+  color: var(--texto-2);
+  font-size: var(--t-sm);
+}
+
+.conta__dica {
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+}
+
+.conta__ok {
+  padding: 14px 16px;
+  border: 1px solid rgba(80, 200, 140, 0.35);
+  border-radius: 12px;
+  background: rgba(80, 200, 140, 0.07);
+  color: var(--texto);
+  font-size: var(--t-sm);
+}
+
+.conta__regras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+}
+
+.conta__regras li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.conta__regras li svg {
+  opacity: 0.35;
+}
+
+.conta__regras li.ok {
+  color: var(--texto-2);
+}
+
+.conta__regras li.ok svg {
+  opacity: 1;
+  color: #50c88c;
+}
+
+.conta__topo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.conta__grade {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.conta__abas {
+  display: grid;
+  gap: 6px;
+}
+
+.conta__aba {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--texto-2);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.conta__aba:hover {
+  color: var(--texto);
+  background: rgba(31, 111, 235, 0.08);
+}
+
+.conta__aba--ativa {
+  border-color: var(--linha-forte);
+  background: rgba(31, 111, 235, 0.14);
+  color: var(--texto);
+}
+
+.conta__dados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+  margin: 0;
+}
+
+.conta__dados dt,
+.conta__rotulo {
+  color: var(--texto-3);
+  font-size: var(--t-xs);
+  font-weight: 600;
+}
+
+.conta__dados dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.conta__fixo {
+  min-height: 50px;
+  padding: 13px 15px;
+  border: 1px dashed var(--linha-forte);
+  border-radius: 12px;
+  color: var(--texto-2);
+  overflow-wrap: anywhere;
+}
+
+.conta__contatos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 760px) {
+  .conta__grade,
+  .conta__dados {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .conta__abas {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    overflow-x: auto;
+  }
+}
+
 /* ---------- Páginas legais (privacidade e termos) ---------- */
 .texto-longo ul {
   list-style: disc;
@@ -1867,7 +2094,8 @@ main:focus {
 /* ---------- Responsivo ---------- */
 @media (max-width: 1080px) {
   .topo__nav,
-  .topo__cta {
+  .topo__cta,
+  .topo__conta {
     display: none;
   }
   .topo__menu {

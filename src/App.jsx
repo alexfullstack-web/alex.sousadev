@@ -17,6 +17,14 @@ const Contato = lazy(() => import('./pages/Contato.jsx'));
 const PoliticaPrivacidade = lazy(() => import('./pages/PoliticaPrivacidade.jsx'));
 const TermosUso = lazy(() => import('./pages/TermosUso.jsx'));
 const NaoEncontrado = lazy(() => import('./pages/NaoEncontrado.jsx'));
+// Área do cliente: um só pedaço de código, carregado só em /conta.
+const conta = (nome) => lazy(() => import('./conta/Paginas.jsx').then((m) => ({ default: m[nome] })));
+const ContaLayout = conta('ContaLayout');
+const MinhaConta = conta('MinhaConta');
+const Entrar = conta('Entrar');
+const Cadastro = conta('Cadastro');
+const EsqueciSenha = conta('EsqueciSenha');
+const RedefinirSenha = conta('RedefinirSenha');
 
 // Links "/pagina#secao": rola até a seção (esperando a página montar); troca de página volta ao topo.
 function Rolagem() {
@@ -67,6 +75,13 @@ export default function App() {
               <Route path={CAMINHO_TERMOS} element={<TermosUso />} />
               {/* Endereço antigo: a Vercel redireciona (308); aqui cobre a navegação interna. */}
               <Route path="/privacidade" element={<Navigate to={CAMINHO_PRIVACIDADE} replace />} />
+              <Route path="/conta" element={<ContaLayout />}>
+                <Route index element={<MinhaConta />} />
+                <Route path="entrar" element={<Entrar />} />
+                <Route path="cadastro" element={<Cadastro />} />
+                <Route path="esqueci-senha" element={<EsqueciSenha />} />
+                <Route path="redefinir-senha" element={<RedefinirSenha />} />
+              </Route>
               <Route path="*" element={<NaoEncontrado />} />
             </Routes>
           </Suspense>

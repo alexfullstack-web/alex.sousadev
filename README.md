@@ -87,6 +87,13 @@ src/
 └── styles/                base.css (cores, fontes, base) e site.css (componentes)
 ```
 
+## Área do cliente (`/conta`)
+
+- Páginas em `src/conta/` (Entrar, Criar conta, Recuperar senha, Nova senha, Minha conta), carregadas só quando o visitante abre `/conta`.
+- Conversam com `VITE_GESTAO_API_URL` + `/customer` (API do Gestão), com `credentials: 'include'`. A sessão volta pelo cookie HttpOnly da API; o token de acesso fica só em memória, nada no `localStorage`.
+- Não são pré-renderizadas nem indexadas: o `vercel.json` manda `/conta` para a casca do app (`noindex`) e o `robots.txt` tem `Disallow: /conta`.
+- Na API (Render), o site precisa estar em `CUSTOMER_ORIGINS` (padrão: `PUBLIC_FORM_ORIGINS`), e `SITE_URL` define o endereço dos links nos e-mails.
+
 ## Páginas legais
 
 - `/politica-de-privacidade` (`src/pages/PoliticaPrivacidade.jsx`) e `/termos-de-uso` (`src/pages/TermosUso.jsx`), com links no rodapé. Os endereços ficam em `src/data/legal.js`.

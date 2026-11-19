@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Menu, Send, X } from 'lucide-react';
+import { Menu, Send, UserRound, X } from 'lucide-react';
 import { NAV } from '../data/empresa.js';
 import Logo from './Logo.jsx';
 
@@ -67,6 +67,9 @@ export default function Header() {
             ))}
           </ul>
         </nav>
+        <Link to="/conta" className="topo__conta">
+          <UserRound size={17} aria-hidden="true" /> Área do cliente
+        </Link>
         <Link to="/orcamento" className="botao botao--primario botao--p topo__cta">
           Solicitar orçamento
         </Link>
@@ -94,6 +97,9 @@ export default function Header() {
             ))}
           </ul>
         </nav>
+        <Link to="/conta" className="botao botao--contorno menu-movel__cta">
+          <UserRound size={18} aria-hidden="true" /> Área do cliente
+        </Link>
         <Link to="/orcamento" className="botao botao--primario menu-movel__cta">
           <Send size={18} aria-hidden="true" /> Solicitar orçamento
         </Link>

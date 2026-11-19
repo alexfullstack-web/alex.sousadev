@@ -36,6 +36,9 @@ export default function Footer() {
             <li>
               <Link to="/orcamento">Solicitar orçamento</Link>
             </li>
+            <li>
+              <Link to="/conta">Área do cliente</Link>
+            </li>
           </ul>
         </nav>
         <div className="rodape__col">

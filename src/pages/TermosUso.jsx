@@ -5,7 +5,7 @@ import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from '../data/legal.js';
 import { useSeo } from '../hooks/useSeo.js';
 import { entidadesTrilha } from '../seo/schema.js';
 
-const ATUALIZADO = { iso: '2026-11-18', rotulo: '18 de novembro de 2026' };
+const ATUALIZADO = { iso: '2026-11-19', rotulo: '19 de novembro de 2026' };
 
 const SECOES = [
   {
@@ -45,6 +45,18 @@ const SECOES = [
         Enviar um pedido pelo formulário não cria contrato nem obriga nenhuma das partes. A Alex Sousa Tech analisa o pedido e responde pelo canal que você escolher. A
         contratação só acontece com proposta e aceite formais, que definem escopo, valores, prazos e responsabilidades.
       </p>
+    ),
+  },
+  {
+    id: 'area-do-cliente',
+    titulo: 'Área do cliente',
+    conteudo: (
+      <ul>
+        <li>Para criar uma conta, informe dados verdadeiros e mantenha-os atualizados. É preciso aceitar estes termos e a Política de Privacidade.</li>
+        <li>A senha é pessoal. Não a compartilhe. Se suspeitar de uso indevido, redefina a senha e fale com a Alex Sousa Tech.</li>
+        <li>Cada conta dá acesso somente aos dados do próprio cliente.</li>
+        <li>A Alex Sousa Tech pode bloquear uma conta em caso de uso indevido, fraude ou descumprimento destes termos. O bloqueio não apaga os dados.</li>
+      </ul>
     ),
   },
   {

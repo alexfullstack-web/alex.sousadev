@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /app-shell
+Disallow: /conta
 
 Sitemap: https://site.alexsousatech.com.br/sitemap.xml
