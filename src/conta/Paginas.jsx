@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Check, KeyRound, Loader2, LogIn, LogOut, Mail, MessageCircle, Save, ShieldCheck, UserPlus, UserRound } from 'lucide-react';
+import { Boxes, Check, KeyRound, Loader2, LogIn, LogOut, Mail, MessageCircle, Repeat, Save, ShieldCheck, UserPlus, UserRound } from 'lucide-react';
 import { CONTATO, linkWhatsapp } from '../data/empresa.js';
 import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from '../data/legal.js';
 import { useSeo } from '../hooks/useSeo.js';
 import * as api from './api.js';
+import { MinhasAssinaturas, MinhasPlataformas } from './Assinaturas.jsx';
 import { ContaProvider, useConta } from './ContaContext.jsx';
 
 // ---------------------------------------------------------------------------
@@ -404,6 +405,8 @@ export function RedefinirSenha() {
 // ---------------------------------------------------------------------------
 const ABAS = [
   { id: 'perfil', rotulo: 'Meu perfil', icone: UserRound },
+  { id: 'assinaturas', rotulo: 'Minhas assinaturas', icone: Repeat },
+  { id: 'plataformas', rotulo: 'Minhas plataformas', icone: Boxes },
   { id: 'dados', rotulo: 'Atualizar dados', icone: Save },
   { id: 'senha', rotulo: 'Senha', icone: ShieldCheck },
   { id: 'contato', rotulo: 'Entrar em contato', icone: MessageCircle },
@@ -439,6 +442,8 @@ export function MinhaConta() {
         </nav>
         <div className="conta__cartao conta__cartao--largo">
           {aba === 'perfil' && <Perfil cliente={cliente} />}
+          {aba === 'assinaturas' && <MinhasAssinaturas irParaDados={() => setAba('dados')} />}
+          {aba === 'plataformas' && <MinhasPlataformas />}
           {aba === 'dados' && <AtualizarDados />}
           {aba === 'senha' && <TrocarSenha />}
           {aba === 'contato' && <Contato />}
@@ -474,7 +479,7 @@ function Perfil({ cliente }) {
           <dd>{fmtData(cliente.createdAt)}</dd>
         </div>
       </dl>
-      <p className="conta__dica">Assinaturas, plataformas e pagamentos aparecerão aqui assim que estiverem disponíveis para a sua conta.</p>
+      <p className="conta__dica">Veja seus planos em "Minhas assinaturas" e o que está liberado em "Minhas plataformas".</p>
     </>
   );
 }

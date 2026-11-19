@@ -56,6 +56,15 @@ const SECOES = [
         <li>A senha é pessoal. Não a compartilhe. Se suspeitar de uso indevido, redefina a senha e fale com a Alex Sousa Tech.</li>
         <li>Cada conta dá acesso somente aos dados do próprio cliente.</li>
         <li>A Alex Sousa Tech pode bloquear uma conta em caso de uso indevido, fraude ou descumprimento destes termos. O bloqueio não apaga os dados.</li>
+        <li>
+          Assinaturas: as plataformas de um plano só são liberadas depois que o pagamento é confirmado pela instituição de pagamento. Planos com período de teste liberam o
+          acesso durante o teste, uma única vez por cliente e plano.
+        </li>
+        <li>
+          Se o pagamento não for identificado até o vencimento, o acesso continua durante o prazo de tolerância informado no plano. Depois disso, as plataformas ficam
+          suspensas até a confirmação do pagamento, quando o acesso volta automaticamente. A suspensão não apaga os seus dados.
+        </li>
+        <li>Você pode cancelar uma assinatura na área do cliente. Se o período já estiver pago, o acesso continua até o fim dele.</li>
       </ul>
     ),
   },

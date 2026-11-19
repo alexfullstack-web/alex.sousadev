@@ -56,6 +56,10 @@ const SECOES = [
             <strong>Segurança da conta:</strong> data e hora dos acessos, endereço IP, navegador, tentativas com senha errada, sessões abertas e pedidos de redefinição de
             senha (o link é de uso único, vale 30 minutos e só o hash dele é guardado).
           </li>
+          <li>
+            <strong>Assinaturas:</strong> os planos que você contrata (nome, valor, periodicidade, plataformas incluídas), a situação de cada assinatura, as datas de
+            início, vencimento, cancelamento ou suspensão, e o histórico dessas mudanças. Esses dados definem a quais plataformas você tem acesso.
+          </li>
           <li>Cada cliente vê apenas os próprios dados. A equipe da Alex Sousa Tech vê as contas no sistema Gestão, com acesso restrito.</li>
           <li>Se o CPF da conta for o mesmo de um cliente já atendido, a conta é ligada a esse cadastro interno.</li>
         </ul>

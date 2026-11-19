@@ -92,6 +92,7 @@ src/
 - Páginas em `src/conta/` (Entrar, Criar conta, Recuperar senha, Nova senha, Minha conta), carregadas só quando o visitante abre `/conta`.
 - Conversam com `VITE_GESTAO_API_URL` + `/customer` (API do Gestão), com `credentials: 'include'`. A sessão volta pelo cookie HttpOnly da API; o token de acesso fica só em memória, nada no `localStorage`.
 - Não são pré-renderizadas nem indexadas: o `vercel.json` manda `/conta` para a casca do app (`noindex`) e o `robots.txt` tem `Disallow: /conta`.
+- "Minhas assinaturas" e "Minhas plataformas" (`src/conta/Assinaturas.jsx`): tudo vem da API (`/customer/catalog`, `/customer/subscriptions`, `/customer/platforms`); o site não decide acesso nem pagamento. A contratação só aparece quando a API responde `checkoutEnabled: true`; antes disso, o botão é "Quero contratar" (WhatsApp).
 - Na API (Render), o site precisa estar em `CUSTOMER_ORIGINS` (padrão: `PUBLIC_FORM_ORIGINS`), e `SITE_URL` define o endereço dos links nos e-mails.
 
 ## Páginas legais

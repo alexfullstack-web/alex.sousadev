@@ -94,3 +94,11 @@ export const redefinirSenha = (dados) => chamar('/auth/reset-password', { metodo
 export const meusDados = () => autenticada('/me').then((r) => r.customer);
 export const atualizarDados = (dados) => autenticada('/me', { metodo: 'PUT', corpo: dados }).then((r) => r.customer);
 export const trocarSenha = (dados) => autenticada('/me/password', { metodo: 'PUT', corpo: dados });
+
+// Planos, assinaturas e plataformas (o servidor só devolve o que é do próprio cliente).
+export const catalogo = () => chamar('/catalog');
+export const minhasAssinaturas = () => autenticada('/subscriptions').then((r) => r.data);
+export const contratar = (planId) => autenticada('/subscriptions', { metodo: 'POST', corpo: { planId } });
+export const cancelarAssinatura = (id) => autenticada(`/subscriptions/${id}/cancel`, { metodo: 'POST' });
+export const manterAssinatura = (id) => autenticada(`/subscriptions/${id}/resume`, { metodo: 'POST' });
+export const minhasPlataformas = () => autenticada('/platforms').then((r) => r.data);
