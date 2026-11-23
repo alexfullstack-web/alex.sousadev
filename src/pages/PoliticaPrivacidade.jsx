@@ -116,6 +116,30 @@ const SECOES = [
     ),
   },
   {
+    id: 'pagamentos',
+    titulo: 'Pagamentos',
+    conteudo: (
+      <>
+        <p>
+          Os pagamentos das assinaturas, por PIX ou cartão de crédito, são processados pelo <strong>Mercado Pago</strong>, instituição de pagamento contratada pela Alex Sousa Tech.
+        </p>
+        <ul>
+          <li>Para gerar um PIX, o Mercado Pago recebe seu nome, e-mail, CPF, o valor e a descrição da cobrança.</li>
+          <li>
+            No cartão, você informa os dados <strong>diretamente na página do Mercado Pago</strong>. Número do cartão, código de segurança e validade não passam pelo site nem pelo
+            Gestão, e não são guardados pela Alex Sousa Tech. O Gestão envia ao Mercado Pago seu e-mail, o plano e o valor da assinatura.
+          </li>
+          <li>
+            A Alex Sousa Tech guarda o registro de cada cobrança (valor, forma de pagamento, situação, datas e o número da operação no Mercado Pago) para controlar as assinaturas,
+            liberar as plataformas e cumprir obrigações fiscais e contábeis.
+          </li>
+          <li>A credencial de acesso ao Mercado Pago fica somente nas configurações protegidas do servidor.</li>
+          <li>O Mercado Pago trata esses dados também conforme a política de privacidade dele.</li>
+        </ul>
+      </>
+    ),
+  },
+  {
     id: 'finalidades',
     titulo: 'Para que usamos os dados',
     conteudo: (
@@ -196,6 +220,7 @@ const SECOES = [
         </p>
         <ul>
           <li>Resend, para o envio dos e-mails;</li>
+          <li>Mercado Pago, para processar os pagamentos das assinaturas (PIX e cartão);</li>
           <li>Supabase, Render e Vercel, para hospedagem e banco de dados;</li>
           <li>Cloudflare, quando a verificação anti-robô Turnstile estiver ativada no formulário (ela pode processar dados técnicos do navegador);</li>
           <li>ipinfo.io, apenas se a localização aproximada dos acessos ao Gestão for ativada (desativada por padrão). Nesse caso, o IP de cada acesso é consultado nesse serviço.</li>

@@ -64,7 +64,14 @@ const SECOES = [
           Se o pagamento não for identificado até o vencimento, o acesso continua durante o prazo de tolerância informado no plano. Depois disso, as plataformas ficam
           suspensas até a confirmação do pagamento, quando o acesso volta automaticamente. A suspensão não apaga os seus dados.
         </li>
-        <li>Você pode cancelar uma assinatura na área do cliente. Se o período já estiver pago, o acesso continua até o fim dele.</li>
+        <li>
+          Pagamentos: por PIX ou cartão de crédito, processados pelo Mercado Pago. O PIX vale pelo prazo indicado na tela; depois disso é preciso gerar outro. No cartão, as
+          cobranças seguintes são feitas automaticamente a cada período, até o cancelamento.
+        </li>
+        <li>
+          Você pode cancelar uma assinatura na área do cliente. O cancelamento interrompe as próximas cobranças no cartão. Se o período já estiver pago, o acesso continua até
+          o fim dele.
+        </li>
       </ul>
     ),
   },

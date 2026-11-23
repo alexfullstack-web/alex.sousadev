@@ -2503,3 +2503,49 @@ main:focus {
     justify-content: flex-start;
   }
 }
+
+/* Pagamento por PIX na área do cliente (mesmos tokens, campos e botões do site) */
+.assinatura__pagar {
+  display: grid;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--linha);
+}
+
+.pix {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.pix__qr {
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+  border-radius: var(--raio-p);
+  background: #fff; /* o QR Code precisa de fundo claro para ser lido pelo app do banco */
+}
+
+.pix__info {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.pix__info textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--t-xs);
+  word-break: break-all;
+}
+
+@media (max-width: 640px) {
+  .pix {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .pix__info {
+    width: 100%;
+  }
+}

@@ -102,3 +102,9 @@ export const contratar = (planId) => autenticada('/subscriptions', { metodo: 'PO
 export const cancelarAssinatura = (id) => autenticada(`/subscriptions/${id}/cancel`, { metodo: 'POST' });
 export const manterAssinatura = (id) => autenticada(`/subscriptions/${id}/resume`, { metodo: 'POST' });
 export const minhasPlataformas = () => autenticada('/platforms').then((r) => r.data);
+
+// Pagamentos. O valor sai da assinatura no servidor: o site não manda valor nem status.
+export const estadoPagamento = (id) => autenticada(`/subscriptions/${id}/payment`);
+export const gerarPix = (id) => autenticada(`/subscriptions/${id}/pix`, { metodo: 'POST' }).then((r) => r.pix);
+export const pagarComCartao = (id) => autenticada(`/subscriptions/${id}/card`, { metodo: 'POST' });
+export const meusPagamentos = () => autenticada('/payments').then((r) => r.data);

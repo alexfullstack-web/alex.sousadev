@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Boxes, Check, KeyRound, Loader2, LogIn, LogOut, Mail, MessageCircle, Repeat, Save, ShieldCheck, UserPlus, UserRound } from 'lucide-react';
+import { Boxes, Check, KeyRound, Loader2, LogIn, LogOut, Mail, MessageCircle, Receipt, Repeat, Save, ShieldCheck, UserPlus, UserRound } from 'lucide-react';
 import { CONTATO, linkWhatsapp } from '../data/empresa.js';
 import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from '../data/legal.js';
 import { useSeo } from '../hooks/useSeo.js';
 import * as api from './api.js';
-import { MinhasAssinaturas, MinhasPlataformas } from './Assinaturas.jsx';
+import { MeusPagamentos, MinhasAssinaturas, MinhasPlataformas } from './Assinaturas.jsx';
 import { ContaProvider, useConta } from './ContaContext.jsx';
 
 // ---------------------------------------------------------------------------
@@ -407,6 +407,7 @@ const ABAS = [
   { id: 'perfil', rotulo: 'Meu perfil', icone: UserRound },
   { id: 'assinaturas', rotulo: 'Minhas assinaturas', icone: Repeat },
   { id: 'plataformas', rotulo: 'Minhas plataformas', icone: Boxes },
+  { id: 'pagamentos', rotulo: 'Meus pagamentos', icone: Receipt },
   { id: 'dados', rotulo: 'Atualizar dados', icone: Save },
   { id: 'senha', rotulo: 'Senha', icone: ShieldCheck },
   { id: 'contato', rotulo: 'Entrar em contato', icone: MessageCircle },
@@ -455,6 +456,7 @@ export function MinhaConta() {
           {aba === 'perfil' && <Perfil cliente={cliente} />}
           {aba === 'assinaturas' && <MinhasAssinaturas irParaDados={() => setAba('dados')} />}
           {aba === 'plataformas' && <MinhasPlataformas />}
+          {aba === 'pagamentos' && <MeusPagamentos />}
           {aba === 'dados' && <AtualizarDados />}
           {aba === 'senha' && <TrocarSenha />}
           {aba === 'contato' && <Contato />}
