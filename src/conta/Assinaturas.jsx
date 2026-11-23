@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Copy, CreditCard, ExternalLink, Loader2, MessageCircle, QrCode, RefreshCw } from 'lucide-react';
 import { linkWhatsapp } from '../data/empresa.js';
@@ -72,6 +72,15 @@ function situacao(s) {
 // QR Code e "copia e cola" do PIX gerado no Mercado Pago.
 function PainelPix({ pix, onAtualizar }) {
   const [copiado, setCopiado] = useState(false);
+  const [consultando, setConsultando] = useState(false);
+  async function atualizar() {
+    setConsultando(true);
+    try {
+      await onAtualizar();
+    } finally {
+      setConsultando(false);
+    }
+  }
   async function copiar() {
     try {
       await navigator.clipboard.writeText(pix.qrCode);
@@ -96,8 +105,8 @@ function PainelPix({ pix, onAtualizar }) {
           <button type="button" className="botao botao--primario botao--p" onClick={copiar}>
             <Copy size={16} aria-hidden="true" /> {copiado ? 'Código copiado' : 'Copiar código'}
           </button>
-          <button type="button" className="botao botao--fantasma botao--p" onClick={onAtualizar}>
-            <RefreshCw size={16} aria-hidden="true" /> Atualizar situação
+          <button type="button" className="botao botao--fantasma botao--p" onClick={atualizar} disabled={consultando}>
+            <RefreshCw className={consultando ? 'girando' : undefined} size={16} aria-hidden="true" /> {consultando ? 'Consultando…' : 'Atualizar situação'}
           </button>
         </div>
         <p className="conta__dica" aria-live="polite">
@@ -163,7 +172,12 @@ function Pagamento({ s, onMudou, irParaDados }) {
       {pix ? (
         <PainelPix
           pix={pix}
-          onAtualizar={() => {
+          onAtualizar={async () => {
+            try {
+              await api.atualizarPagamento(s.id);
+            } catch (e) {
+              if (e.status === 401 || e.status === 403) return perdeuSessao();
+            }
             recarregar();
             onMudou();
           }}
@@ -361,6 +375,14 @@ export function MinhasAssinaturas({ irParaDados }) {
   const lista = dados ?? [];
   const atuais = lista.filter((s) => !FINAIS.includes(s.status));
   const anteriores = lista.filter((s) => FINAIS.includes(s.status));
+  // Voltou da página do cartão: uma consulta ao Mercado Pago (o webhook também confirma sozinho).
+  const consultouRetorno = useRef(false);
+  useEffect(() => {
+    if (!voltouDoCartao || !dados || consultouRetorno.current) return;
+    consultouRetorno.current = true;
+    const pendentes = dados.filter((s) => s.status === 'AWAITING_PAYMENT');
+    if (pendentes.length) Promise.allSettled(pendentes.map((s) => api.atualizarPagamento(s.id))).then(recarregar);
+  }, [voltouDoCartao, dados, recarregar]);
 
   return (
     <>

@@ -105,6 +105,8 @@ export const minhasPlataformas = () => autenticada('/platforms').then((r) => r.d
 
 // Pagamentos. O valor sai da assinatura no servidor: o site não manda valor nem status.
 export const estadoPagamento = (id) => autenticada(`/subscriptions/${id}/payment`);
+// Pede ao Gestão para consultar o Mercado Pago agora (o status nunca vem do navegador).
+export const atualizarPagamento = (id) => autenticada(`/subscriptions/${id}/payment/refresh`, { metodo: 'POST' });
 export const gerarPix = (id) => autenticada(`/subscriptions/${id}/pix`, { metodo: 'POST' }).then((r) => r.pix);
 export const pagarComCartao = (id) => autenticada(`/subscriptions/${id}/card`, { metodo: 'POST' });
 export const meusPagamentos = () => autenticada('/payments').then((r) => r.data);
