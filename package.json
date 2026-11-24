@@ -1,7 +1,7 @@
 {
   "name": "alex-sousa-tech-site",
   "private": true,
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Site institucional da Alex Sousa Tech (React + Vite, sem TypeScript), integrado ao Alex Sousa Tech Gestão",
   "type": "module",
   "scripts": {

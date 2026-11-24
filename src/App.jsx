@@ -2,8 +2,9 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Footer from './components/Footer.jsx';
 import Header from './components/Header.jsx';
-import StarBackground from './components/StarBackground.jsx';
+import TechBackground from './components/TechBackground.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
+import { CarregandoPagina } from './components/ui/Carregando.jsx';
 import Home from './pages/Home.jsx';
 import { CAMINHO_PRIVACIDADE, CAMINHO_TERMOS } from './data/legal.js';
 
@@ -49,18 +50,20 @@ function Rolagem() {
 
 export default function App() {
   const { pathname } = useLocation();
+  // A área do cliente (/conta) tem cabeçalho e navegação próprios, como uma plataforma.
+  const areaCliente = pathname === '/conta' || pathname.startsWith('/conta/');
   return (
     <>
-      <StarBackground />
+      <TechBackground />
       <a className="pular" href="#conteudo">
         Pular para o conteúdo
       </a>
-      <Header />
+      {!areaCliente && <Header />}
       <Rolagem />
       <main id="conteudo" tabIndex={-1}>
         {/* A chave reinicia a transição suave a cada troca de página. */}
         <div key={pathname} className="transicao">
-          <Suspense fallback={<div className="pagina-topo" aria-busy="true" />}>
+          <Suspense fallback={<CarregandoPagina />}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/empresa" element={<Empresa />} />
@@ -87,8 +90,8 @@ export default function App() {
           </Suspense>
         </div>
       </main>
-      <Footer />
-      <WhatsAppFloat />
+      {!areaCliente && <Footer />}
+      {!areaCliente && <WhatsAppFloat />}
     </>
   );
 }

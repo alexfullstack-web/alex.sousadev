@@ -3,8 +3,8 @@
   "short_name": "Alex Sousa Tech",
   "start_url": "/",
   "display": "browser",
-  "background_color": "#04080f",
-  "theme_color": "#04080f",
+  "background_color": "#050a14",
+  "theme_color": "#050a14",
   "icons": [
     {
       "src": "/img/icon-192.png",

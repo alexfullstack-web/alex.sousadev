@@ -1,4 +1,4 @@
-# Alex Sousa Tech — site oficial
+# Alex Sousa Tech — site oficial (v6.0.0)
 
 Site comercial da **Alex Sousa Tech**: empresa, serviços, pedido de orçamento, planos por assinatura e área do cliente.
 Endereço: `https://site.alexsousatech.com.br`.
@@ -74,7 +74,9 @@ src/
 ├── components/            Header, Footer, QuoteForm, Processo, HeroVisual...
 ├── pages/                 Home, Empresa, SobreAlexSousa, Servicos, Planos,
 │                          Orcamento, Contato, PoliticaPrivacidade, TermosUso, NaoEncontrado
-└── styles/                base.css (cores, fontes, base) e site.css (componentes)
+├── components/ui/         Cartao, SecaoTopo, Aviso, Carregando (componentes reutilizáveis da v6)
+└── styles/                base.css (identidade e base), ui.css (botões, cartões, formulários),
+                           layout.css (fundo, cabeçalho, rodapé), paginas.css e conta.css (área do cliente)
 ```
 
 ## Planos (`/planos`) e vitrine de projetos

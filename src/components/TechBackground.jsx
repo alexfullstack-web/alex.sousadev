@@ -1,196 +1,244 @@
-// Fundo tecnológico do site inteiro: partículas ligadas por linhas finas, trilhas de circuito
-// com pulsos de luz e leve parallax na rolagem. Um único <canvas> fixo, leve:
-//  - quantidade de partículas proporcional à tela (com teto) e densidade de pixels limitada;
-//  - pausa com a aba escondida; ~30 quadros/s em telas pequenas;
-//  - "prefers-reduced-motion": desenha um quadro parado e não anima.
+// Fundo tecnológico do site inteiro (v6).
+// Camadas:
+//  1. CSS: preto azulado, luzes ambientes azul/verde que se movem devagar, grade técnica com máscara;
+//  2. <canvas>: rede de partículas com linhas de conexão, pontos luminosos e reação ao ponteiro.
+// Pensado para ser leve:
+//  - quantidade de partículas proporcional à área da tela, com teto, e menor em aparelhos modestos
+//    (poucos núcleos, pouca memória, economia de dados ou tela pequena);
+//  - densidade de pixels limitada; ~30 quadros/s no modo econômico;
+//  - pausa com a aba escondida;
+//  - "prefers-reduced-motion": desenha uma vez, parado, sem reagir ao ponteiro.
 import { useEffect, useRef } from 'react';
 
-const AZUL = '79, 209, 255';
-const ELETRICO = '30, 107, 255';
+const CORES = ['47, 125, 255', '56, 199, 245', '16, 185, 129'];
 
-function criarCircuitos(w, h, rnd) {
-  // Trilhas ortogonais que nascem nas bordas e dobram em 45° (como trilhas de placa).
-  const trilhas = [];
-  const n = Math.round(Math.min(14, Math.max(6, (w * h) / 140000)));
-  for (let i = 0; i < n; i++) {
-    const daEsquerda = i % 2 === 0;
-    let x = daEsquerda ? -20 : w + 20;
-    let y = rnd() * h;
-    const pts = [[x, y]];
-    const passos = 3 + Math.floor(rnd() * 3);
-    for (let p = 0; p < passos; p++) {
-      const reto = 60 + rnd() * (w * 0.18);
-      x += daEsquerda ? reto : -reto;
-      pts.push([x, y]);
-      const diag = 20 + rnd() * 60;
-      x += daEsquerda ? diag : -diag;
-      y += (rnd() > 0.5 ? 1 : -1) * diag;
-      pts.push([x, y]);
-    }
-    let comp = 0;
-    const seg = [];
-    for (let k = 1; k < pts.length; k++) {
-      const d = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
-      seg.push(d);
-      comp += d;
-    }
-    trilhas.push({ pts, seg, comp, pulso: rnd(), vel: 0.04 + rnd() * 0.06 });
-  }
-  return trilhas;
+function nivelDoAparelho() {
+  const nav = typeof navigator !== 'undefined' ? navigator : {};
+  const economia = nav.connection?.saveData === true;
+  const poucosNucleos = (nav.hardwareConcurrency || 8) <= 4;
+  const poucaMemoria = (nav.deviceMemory || 8) <= 4;
+  const telaPequena = window.innerWidth < 760;
+  return economia || poucosNucleos || poucaMemoria || telaPequena ? 'economico' : 'completo';
 }
 
-function pontoNa(t, f) {
-  let alvo = f * t.comp;
-  for (let k = 0; k < t.seg.length; k++) {
-    if (alvo <= t.seg[k]) {
-      const a = t.pts[k];
-      const b = t.pts[k + 1];
-      const r = alvo / t.seg[k];
-      return [a[0] + (b[0] - a[0]) * r, a[1] + (b[1] - a[1]) * r];
-    }
-    alvo -= t.seg[k];
-  }
-  return t.pts[t.pts.length - 1];
+function spriteBrilho(cor) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 48;
+  const g = c.getContext('2d');
+  const r = g.createRadialGradient(24, 24, 0, 24, 24, 24);
+  r.addColorStop(0, `rgba(${cor}, 0.95)`);
+  r.addColorStop(0.2, `rgba(${cor}, 0.4)`);
+  r.addColorStop(1, `rgba(${cor}, 0)`);
+  g.fillStyle = r;
+  g.fillRect(0, 0, 48, 48);
+  return c;
 }
 
 export default function TechBackground() {
   const ref = useRef(null);
+
   useEffect(() => {
     const canvas = ref.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     const reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const brilhos = Object.fromEntries(CORES.map((c) => [c, spriteBrilho(c)]));
+    const ponteiro = { x: -9999, y: -9999, ativo: false };
+
+    let nivel = nivelDoAparelho();
     let w = 0;
     let h = 0;
-    let dpr = 1;
     let pontos = [];
-    let trilhas = [];
     let raf = 0;
     let ultimo = 0;
-    let semente = 7;
-    const rnd = () => ((semente = (semente * 16807) % 2147483647) / 2147483647);
+    let distancia = 140;
 
     function montar() {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      nivel = nivelDoAparelho();
+      const dpr = Math.min(window.devicePixelRatio || 1, nivel === 'economico' ? 1 : 1.5);
       w = window.innerWidth;
       h = window.innerHeight;
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      semente = 7;
-      const n = Math.min(90, Math.round((w * h) / 16000));
-      pontos = Array.from({ length: n }, () => ({ x: rnd() * w, y: rnd() * h * 1.4, vx: (rnd() - 0.5) * 0.18, vy: (rnd() - 0.5) * 0.18, r: 0.6 + rnd() * 1.4, p: rnd() * 6.28 }));
-      trilhas = criarCircuitos(w, h, rnd);
+
+      const area = w * h;
+      const n = nivel === 'economico' ? Math.min(Math.round(area / 26000), 42) : Math.min(Math.round(area / 15000), 95);
+      distancia = nivel === 'economico' ? 115 : Math.min(150, Math.max(110, w / 11));
+      pontos = Array.from({ length: Math.max(n, 16) }, () => {
+        const destaque = Math.random() < 0.12;
+        const vel = 0.08 + Math.random() * 0.22;
+        const ang = Math.random() * Math.PI * 2;
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: Math.cos(ang) * vel,
+          vy: Math.sin(ang) * vel,
+          r: destaque ? 1.8 + Math.random() * 1.2 : 0.8 + Math.random() * 1.1,
+          cor: CORES[destaque ? (Math.random() < 0.5 ? 0 : 2) : Math.floor(Math.random() * CORES.length)],
+          destaque,
+          fase: Math.random() * Math.PI * 2,
+          prof: 0.3 + Math.random() * 0.7, // profundidade: afeta parallax e brilho
+        };
+      });
     }
 
     function desenhar(tempo) {
-      const rolagem = window.scrollY || 0;
       ctx.clearRect(0, 0, w, h);
-      // trilhas de circuito (sobem mais devagar que a página: parallax)
-      const dyC = -(rolagem * 0.08) % h;
-      ctx.lineWidth = 1;
-      for (const t of trilhas) {
-        for (const desloc of [dyC, dyC + h]) {
-          ctx.strokeStyle = `rgba(${ELETRICO}, 0.10)`;
+      const rolagem = window.scrollY || 0;
+      const t = tempo / 1000;
+
+      // Posição na tela com leve parallax de rolagem (mais fundo = move menos).
+      const tela = pontos.map((p) => {
+        let y = (p.y - rolagem * 0.04 * p.prof) % h;
+        if (y < 0) y += h;
+        return { x: p.x, y, p };
+      });
+
+      // Linhas de conexão
+      const d2max = distancia * distancia;
+      ctx.lineWidth = 0.7;
+      for (let i = 0; i < tela.length; i++) {
+        const a = tela[i];
+        for (let j = i + 1; j < tela.length; j++) {
+          const b = tela[j];
+          const dx = a.x - b.x;
+          if (dx > distancia || dx < -distancia) continue;
+          const dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > d2max) continue;
+          const forca = 1 - Math.sqrt(d2) / distancia;
+          ctx.strokeStyle = `rgba(${a.p.cor}, ${(forca * 0.28 * (a.p.prof + b.p.prof)) / 2})`;
           ctx.beginPath();
-          t.pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y + desloc) : ctx.moveTo(x, y + desloc)));
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
           ctx.stroke();
-          const [ux, uy] = t.pts[t.pts.length - 1];
-          ctx.fillStyle = `rgba(${AZUL}, 0.25)`;
+        }
+      }
+
+      // Linhas até o ponteiro
+      if (ponteiro.ativo && !reduzido) {
+        const raio = distancia * 1.35;
+        for (const a of tela) {
+          const dx = a.x - ponteiro.x;
+          const dy = a.y - ponteiro.y;
+          const d = Math.hypot(dx, dy);
+          if (d > raio) continue;
+          const forca = 1 - d / raio;
+          ctx.strokeStyle = `rgba(106, 168, 255, ${forca * 0.45})`;
+          ctx.lineWidth = 0.8;
           ctx.beginPath();
-          ctx.arc(ux, uy + desloc, 2.2, 0, 6.28);
-          ctx.fill();
-          if (!reduzido) {
-            const [px, py] = pontoNa(t, t.pulso);
-            const g = ctx.createRadialGradient(px, py + desloc, 0, px, py + desloc, 9);
-            g.addColorStop(0, `rgba(${AZUL}, 0.75)`);
-            g.addColorStop(1, `rgba(${AZUL}, 0)`);
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(px, py + desloc, 9, 0, 6.28);
-            ctx.fill();
-          }
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(ponteiro.x, ponteiro.y);
+          ctx.stroke();
         }
       }
-      // partículas + ligações
-      const dyP = -(rolagem * 0.18);
-      const visiveis = [];
-      for (const p of pontos) {
-        let y = (p.y + dyP) % (h * 1.4);
-        if (y < -20) y += h * 1.4;
-        if (y > h + 20) continue;
-        visiveis.push([p.x, y, p]);
-      }
-      for (let i = 0; i < visiveis.length; i++) {
-        const [x1, y1] = visiveis[i];
-        for (let j = i + 1; j < visiveis.length; j++) {
-          const [x2, y2] = visiveis[j];
-          const d2 = (x1 - x2) ** 2 + (y1 - y2) ** 2;
-          if (d2 < 14400) {
-            ctx.strokeStyle = `rgba(${AZUL}, ${0.12 * (1 - d2 / 14400)})`;
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-          }
+
+      // Pontos
+      for (const a of tela) {
+        const pulso = reduzido ? 1 : 0.7 + 0.3 * Math.sin(t * 1.4 + a.p.fase);
+        if (a.p.destaque) {
+          const tam = a.p.r * 9 * pulso;
+          ctx.globalAlpha = 0.55 * a.p.prof;
+          ctx.drawImage(brilhos[a.p.cor], a.x - tam / 2, a.y - tam / 2, tam, tam);
+          ctx.globalAlpha = 1;
         }
-      }
-      for (const [x, y, p] of visiveis) {
-        const brilho = 0.45 + 0.35 * Math.sin(tempo / 1400 + p.p);
-        ctx.fillStyle = `rgba(${AZUL}, ${brilho})`;
+        ctx.fillStyle = `rgba(${a.p.cor}, ${(0.45 + 0.5 * a.p.prof) * pulso})`;
         ctx.beginPath();
-        ctx.arc(x, y, p.r, 0, 6.28);
+        ctx.arc(a.x, a.y, a.p.r, 0, Math.PI * 2);
         ctx.fill();
+      }
+    }
+
+    function mover(dt) {
+      for (const p of pontos) {
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        // Leve afastamento do ponteiro (profundidade)
+        if (ponteiro.ativo) {
+          const dx = p.x - ponteiro.x;
+          const dy = p.y - ponteiro.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < 9000 && d2 > 1) {
+            const f = (1 - d2 / 9000) * 0.6 * dt;
+            const d = Math.sqrt(d2);
+            p.x += (dx / d) * f;
+            p.y += (dy / d) * f;
+          }
+        }
+        if (p.x < -20) p.x = w + 20;
+        else if (p.x > w + 20) p.x = -20;
+        if (p.y < -20) p.y = h + 20;
+        else if (p.y > h + 20) p.y = -20;
       }
     }
 
     function passo(tempo) {
       raf = requestAnimationFrame(passo);
-      const intervalo = w < 760 ? 33 : 16;
+      const intervalo = nivel === 'economico' ? 33 : 16;
       if (tempo - ultimo < intervalo) return;
-      const dt = Math.min(tempo - ultimo, 64) / 16;
+      const dt = Math.min(tempo - ultimo, 66) / 16.6;
       ultimo = tempo;
-      for (const p of pontos) {
-        p.x += p.vx * dt;
-        p.y += p.vy * dt;
-        if (p.x < -10) p.x = w + 10;
-        if (p.x > w + 10) p.x = -10;
-        if (p.y < -10) p.y = h * 1.4;
-        if (p.y > h * 1.4) p.y = -10;
-      }
-      for (const t of trilhas) t.pulso = (t.pulso + (t.vel * dt) / 60) % 1;
+      mover(dt);
       desenhar(tempo);
     }
 
-    montar();
-    desenhar(0);
-    let rolando = 0;
-    const aoRolar = () => {
-      if (reduzido && !rolando) rolando = requestAnimationFrame(() => {
-        rolando = 0;
-        desenhar(0);
-      });
-    };
-    const aoRedimensionar = () => {
-      montar();
-      desenhar(0);
-    };
-    const visibilidade = () => {
+    function iniciar() {
       cancelAnimationFrame(raf);
-      if (!document.hidden && !reduzido) raf = requestAnimationFrame(passo);
-    };
-    if (!reduzido) raf = requestAnimationFrame(passo);
-    window.addEventListener('resize', aoRedimensionar);
-    window.addEventListener('scroll', aoRolar, { passive: true });
-    document.addEventListener('visibilitychange', visibilidade);
+      if (reduzido) {
+        desenhar(0);
+        return;
+      }
+      ultimo = performance.now();
+      raf = requestAnimationFrame(passo);
+    }
+
+    let espera = 0;
+    function aoRedimensionar() {
+      clearTimeout(espera);
+      espera = setTimeout(() => {
+        // Teclado virtual no celular muda só a altura: não vale recriar tudo.
+        if (Math.abs(window.innerWidth - w) < 2 && Math.abs(window.innerHeight - h) < 140) return;
+        montar();
+        if (reduzido) desenhar(0);
+      }, 180);
+    }
+    function aoMoverPonteiro(e) {
+      if (e.pointerType === 'touch') return;
+      ponteiro.x = e.clientX;
+      ponteiro.y = e.clientY;
+      ponteiro.ativo = true;
+    }
+    function aoSairPonteiro() {
+      ponteiro.ativo = false;
+    }
+    function aoMudarVisibilidade() {
+      if (document.hidden) cancelAnimationFrame(raf);
+      else iniciar();
+    }
+
+    montar();
+    iniciar();
+    window.addEventListener('resize', aoRedimensionar, { passive: true });
+    document.addEventListener('visibilitychange', aoMudarVisibilidade);
+    if (!reduzido) {
+      window.addEventListener('pointermove', aoMoverPonteiro, { passive: true });
+      document.documentElement.addEventListener('pointerleave', aoSairPonteiro);
+    }
     return () => {
       cancelAnimationFrame(raf);
+      clearTimeout(espera);
       window.removeEventListener('resize', aoRedimensionar);
-      window.removeEventListener('scroll', aoRolar);
-      document.removeEventListener('visibilitychange', visibilidade);
+      document.removeEventListener('visibilitychange', aoMudarVisibilidade);
+      window.removeEventListener('pointermove', aoMoverPonteiro);
+      document.documentElement.removeEventListener('pointerleave', aoSairPonteiro);
     };
   }, []);
+
   return (
     <div className="fundo" aria-hidden="true">
+      <div className="fundo__luz fundo__luz--azul" />
+      <div className="fundo__luz fundo__luz--verde" />
+      <div className="fundo__grade" />
       <canvas ref={ref} className="fundo__canvas" />
       <div className="fundo__vinheta" />
     </div>

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Copy, CreditCard, ExternalLink, Loader2, MessageCircle, QrCode, RefreshCw } from 'lucide-react';
+import { Boxes, Copy, CreditCard, ExternalLink, History, Layers, Loader2, MessageCircle, QrCode, Receipt, RefreshCw } from 'lucide-react';
 import { linkWhatsapp } from '../data/empresa.js';
+import Aviso from '../components/ui/Aviso.jsx';
+import { CarregandoTexto } from '../components/ui/Carregando.jsx';
 import * as api from './api.js';
 import { useConta } from './ContaContext.jsx';
 
@@ -27,7 +29,7 @@ function Selo({ tom, children }) {
   return <span className={`selo selo--${tom}`}>{children}</span>;
 }
 
-function useCarregar(fn) {
+export function useCarregar(fn) {
   const { perdeuSessao } = useConta();
   const [estado, setEstado] = useState({ carregando: true, erro: '', dados: null });
   const carregar = useCallback(async () => {
@@ -47,11 +49,7 @@ function useCarregar(fn) {
 }
 
 function Carregando({ texto }) {
-  return (
-    <p className="conta__texto" role="status">
-      <Loader2 className="girando" size={18} aria-hidden="true" /> {texto}
-    </p>
-  );
+  return <CarregandoTexto>{texto}</CarregandoTexto>;
 }
 
 // O que o cliente precisa saber sobre cada assinatura, na linguagem dele.
@@ -102,14 +100,14 @@ function PainelPix({ pix, onAtualizar }) {
           <textarea id={`pix-${pix.id}`} readOnly rows={3} value={pix.qrCode} onFocus={(e) => e.target.select()} />
         </div>
         <div className="assinatura__acoes">
-          <button type="button" className="botao botao--primario botao--p" onClick={copiar}>
+          <button type="button" className="btn btn--primario btn--p" onClick={copiar}>
             <Copy size={16} aria-hidden="true" /> {copiado ? 'Código copiado' : 'Copiar código'}
           </button>
-          <button type="button" className="botao botao--fantasma botao--p" onClick={atualizar} disabled={consultando}>
+          <button type="button" className="btn btn--fantasma btn--p" onClick={atualizar} disabled={consultando}>
             <RefreshCw className={consultando ? 'girando' : undefined} size={16} aria-hidden="true" /> {consultando ? 'Consultando…' : 'Atualizar situação'}
           </button>
         </div>
-        <p className="conta__dica" aria-live="polite">
+        <p className="painel__dica" aria-live="polite">
           Depois de pagar, a confirmação chega automaticamente do Mercado Pago e pode levar alguns minutos. Não é preciso enviar comprovante.
         </p>
       </div>
@@ -127,13 +125,13 @@ function Pagamento({ s, onMudou, irParaDados }) {
 
   if (carregando && !dados) return null;
   const whats = (
-    <a className="botao botao--primario botao--p" href={linkWhatsapp(`Olá! Sou ${cliente.name} e quero pagar a assinatura ${s.planName}.`)} target="_blank" rel="noopener noreferrer">
+    <a className="btn btn--primario btn--p" href={linkWhatsapp(`Olá! Sou ${cliente.name} e quero pagar a assinatura ${s.planName}.`)} target="_blank" rel="noopener noreferrer">
       <MessageCircle size={16} aria-hidden="true" /> Falar pelo WhatsApp
     </a>
   );
   if (!dados) return whats;
-  if (dados.awaitingConfirmation) return <p className="conta__ok">Recebemos o seu pagamento. A confirmação do Mercado Pago chega automaticamente.</p>;
-  if (dados.card?.status === 'authorized') return <p className="conta__dica">Cobrança automática no cartão ativa. Não é preciso pagar por PIX.</p>;
+  if (dados.awaitingConfirmation) return <Aviso tipo="ok">Recebemos o seu pagamento. A confirmação do Mercado Pago chega automaticamente.</Aviso>;
+  if (dados.card?.status === 'authorized') return <p className="painel__dica">Cobrança automática no cartão ativa. Não é preciso pagar por PIX.</p>;
   if (!dados.need) return null;
   if (!dados.enabled) return whats;
   const pix = pixNovo ?? dados.pix;
@@ -160,14 +158,14 @@ function Pagamento({ s, onMudou, irParaDados }) {
   return (
     <div className="assinatura__pagar">
       {falha && (
-        <p className="orc-erro" role="alert">
+        <Aviso>
           {falha.mensagem}{' '}
           {falha.codigo === 'CPF_REQUIRED' && (
-            <button type="button" className="conta__link" onClick={irParaDados}>
+            <button type="button" className="link-botao" onClick={irParaDados}>
               Informar CPF
             </button>
           )}
-        </p>
+        </Aviso>
       )}
       {pix ? (
         <PainelPix
@@ -185,15 +183,15 @@ function Pagamento({ s, onMudou, irParaDados }) {
       ) : null}
       <div className="assinatura__acoes">
         {!pix && (
-          <button type="button" className="botao botao--primario botao--p" disabled={Boolean(enviando)} onClick={() => agir('pix')}>
+          <button type="button" className="btn btn--primario btn--p" disabled={Boolean(enviando)} onClick={() => agir('pix')}>
             {enviando === 'pix' ? <Loader2 className="girando" size={16} aria-hidden="true" /> : <QrCode size={16} aria-hidden="true" />} Pagar com PIX
           </button>
         )}
-        <button type="button" className="botao botao--contorno botao--p" disabled={Boolean(enviando)} onClick={() => agir('cartao')}>
+        <button type="button" className="btn btn--contorno btn--p" disabled={Boolean(enviando)} onClick={() => agir('cartao')}>
           {enviando === 'cartao' ? <Loader2 className="girando" size={16} aria-hidden="true" /> : <CreditCard size={16} aria-hidden="true" />} {dados.card?.checkoutUrl ? 'Continuar no cartão' : 'Pagar com cartão'}
         </button>
       </div>
-      {!pix && <p className="conta__dica">No cartão, você informa os dados na página segura do Mercado Pago e as próximas cobranças são automáticas.</p>}
+      {!pix && <p className="painel__dica">No cartão, você informa os dados na página segura do Mercado Pago e as próximas cobranças são automáticas.</p>}
     </div>
   );
 }
@@ -232,18 +230,18 @@ function CartaoAssinatura({ s, onMudou, irParaDados }) {
       <p className="assinatura__preco">
         <strong className="num">{real(s.price)}</strong> {CICLO[s.billingCycle]}
       </p>
-      <ul className="assinatura__plataformas" aria-label="Plataformas incluídas">
+      <ul className="etiquetas" aria-label="Plataformas incluídas">
         {s.platforms.map((p) => (
           <li key={p.id}>{p.name}</li>
         ))}
       </ul>
       {!final && situacao(s) && <p className={`assinatura__situacao${precisaPagar ? ' assinatura__situacao--alerta' : ''}`}>{situacao(s)}</p>}
-      {final && <p className="conta__dica">{s.status === 'ENDED' ? 'Encerrada no fim do período.' : 'Cancelada.'}</p>}
+      {final && <p className="painel__dica">{s.status === 'ENDED' ? 'Encerrada no fim do período.' : 'Cancelada.'}</p>}
 
       {erro && (
-        <p className="orc-erro" role="alert">
+        <Aviso>
           {erro}
-        </p>
+        </Aviso>
       )}
 
       {!final && !s.cancelAtPeriodEnd && <Pagamento s={s} onMudou={onMudou} irParaDados={irParaDados} />}
@@ -251,21 +249,21 @@ function CartaoAssinatura({ s, onMudou, irParaDados }) {
       {!final && (
         <div className="assinatura__acoes">
           {s.cancelAtPeriodEnd ? (
-            <button type="button" className="botao botao--contorno botao--p" disabled={enviando} onClick={() => agir(api.manterAssinatura)}>
+            <button type="button" className="btn btn--contorno btn--p" disabled={enviando} onClick={() => agir(api.manterAssinatura)}>
               Manter assinatura
             </button>
           ) : confirmando ? (
             <div className="assinatura__confirmar" role="group" aria-label="Confirmar cancelamento">
               <p>{imediato ? 'Cancelar agora? Esta contratação será encerrada.' : `Cancelar? Você mantém o acesso até ${data(s.currentPeriodEnd)}.`}</p>
-              <button type="button" className="botao botao--contorno botao--p" disabled={enviando} onClick={() => setConfirmando(false)}>
+              <button type="button" className="btn btn--contorno btn--p" disabled={enviando} onClick={() => setConfirmando(false)}>
                 Voltar
               </button>
-              <button type="button" className="botao botao--perigo botao--p" disabled={enviando} onClick={() => agir(api.cancelarAssinatura)}>
+              <button type="button" className="btn btn--perigo btn--p" disabled={enviando} onClick={() => agir(api.cancelarAssinatura)}>
                 {enviando ? <Loader2 className="girando" size={16} aria-hidden="true" /> : null} Confirmar cancelamento
               </button>
             </div>
           ) : (
-            <button type="button" className="botao botao--fantasma botao--p" onClick={() => setConfirmando(true)}>
+            <button type="button" className="btn btn--fantasma btn--p" onClick={() => setConfirmando(true)}>
               Cancelar assinatura
             </button>
           )}
@@ -285,12 +283,12 @@ function Catalogo({ assinaturas, onContratou, irParaDados }) {
   if (carregando && !dados) return <Carregando texto="Carregando planos..." />;
   if (erro)
     return (
-      <p className="orc-erro" role="alert">
+      <Aviso>
         {erro}{' '}
-        <button type="button" className="conta__link" onClick={recarregar}>
+        <button type="button" className="link-botao" onClick={recarregar}>
           Tentar de novo
         </button>
-      </p>
+      </Aviso>
     );
   const planos = dados?.data ?? [];
   if (!planos.length) return null;
@@ -312,59 +310,61 @@ function Catalogo({ assinaturas, onContratou, irParaDados }) {
   }
 
   return (
-    <section className="planos" aria-labelledby="planos-titulo">
-      <h3 id="planos-titulo">Planos disponíveis</h3>
-      <div className="planos__grade">
+    <section className="catalogo" aria-labelledby="planos-titulo">
+      <h3 id="planos-titulo" className="painel__subtitulo">
+        <Layers size={18} aria-hidden="true" /> Planos disponíveis
+      </h3>
+      <div className="catalogo__grade">
         {planos.map((p) => (
-          <article key={p.id} className="plano">
+          <article key={p.id} className="catalogo__plano">
             <h4>{p.name}</h4>
-            <p className="plano__preco">
+            <p className="catalogo__preco">
               <strong className="num">{real(p.price)}</strong> {CICLO[p.billingCycle]}
             </p>
-            {p.description && <p className="conta__dica">{p.description}</p>}
-            <ul className="assinatura__plataformas" aria-label="Plataformas incluídas">
+            {p.description && <p className="painel__dica">{p.description}</p>}
+            <ul className="etiquetas" aria-label="Plataformas incluídas">
               {p.platforms.map((x) => (
                 <li key={x.id}>{x.name}</li>
               ))}
             </ul>
-            {p.trialDays > 0 && <p className="conta__dica">Teste grátis de {p.trialDays} dias na primeira contratação deste plano.</p>}
+            {p.trialDays > 0 && <p className="painel__dica">Teste grátis de {p.trialDays} dias na primeira contratação deste plano.</p>}
 
             {falha?.planId === p.id && (
-              <p className="orc-erro" role="alert">
+              <Aviso>
                 {falha.mensagem}{' '}
                 {falha.codigo === 'CPF_REQUIRED' && (
-                  <button type="button" className="conta__link" onClick={irParaDados}>
+                  <button type="button" className="link-botao" onClick={irParaDados}>
                     Informar CPF
                   </button>
                 )}
-              </p>
+              </Aviso>
             )}
 
             {emAndamento.has(p.id) ? (
-              <p className="conta__dica">Você já tem este plano.</p>
+              <p className="painel__dica">Você já tem este plano.</p>
             ) : !dados.checkoutEnabled ? (
-              <a className="botao botao--contorno botao--p" href={linkWhatsapp(`Olá! Sou ${cliente.name} e quero contratar o plano ${p.name}.`)} target="_blank" rel="noopener noreferrer">
+              <a className="btn btn--contorno btn--p" href={linkWhatsapp(`Olá! Sou ${cliente.name} e quero contratar o plano ${p.name}.`)} target="_blank" rel="noopener noreferrer">
                 <MessageCircle size={16} aria-hidden="true" /> Quero contratar
               </a>
             ) : escolhido === p.id ? (
               <div className="assinatura__confirmar" role="group" aria-label={`Confirmar contratação do plano ${p.name}`}>
                 <p>{p.trialDays > 0 ? 'Contratar este plano?' : 'Contratar este plano? As plataformas são liberadas assim que o pagamento for confirmado.'}</p>
-                <button type="button" className="botao botao--contorno botao--p" disabled={enviando} onClick={() => setEscolhido(null)}>
+                <button type="button" className="btn btn--contorno btn--p" disabled={enviando} onClick={() => setEscolhido(null)}>
                   Voltar
                 </button>
-                <button type="button" className="botao botao--primario botao--p" disabled={enviando} onClick={() => contratar(p)}>
+                <button type="button" className="btn btn--primario btn--p" disabled={enviando} onClick={() => contratar(p)}>
                   {enviando ? <Loader2 className="girando" size={16} aria-hidden="true" /> : null} Confirmar contratação
                 </button>
               </div>
             ) : (
-              <button type="button" className="botao botao--primario botao--p" onClick={() => setEscolhido(p.id)}>
+              <button type="button" className="btn btn--primario btn--p" onClick={() => setEscolhido(p.id)}>
                 Contratar
               </button>
             )}
           </article>
         ))}
       </div>
-      {!dados.checkoutEnabled && <p className="conta__dica">A contratação com pagamento pelo site estará disponível em breve. Por enquanto, fale com a gente pelo WhatsApp.</p>}
+      {!dados.checkoutEnabled && <p className="painel__dica">A contratação com pagamento pelo site estará disponível em breve. Por enquanto, fale com a gente pelo WhatsApp.</p>}
     </section>
   );
 }
@@ -388,23 +388,23 @@ export function MinhasAssinaturas({ irParaDados }) {
     <>
       <h2>Minhas assinaturas</h2>
       {voltouDoCartao && (
-        <p className="conta__ok" role="status">
+        <Aviso tipo="ok">
           Você voltou do Mercado Pago. Assim que ele confirmar o cartão, a assinatura é ativada automaticamente. Não é preciso fazer mais nada.
-        </p>
+        </Aviso>
       )}
       {carregando && !dados ? (
         <Carregando texto="Carregando assinaturas..." />
       ) : erro ? (
-        <p className="orc-erro" role="alert">
+        <Aviso>
           {erro}{' '}
-          <button type="button" className="conta__link" onClick={recarregar}>
+          <button type="button" className="link-botao" onClick={recarregar}>
             Tentar de novo
           </button>
-        </p>
+        </Aviso>
       ) : (
         <>
           {!atuais.length ? (
-            <p className="conta__texto">Você ainda não tem assinaturas em andamento.</p>
+            <p className="painel__texto">Você ainda não tem assinaturas em andamento.</p>
           ) : (
             <div className="assinaturas">
               {atuais.map((s) => (
@@ -452,14 +452,14 @@ export function MinhasPlataformas() {
       {carregando && !dados ? (
         <Carregando texto="Carregando plataformas..." />
       ) : erro ? (
-        <p className="orc-erro" role="alert">
+        <Aviso>
           {erro}{' '}
-          <button type="button" className="conta__link" onClick={recarregar}>
+          <button type="button" className="link-botao" onClick={recarregar}>
             Tentar de novo
           </button>
-        </p>
+        </Aviso>
       ) : !lista.length ? (
-        <p className="conta__texto">Nenhuma plataforma disponível no momento.</p>
+        <p className="painel__texto">Nenhuma plataforma disponível no momento.</p>
       ) : (
         <ul className="plataformas">
           {lista.map((a) => {
@@ -468,7 +468,7 @@ export function MinhasPlataformas() {
               <li key={a.platform.slug} className={`plataforma${a.access ? ' plataforma--liberada' : ''}`}>
                 <div className="plataforma__info">
                   <h3>{a.platform.name}</h3>
-                  {a.platform.description && <p className="conta__dica">{a.platform.description}</p>}
+                  {a.platform.description && <p className="painel__dica">{a.platform.description}</p>}
                   <p className={`plataforma__motivo${pagar ? ' assinatura__situacao--alerta' : ''}`}>
                     {MOTIVO[a.reason] ?? MOTIVO.NO_ACCESS}
                     {a.access && a.until && a.reason !== 'GRACE_PERIOD' ? `, até ${data(a.until)}.` : '.'}
@@ -477,12 +477,12 @@ export function MinhasPlataformas() {
                 <div className="plataforma__acoes">
                   <Selo tom={a.access ? 'ok' : 'neutro'}>{a.access ? 'Liberada' : 'Sem acesso'}</Selo>
                   {a.access && a.platform.url && (
-                    <a className="botao botao--contorno botao--p" href={a.platform.url} target="_blank" rel="noopener noreferrer">
+                    <a className="btn btn--contorno btn--p" href={a.platform.url} target="_blank" rel="noopener noreferrer">
                       Acessar <ExternalLink size={15} aria-hidden="true" />
                     </a>
                   )}
                   {pagar && (
-                    <a className="botao botao--primario botao--p" href={linkWhatsapp(`Olá! Sou ${cliente.name} e quero regularizar o pagamento da plataforma ${a.platform.name}.`)} target="_blank" rel="noopener noreferrer">
+                    <a className="btn btn--primario btn--p" href={linkWhatsapp(`Olá! Sou ${cliente.name} e quero regularizar o pagamento da plataforma ${a.platform.name}.`)} target="_blank" rel="noopener noreferrer">
                       <MessageCircle size={16} aria-hidden="true" /> Regularizar
                     </a>
                   )}
@@ -515,14 +515,14 @@ export function MeusPagamentos() {
       {carregando && !dados ? (
         <Carregando texto="Carregando pagamentos..." />
       ) : erro ? (
-        <p className="orc-erro" role="alert">
+        <Aviso>
           {erro}{' '}
-          <button type="button" className="conta__link" onClick={recarregar}>
+          <button type="button" className="link-botao" onClick={recarregar}>
             Tentar de novo
           </button>
-        </p>
+        </Aviso>
       ) : !lista.length ? (
-        <p className="conta__texto">Nenhum pagamento ainda. As cobranças por PIX e cartão aparecem aqui.</p>
+        <p className="painel__texto">Nenhum pagamento ainda. As cobranças por PIX e cartão aparecem aqui.</p>
       ) : (
         <ul className="assinaturas" aria-label="Histórico de pagamentos">
           {lista.map((p) => {
@@ -537,7 +537,7 @@ export function MeusPagamentos() {
                   <strong className="num">{real(p.amount)}</strong> {p.method === 'PIX' ? 'por PIX' : 'no cartão'}
                   {p.purpose === 'RENEWAL' ? ', renovação' : ''}
                 </p>
-                <p className="conta__dica">
+                <p className="painel__dica">
                   {p.approvedAt ? `Pago em ${dataHora(p.approvedAt)}` : `Gerado em ${dataHora(p.createdAt)}`}
                   {p.periodStart && p.periodEnd ? `. Período de ${data(p.periodStart)} a ${data(p.periodEnd)}` : ''}
                   {p.gatewayPaymentId ? `. Nº no Mercado Pago: ${p.gatewayPaymentId}` : ''}

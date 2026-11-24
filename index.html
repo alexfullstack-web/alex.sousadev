@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#04080f" />
+    <meta name="theme-color" content="#050a14" />
     <meta name="color-scheme" content="dark" />
     <!-- O bloco abaixo é substituído por página em scripts/prerender.mjs -->
     <!--seo-inicio-->
@@ -14,11 +14,49 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/img/icon-192.png" />
     <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <noscript><style>.revelar { opacity: 1 !important; transform: none !important; }</style></noscript>
+    <style>
+      /* Tela de abertura: só CSS, aparece antes do JavaScript. Sai sozinha em 4 s mesmo se o JS falhar. */
+      html.sem-abertura #abertura { display: none; }
+      #abertura { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; background: radial-gradient(900px 600px at 70% 0%, rgba(29,91,216,.28), transparent 60%), radial-gradient(700px 500px at 0% 100%, rgba(16,185,129,.12), transparent 60%), #050a14; color: #eef4ff; font-family: 'Sora', system-ui, sans-serif; animation: abertura-auto .5s ease 4s forwards; }
+      #abertura.abertura--saindo { animation: abertura-sair .55s cubic-bezier(.22,1,.36,1) forwards; }
+      .abertura__centro { display: grid; justify-items: center; gap: 22px; animation: abertura-entrar .7s cubic-bezier(.22,1,.36,1) both; }
+      .abertura__marca { position: relative; display: grid; place-items: center; width: 116px; height: 116px; }
+      .abertura__marca img { width: 70px; height: auto; filter: drop-shadow(0 8px 24px rgba(47,125,255,.6)); }
+      .abertura__anel { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(148,180,235,.1); border-top-color: #2f7dff; border-right-color: #10b981; animation: abertura-girar 1.1s linear infinite; }
+      .abertura__anel--2 { inset: 14px; border-width: 1px; border-top-color: transparent; border-right-color: transparent; border-bottom-color: rgba(61,255,168,.6); animation-duration: 1.8s; animation-direction: reverse; }
+      .abertura__nome { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: -.01em; }
+      .abertura__nome span { background: linear-gradient(100deg,#8fc0ff,#4f93ff 40%,#2fd3a0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .abertura__slogan { margin: -14px 0 0; font: 600 .62rem/1 'Manrope', system-ui, sans-serif; letter-spacing: .28em; text-transform: uppercase; color: #8394b0; }
+      .abertura__barra { position: relative; width: 160px; height: 3px; overflow: hidden; border-radius: 3px; background: rgba(148,180,235,.12); }
+      .abertura__barra::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,#2f7dff,#10b981); animation: abertura-barra 1.3s cubic-bezier(.22,1,.36,1) infinite; }
+      @keyframes abertura-girar { to { transform: rotate(360deg); } }
+      @keyframes abertura-barra { 0% { transform: translateX(-100%) scaleX(.4); } 50% { transform: translateX(20%) scaleX(.6); } 100% { transform: translateX(110%) scaleX(.4); } }
+      @keyframes abertura-entrar { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: none; } }
+      @keyframes abertura-sair { to { opacity: 0; visibility: hidden; transform: scale(1.03); } }
+      @keyframes abertura-auto { to { opacity: 0; visibility: hidden; } }
+      @media (prefers-reduced-motion: reduce) { #abertura, #abertura * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } #abertura { animation: abertura-auto .2s ease 1.2s forwards !important; } }
+    </style>
+    <script>
+      // Abertura só na primeira página da visita (sessionStorage guarda apenas esta marca, nada de sessão).
+      try { if (sessionStorage.getItem('ast-abertura')) document.documentElement.classList.add('sem-abertura'); } catch (e) {}
+    </script>
+    <noscript><style>.revelar { opacity: 1 !important; transform: none !important; } #abertura { display: none !important; }</style></noscript>
   </head>
   <body>
+    <div id="abertura" role="status" aria-label="Carregando Alex Sousa Tech">
+      <div class="abertura__centro">
+        <div class="abertura__marca">
+          <span class="abertura__anel"></span>
+          <span class="abertura__anel abertura__anel--2"></span>
+          <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
+        </div>
+        <p class="abertura__nome">Alex Sousa <span>Tech</span></p>
+        <p class="abertura__slogan">Desenvolvimento • Tecnologia • Inovação</p>
+        <div class="abertura__barra" aria-hidden="true"></div>
+      </div>
+    </div>
     <div id="root"><!--app-inicio--><noscript>
-        <main style="padding:120px 6vw;font-family:sans-serif;color:#eef3fa;background:#04080f;min-height:100vh">
+        <main style="padding:120px 6vw;font-family:sans-serif;color:#eef4ff;background:#050a14;min-height:100vh">
           <h1>Alex Sousa Tech</h1>
           <p>Desenvolvimento • Tecnologia • Inovação</p>
           <p>Ative o JavaScript para ver os projetos e pedir um orçamento.</p>

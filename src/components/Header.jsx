@@ -1,26 +1,53 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Menu, Send, UserRound, X } from 'lucide-react';
-import { NAV } from '../data/empresa.js';
+import { ArrowRight, Building2, CreditCard, House, Layers, Mail, Menu, Send, UserRound, UserRoundCog, X } from 'lucide-react';
+import { EMPRESA, NAV } from '../data/empresa.js';
 import Logo from './Logo.jsx';
 
-// Cabeçalho fixo: transparente sobre o topo da página, sólido ao rolar.
+// Ícone de cada página do menu.
+const ICONES = {
+  '/': House,
+  '/empresa': Building2,
+  '/sobre-alex-sousa': UserRound,
+  '/servicos': Layers,
+  '/planos': CreditCard,
+  '/contato': Mail,
+};
+
+// Cabeçalho fixo: transparente no topo, vidro com desfoque ao rolar, barra de progresso de leitura.
 // No celular, o menu abre em painel com foco preso, Esc fecha e a página não rola por trás.
 export default function Header() {
   const [aberto, setAberto] = useState(false);
   const [rolou, setRolou] = useState(false);
   const { pathname } = useLocation();
+  const raiz = useRef(null);
   const painel = useRef(null);
   const botao = useRef(null);
 
   useEffect(() => setAberto(false), [pathname]);
 
+  // Estado "rolou" + progresso real de leitura da página (uma atualização por quadro).
   useEffect(() => {
-    const aoRolar = () => setRolou(window.scrollY > 12);
-    aoRolar();
+    let quadro = 0;
+    const medir = () => {
+      quadro = 0;
+      const y = window.scrollY;
+      setRolou(y > 12);
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      raiz.current?.style.setProperty('--progresso', total > 0 ? Math.min(1, y / total).toFixed(4) : '0');
+    };
+    const aoRolar = () => {
+      if (!quadro) quadro = requestAnimationFrame(medir);
+    };
+    medir();
     window.addEventListener('scroll', aoRolar, { passive: true });
-    return () => window.removeEventListener('scroll', aoRolar);
-  }, []);
+    window.addEventListener('resize', aoRolar, { passive: true });
+    return () => {
+      cancelAnimationFrame(quadro);
+      window.removeEventListener('scroll', aoRolar);
+      window.removeEventListener('resize', aoRolar);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (!aberto) return undefined;
@@ -53,56 +80,77 @@ export default function Header() {
   }, [aberto]);
 
   return (
-    <header className={`topo${rolou || aberto ? ' topo--solido' : ''}${aberto ? ' topo--aberto' : ''}`}>
+    <header ref={raiz} className={`topo${rolou ? ' topo--rolou' : ''}${aberto ? ' topo--aberto' : ''}`}>
       <div className="topo__barra">
         <Logo />
         <nav className="topo__nav" aria-label="Principal">
           <ul>
-            {NAV.map((item) => (
-              <li key={item.to}>
-                <NavLink to={item.to} end={item.to === '/'} className="topo__link">
-                  {item.rotulo}
-                </NavLink>
-              </li>
-            ))}
+            {NAV.map((item) => {
+              const Icone = ICONES[item.to] ?? ArrowRight;
+              return (
+                <li key={item.to}>
+                  <NavLink to={item.to} end={item.to === '/'} className="topo__link">
+                    <Icone size={16} strokeWidth={1.9} aria-hidden="true" />
+                    <span>{item.rotulo}</span>
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         </nav>
-        <Link to="/conta" className="topo__conta">
-          <UserRound size={17} aria-hidden="true" /> Área do cliente
-        </Link>
-        <Link to="/orcamento" className="botao botao--primario botao--p topo__cta">
-          Solicitar orçamento
-        </Link>
-        <button
-          ref={botao}
-          type="button"
-          className="topo__menu"
-          aria-expanded={aberto}
-          aria-controls="menu-movel"
-          aria-label={aberto ? 'Fechar menu' : 'Abrir menu'}
-          onClick={() => setAberto((a) => !a)}
-        >
-          {aberto ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
-        </button>
+        <div className="topo__acoes">
+          <Link to="/conta" className="topo__conta" aria-label="Área do cliente">
+            <UserRoundCog size={18} strokeWidth={1.9} aria-hidden="true" />
+            <span>Área do cliente</span>
+          </Link>
+          <Link to="/orcamento" className="btn btn--primario btn--p topo__cta">
+            Solicitar orçamento
+          </Link>
+          <button
+            ref={botao}
+            type="button"
+            className="topo__menu"
+            aria-expanded={aberto}
+            aria-controls="menu-movel"
+            aria-label={aberto ? 'Fechar menu' : 'Abrir menu'}
+            onClick={() => setAberto((a) => !a)}
+          >
+            <span className="topo__menu-icone" aria-hidden="true">
+              {aberto ? <X size={22} /> : <Menu size={22} />}
+            </span>
+          </button>
+        </div>
       </div>
+      <span className="topo__progresso" aria-hidden="true" />
+
       <div id="menu-movel" ref={painel} className="menu-movel" hidden={!aberto}>
         <nav aria-label="Menu do celular">
           <ul>
-            {NAV.map((item, i) => (
-              <li key={item.to} style={{ '--i': i }}>
-                <NavLink to={item.to} end={item.to === '/'} className="menu-movel__link">
-                  {item.rotulo}
-                </NavLink>
-              </li>
-            ))}
+            {NAV.map((item, i) => {
+              const Icone = ICONES[item.to] ?? ArrowRight;
+              return (
+                <li key={item.to} style={{ '--i': i }}>
+                  <NavLink to={item.to} end={item.to === '/'} className="menu-movel__link">
+                    <span className="icone-caixa icone-caixa--p">
+                      <Icone size={18} strokeWidth={1.8} aria-hidden="true" />
+                    </span>
+                    {item.rotulo}
+                    <ArrowRight size={16} className="menu-movel__seta" aria-hidden="true" />
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         </nav>
-        <Link to="/conta" className="botao botao--contorno menu-movel__cta">
-          <UserRound size={18} aria-hidden="true" /> Área do cliente
-        </Link>
-        <Link to="/orcamento" className="botao botao--primario menu-movel__cta">
-          <Send size={18} aria-hidden="true" /> Solicitar orçamento
-        </Link>
+        <div className="menu-movel__acoes" style={{ '--i': NAV.length }}>
+          <Link to="/conta" className="btn btn--contorno btn--bloco">
+            <UserRoundCog size={18} aria-hidden="true" /> Área do cliente
+          </Link>
+          <Link to="/orcamento" className="btn btn--primario btn--bloco">
+            <Send size={18} aria-hidden="true" /> Solicitar orçamento
+          </Link>
+        </div>
+        <p className="menu-movel__slogan">{EMPRESA.slogan}</p>
       </div>
     </header>
   );

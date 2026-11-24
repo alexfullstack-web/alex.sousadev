@@ -4,7 +4,8 @@
 // e-mail com a mesma mensagem por 10 minutos.
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Loader2, MessageCircle, Send } from 'lucide-react';
+import { Building2, CheckCircle2, FolderKanban, Loader2, Mail, MessageCircle, Phone, RotateCcw, Send, ShieldCheck, UserRound } from 'lucide-react';
+import Aviso from './ui/Aviso.jsx';
 import { OPCOES_ORCAMENTO, linkWhatsapp } from '../data/empresa.js';
 import { enviarPedido } from '../lib/gestao.js';
 import Turnstile, { precisaTurnstile } from './Turnstile.jsx';
@@ -112,8 +113,11 @@ export default function QuoteForm({ tipoInicial = '' }) {
 
   if (enviado) {
     return (
-      <div className="orc-sucesso" role="status" aria-live="polite">
-        <CheckCircle2 size={36} aria-hidden="true" />
+      <div className="orc__form orc-sucesso" role="status" aria-live="polite">
+        <div className="orc-sucesso__icone">
+          <span className="orc-sucesso__anel" aria-hidden="true" />
+          <CheckCircle2 size={40} aria-hidden="true" />
+        </div>
         <h2>Pedido enviado</h2>
         <p>
           Recebemos o seu pedido. Vamos analisar a necessidade e responder pelo{' '}
@@ -121,43 +125,49 @@ export default function QuoteForm({ tipoInicial = '' }) {
           projeto.
         </p>
         <div className="orc-sucesso__acoes">
-          <a className="botao botao--primario" href={linkWhatsapp(resumo)} target="_blank" rel="noopener noreferrer">
+          <a className="btn btn--primario" href={linkWhatsapp(resumo)} target="_blank" rel="noopener noreferrer">
             <MessageCircle size={18} aria-hidden="true" /> Adiantar pelo WhatsApp
           </a>
           <button
             type="button"
-            className="botao botao--contorno"
+            className="btn btn--contorno"
             onClick={() => {
               setEnviado(false);
               setV({ ...VAZIO });
               inicio.current = Date.now();
             }}
           >
-            Enviar outro pedido
+            <RotateCcw size={17} aria-hidden="true" /> Enviar outro pedido
           </button>
         </div>
       </div>
     );
   }
 
-  const campo = (id, rotulo, props = {}, Tag = 'input') => (
-    <div className={`campo${props.largo ? ' campo--largo' : ''}`}>
-      <label htmlFor={`orc-${id}`}>{rotulo}</label>
-      <Tag
-        id={`orc-${id}`}
-        value={v[id]}
-        onChange={(e) => set(id, props.mascara ? props.mascara(e.target.value) : e.target.value)}
-        aria-invalid={Boolean(erros[id])}
-        aria-describedby={erros[id] ? `orc-${id}-erro` : undefined}
-        {...Object.fromEntries(Object.entries(props).filter(([k]) => !['largo', 'mascara'].includes(k)))}
-      />
-      {erros[id] && (
-        <p className="campo__erro" id={`orc-${id}-erro`}>
-          {erros[id]}
-        </p>
-      )}
-    </div>
-  );
+  const campo = (id, rotulo, props = {}, Tag = 'input') => {
+    const { largo, mascara, icone: Icone, ...resto } = props;
+    return (
+      <div className={`campo${largo ? ' campo--largo' : ''}`}>
+        <label htmlFor={`orc-${id}`}>{rotulo}</label>
+        <div className={`campo__controle${Icone ? ' campo__controle--icone' : ''}`}>
+          {Icone && <Icone size={18} className="campo__icone" aria-hidden="true" />}
+          <Tag
+            id={`orc-${id}`}
+            value={v[id]}
+            onChange={(e) => set(id, mascara ? mascara(e.target.value) : e.target.value)}
+            aria-invalid={Boolean(erros[id])}
+            aria-describedby={erros[id] ? `orc-${id}-erro` : undefined}
+            {...resto}
+          />
+        </div>
+        {erros[id] && (
+          <p className="campo__erro" id={`orc-${id}-erro`}>
+            {erros[id]}
+          </p>
+        )}
+      </div>
+    );
+  };
   const escolha = (id, rotulo, opcoes, placeholder) => (
     <div className="campo">
       <label htmlFor={`orc-${id}`}>{rotulo}</label>
@@ -178,21 +188,26 @@ export default function QuoteForm({ tipoInicial = '' }) {
   );
 
   return (
-    <form className="orc-form" onSubmit={enviar} noValidate aria-busy={enviando}>
-      <fieldset disabled={enviando}>
-        <legend>Seus dados</legend>
-        <div className="orc-grade">
-          {campo('nome', 'Nome completo *', { autoComplete: 'name', maxLength: 120 })}
-          {campo('email', 'E-mail *', { type: 'email', autoComplete: 'email', maxLength: 160, inputMode: 'email' })}
-          {campo('whatsapp', 'WhatsApp *', { type: 'tel', autoComplete: 'tel', inputMode: 'tel', placeholder: '(00) 00000-0000', mascara: mascaraZap })}
-          {campo('empresa', 'Empresa', { autoComplete: 'organization', maxLength: 120, placeholder: 'Se houver' })}
+    <form className="orc__form" onSubmit={enviar} noValidate aria-busy={enviando}>
+      {enviando && <div className="barra-carregando orc__barra" aria-hidden="true" />}
+      <fieldset disabled={enviando} className="orc__etapa">
+        <legend>
+          <span className="orc__etapa-num num">1</span> Seus dados
+        </legend>
+        <div className="form-grade">
+          {campo('nome', 'Nome completo *', { autoComplete: 'name', maxLength: 120, icone: UserRound })}
+          {campo('email', 'E-mail *', { type: 'email', autoComplete: 'email', maxLength: 160, inputMode: 'email', icone: Mail })}
+          {campo('whatsapp', 'WhatsApp *', { type: 'tel', autoComplete: 'tel', inputMode: 'tel', placeholder: '(00) 00000-0000', mascara: mascaraZap, icone: Phone })}
+          {campo('empresa', 'Empresa', { autoComplete: 'organization', maxLength: 120, placeholder: 'Se houver', icone: Building2 })}
         </div>
       </fieldset>
-      <fieldset disabled={enviando}>
-        <legend>O projeto</legend>
-        <div className="orc-grade">
+      <fieldset disabled={enviando} className="orc__etapa">
+        <legend>
+          <span className="orc__etapa-num num">2</span> O projeto
+        </legend>
+        <div className="form-grade">
           {escolha('tipo', 'Tipo de projeto *', OPCOES_ORCAMENTO.tipos, 'Escolha o tipo')}
-          {campo('nomeProjeto', 'Nome do projeto', { maxLength: 120, placeholder: 'Se já tiver um' })}
+          {campo('nomeProjeto', 'Nome do projeto', { maxLength: 120, placeholder: 'Se já tiver um', icone: FolderKanban })}
           {campo('descricao', 'O que você precisa? *', { largo: true, rows: 5, maxLength: 3000, placeholder: 'Conte o objetivo, para quem é e qual problema o projeto resolve.' }, 'textarea')}
           {campo('funcionalidades', 'Funcionalidades desejadas', { largo: true, rows: 3, maxLength: 2000, placeholder: 'Ex.: agendamento, pagamentos, área do cliente, painel administrativo' }, 'textarea')}
           {escolha('faixa', 'Faixa de investimento *', OPCOES_ORCAMENTO.faixas, 'Escolha uma faixa')}
@@ -204,17 +219,20 @@ export default function QuoteForm({ tipoInicial = '' }) {
           <input id="orc-website" tabIndex={-1} autoComplete="off" value={v.website} onChange={(e) => set('website', e.target.value)} />
         </div>
       </fieldset>
-      <fieldset disabled={enviando}>
-        <legend>Como prefere receber a resposta?</legend>
-        <div className="orc-preferencias" role="radiogroup" aria-label="Forma de contato">
+      <fieldset disabled={enviando} className="orc__etapa">
+        <legend>
+          <span className="orc__etapa-num num">3</span> Como prefere receber a resposta?
+        </legend>
+        <div className="opcoes" role="radiogroup" aria-label="Forma de contato">
           {OPCOES_ORCAMENTO.preferencias.map((p) => (
-            <label key={p.valor} className={`orc-pref${v.preferencia === p.valor ? ' orc-pref--ativa' : ''}`}>
+            <label key={p.valor} className={`opcao${v.preferencia === p.valor ? ' opcao--ativa' : ''}`}>
               <input type="radio" name="preferencia" value={p.valor} checked={v.preferencia === p.valor} onChange={() => set('preferencia', p.valor)} />
+              {p.valor === 'WHATSAPP' ? <MessageCircle size={17} aria-hidden="true" /> : p.valor === 'EMAIL' ? <Mail size={17} aria-hidden="true" /> : <Phone size={17} aria-hidden="true" />}
               {p.rotulo}
             </label>
           ))}
         </div>
-        <label className={`orc-check${erros.consentimento ? ' orc-check--erro' : ''}`}>
+        <label className={`check orc__consentimento${erros.consentimento ? ' check--erro' : ''}`}>
           <input id="orc-consentimento" type="checkbox" checked={v.consentimento} onChange={(e) => set('consentimento', e.target.checked)} aria-describedby={erros.consentimento ? 'orc-consentimento-erro' : undefined} />
           <span>
             Autorizo a Alex Sousa Tech a usar estes dados só para responder a este pedido. <Link to="/politica-de-privacidade">Política de privacidade</Link>
@@ -228,17 +246,15 @@ export default function QuoteForm({ tipoInicial = '' }) {
         <Turnstile onToken={onToken} chave={captchaVersao} />
         {erros.captcha && <p className="campo__erro">{erros.captcha}</p>}
       </fieldset>
-      {erroGeral && (
-        <p className="orc-erro" role="alert">
-          {erroGeral}
-        </p>
-      )}
-      <div className="orc-acoes">
-        <button type="submit" className="botao botao--primario" disabled={enviando}>
+      <Aviso>{erroGeral}</Aviso>
+      <div className="orc__acoes">
+        <button type="submit" className="btn btn--primario btn--g" disabled={enviando}>
           {enviando ? <Loader2 size={18} className="girando" aria-hidden="true" /> : <Send size={18} aria-hidden="true" />}
           {enviando ? 'Enviando…' : 'Enviar pedido de orçamento'}
         </button>
-        <p className="orc-nota">Sem cadastro. Valor e prazo são definidos depois de entender o projeto: nenhum preço é calculado automaticamente.</p>
+        <p className="orc__nota">
+          <ShieldCheck size={16} aria-hidden="true" /> Sem cadastro. Valor e prazo são definidos depois de entender o projeto: nenhum preço é calculado automaticamente.
+        </p>
       </div>
     </form>
   );
