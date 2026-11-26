@@ -163,7 +163,7 @@
     box-shadow var(--medio) ease;
 }
 .logo__marca img {
-  width: 34px;
+  width: 38px;
   height: auto;
 }
 .logo:hover .logo__marca {
@@ -789,7 +789,7 @@
   align-content: start;
 }
 .rodape__marca img {
-  width: 150px;
+  width: 210px;
 }
 .rodape__marca p {
   color: var(--texto-3);

@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="rodape__brilho" aria-hidden="true" />
       <div className="rodape__conteudo">
         <div className="rodape__marca">
-          <img src="/img/site/logo-full.webp" alt="Logotipo da Alex Sousa Tech" width="778" height="646" loading="lazy" decoding="async" />
+          <img src="/img/site/logo-full.webp" alt="Logotipo da Alex Sousa Tech" width="900" height="623" loading="lazy" decoding="async" />
           <p>{EMPRESA.posicionamento}</p>
           <ul className="rodape__redes" aria-label="Redes e contatos">
             {REDES.map(({ href, icone: Icone, rotulo, interno }) => (

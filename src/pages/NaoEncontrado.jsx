@@ -9,7 +9,7 @@ export default function NaoEncontrado() {
       <div className="nao-encontrado__codigo num" aria-hidden="true">
         <span>4</span>
         <span className="nao-encontrado__zero">
-          <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
+          <img src="/img/site/logo-as.webp" alt="" width="480" height="233" />
         </span>
         <span>4</span>
       </div>

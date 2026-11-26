@@ -49,7 +49,7 @@ export default function HeroVisual() {
         <Orbita satelites={SATELITES_2} classe="hv__orbita--2" />
         <div className="hv__nucleo">
           <span className="hv__nucleo-anel" />
-          <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
+          <img src="/img/site/logo-as.webp" alt="" width="480" height="233" />
         </div>
 
         <div className="hv__janela hv__janela--codigo">

@@ -9,7 +9,7 @@ export function CarregandoPagina() {
     <div className="carregando-pagina" role="status" aria-live="polite">
       <div className="carregando-pagina__marca">
         <span className="carregando-pagina__anel" aria-hidden="true" />
-        <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
+        <img src="/img/site/logo-as.webp" alt="" width="480" height="233" />
       </div>
       <div className="barra-carregando" aria-hidden="true" />
       <span className="sr-only">Carregando a página…</span>

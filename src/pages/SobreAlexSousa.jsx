@@ -49,7 +49,7 @@ export default function SobreAlexSousa() {
               <img src="/img/site/alex.webp" alt="Alex Sousa, desenvolvedor Full Stack e fundador da Alex Sousa Tech" width="760" height="1128" fetchPriority="high" />
             </picture>
             <span className="sobre-topo__selo">
-              <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
+              <img src="/img/site/logo-as.webp" alt="" width="480" height="233" />
               Full Stack
             </span>
           </div>
@@ -89,7 +89,7 @@ export default function SobreAlexSousa() {
       <section className="secao secao--estreita" aria-labelledby="empresa-link-titulo">
         <Reveal>
           <Cartao destaque className="sobre-empresa">
-            <img src="/img/site/logo-as.webp" alt="" width="240" height="141" className="sobre-empresa__logo" />
+            <img src="/img/site/logo-as.webp" alt="" width="480" height="233" className="sobre-empresa__logo" />
             <h2 id="empresa-link-titulo">A Alex Sousa Tech</h2>
             <p>A empresa reúne esse conhecimento em soluções digitais para outros negócios: sites, sistemas, lojas virtuais e ferramentas sob medida.</p>
             <Link to="/empresa" className="link-seta">

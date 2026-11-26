@@ -61,7 +61,7 @@
   border: 1px solid rgba(106, 168, 255, 0.3);
 }
 .hero__marca-logo img {
-  width: 38px;
+  width: 42px;
 }
 .hero__marca-nome {
   display: grid;
@@ -267,7 +267,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .hv__nucleo img {
-  width: 70%;
+  width: 78%;
   filter: drop-shadow(0 6px 18px rgba(47, 125, 255, 0.6));
 }
 .hv__nucleo-anel {

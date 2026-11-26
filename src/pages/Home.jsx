@@ -71,7 +71,7 @@ export default function Home() {
         <div className="hero__texto">
           <p className="hero__marca">
             <span className="hero__marca-logo">
-              <img src="/img/site/logo-as.webp" alt="" width="240" height="141" fetchPriority="high" />
+              <img src="/img/site/logo-as.webp" alt="" width="480" height="233" fetchPriority="high" />
             </span>
             <span className="hero__marca-nome">
               {EMPRESA.nome}

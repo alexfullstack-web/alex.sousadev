@@ -157,7 +157,7 @@ function Moldura({ titulo, texto, icone: Icone = UserRound, children, rodape, to
             <span className="auth__orbita" />
             <span className="auth__orbita auth__orbita--2" />
             <span className="auth__nucleo">
-              <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
+              <img src="/img/site/logo-as.webp" alt="" width="480" height="233" />
             </span>
           </div>
           <span className="rotulo">Área do cliente</span>
@@ -215,7 +215,7 @@ function Carregando() {
     <section className="conta-carregando" aria-busy="true" role="status">
       <div className="conta-carregando__marca" aria-hidden="true">
         <span className="conta-carregando__anel" />
-        <img src="/img/site/logo-as.webp" alt="" width="240" height="141" />
+        <img src="/img/site/logo-as.webp" alt="" width="480" height="233" />
       </div>
       <p>Carregando sua conta…</p>
       <div className="barra-carregando" aria-hidden="true" />
